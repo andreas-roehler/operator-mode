@@ -1,4 +1,4 @@
-;;; operator.el --- simple electric operator  -*- lexical-binding: t; -*-
+;;; operator-mode.el --- simple electric operator  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018  Andreas Röhler
 
@@ -234,5 +234,5 @@ inserts surrounding spaces, e.g., `=' might become ` = ',`+=' becomes ` += '."
 		 ;; #'operator-post-self-insert-function t)))
 		 #'operator-do t)))
 
-(provide 'operator)
-;;; operator.el ends here
+(provide 'operator-mode)
+;;; operator-mode.el ends here

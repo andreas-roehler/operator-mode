@@ -1,4 +1,4 @@
-;;; operator-test.el --- operator tests  -*- lexical-binding: t; -*-
+;;; operator-mode-test.el --- operator-mode tests  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018  Andreas Röhler
 
@@ -27,7 +27,7 @@
 (require 'ert-x)
 (require 'python)
 (require 'haskell-mode)
-(require 'operator)
+(require 'operator-mode)
 
 (defmacro operator-test (contents mode debug &rest body)
   "Create temp buffer inserting CONTENTS.
@@ -549,5 +549,5 @@ BODY is code to be executed within the temp buffer.  Point is
    (should (looking-back "(september <|> " (line-beginning-position)))
    (should (char-equal (char-before) 32))))
 
-(provide 'operator-test)
-;;; operator-test.el ends here
+(provide 'operator-mode-test)
+;;; operator-mode-test.el ends here

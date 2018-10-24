@@ -6,7 +6,7 @@ build :
 	cask exec $(EMACS) -Q --batch --eval             \
 	    "(progn                                \
 	      (setq byte-compile-error-on-warn t)  \
-	      (batch-byte-compile))" operator.el
+	      (batch-byte-compile))" operator-mode.el
 
 clean :
 	@rm -f *.elc

@@ -27,10 +27,10 @@ TESTDIR=test/
 export TESTDIR
 
 
-FILE1=operator.el
+FILE1=operator-mode.el
 #  FILE2=.cask/24.4/elpa/haskell-mode-20180917.923
 #  thingatpt-utils-core-setup-tests.el
-TEST1=${TESTDIR}operator-test.el
+TEST1=${TESTDIR}operator-mode-test.el
 
 echo "\$TEST1: $TEST1"
 

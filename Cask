@@ -1,10 +1,10 @@
-(package "simple-operator" "0.0.9" "Auto-add spaces around operators")
+(package "operator-mode" "0.0.9" "Add spaces around operators maybe")
 
-(files "operator.el" "test/operator-test.el")
+(files "operator-mode.el" "test/operator-mode-test.el")
 
 ;; Tell Cask to add package information to this file (so that we can have a
 ;; single file package).
-(package-file "operator.el")
+(package-file "operator-mode.el")
 
 ;; install" error
 (source melpa)
