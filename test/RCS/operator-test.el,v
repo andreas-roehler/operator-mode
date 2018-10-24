@@ -1,0 +1,654 @@
+head	1.5;
+access;
+symbols;
+locks
+	speck:1.5; strict;
+comment	@; @;
+
+
+1.5
+date	2018.10.23.20.10.54;	author speck;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2018.10.23.19.57.34;	author speck;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2018.10.23.18.51.59;	author speck;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2018.10.23.18.35.42;	author speck;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2018.10.23.17.43.56;	author speck;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@;;; operator-test.el --- operator tests  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2018  Andreas Röhler
+
+;; Author: Andreas Röhler <andreas.roehler@@easy-emacs.de>
+;; Keywords: convenience
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'ert-x)
+(require 'python)
+(require 'haskell-mode)
+(require 'operator)
+
+(defmacro operator-test (contents mode debug &rest body)
+  "Create temp buffer inserting CONTENTS.
+
+BODY is code to be executed within the temp buffer "
+  (declare (indent 1) (debug t))
+  `(with-temp-buffer
+     (let (hs-minor-mode)
+       (insert ,contents)
+       (funcall ,mode)
+       (when ,debug
+	 (switch-to-buffer (current-buffer))
+	 (save-excursion (font-lock-fontify-region (point-min)(point-max)))
+       ,@@body))
+  ;; (sit-for 0.1)
+  ))
+
+(defmacro operator-test-point-min (contents mode debug &rest body)
+  "Create temp buffer inserting CONTENTS.
+BODY is code to be executed within the temp buffer.  Point is
+ at the beginning of buffer."
+  (declare (indent 1) (debug t))
+  `(with-temp-buffer
+     (let (hs-minor-mode)
+       (funcall ,mode)
+       (insert ,contents)
+       (goto-char (point-min))
+       (when ,debug
+	 (switch-to-buffer (current-buffer))
+	 (save-excursion (font-lock-fontify-region (point-min)(point-max))))
+       ,@@body)))
+
+;; (ert-simulate-command (cons self-insert-command))
+
+(ert-deftest operator-python-test-JSKBng ()
+  (operator-test
+      "a*"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    ))
+
+(ert-deftest operator-python-test-Ye2u2d ()
+  (operator-test
+      ;; "{a:1}"
+      ;; "{a: 1}"
+      "{a:"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "{a: " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-qk54K8 ()
+  (operator-test
+      "a = itertools.starmap(lambda x,y:"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "a = itertools.starmap(lambda x,y: " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-b7WSVI ()
+  (operator-test
+      "def f(x, y):"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "def f(x, y):" (line-beginning-position)))))
+
+(ert-deftest operator-python-test-wMe1nG ()
+  (operator-test
+      "def f(x"
+    'python-mode
+    operator-debug
+    (insert ",")
+    (operator-do)
+    (should (looking-back "def f(x, " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-IWe5uE ()
+  (operator-test
+      "def f(x): return 2*"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (char-equal (char-before) ?*)))) 
+
+
+(ert-deftest operator-python-test-sFlZBF ()
+  (operator-test
+      "map(x.__add__,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "map(x.__add__, " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-zbLLBK ()
+  (operator-test
+      "def foo(x):
+    if x >="
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "if x >= " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-5P8YxK ()
+  (operator-test
+      "def foo(x):
+    if x>"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "if x > " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-r0usNr ()
+  (operator-test
+      ;; a[2:-1]
+      "a[2:-"
+    'python-mode
+    operator-debug
+    (operator-do)
+    ;; (should (looking-back "a\[-2:-"))
+    (should (eq (char-before) ?-))
+    (should (eq (point) 6))))
+
+(ert-deftest operator-python-test-lWxlOq ()
+  (operator-test
+      ;; def munge() -> AnyStr:
+      "def munge()-"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "def munge() -" (line-beginning-position)))))
+
+(ert-deftest operator-python-test-j935xv ()
+  (operator-test
+      ;; def munge() -> AnyStr:
+      "def munge() ->"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "def munge() -> " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-3jUN8a ()
+  (operator-test
+      "foo = long_function_name(var_one,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "foo = long_function_name(var_one, " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-KEKwec ()
+  (operator-test
+      "my_list = [
+    1,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-qJcBTq ()
+  (operator-test
+      "result = some_function_that_takes_arguments(
+    'a',"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-a7WdXi ()
+  (operator-test
+      "with open('/path/to/some/file/you/want/to/read') as file_1,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (point) 61))
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-bKwOMr ()
+  (operator-test
+      "open('/path/to/some/file', 'w') as file_2:"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should-not (char-equal (char-before (- (point) 2)) 32)) 
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-xo23nI ()
+  (operator-test
+   ;; "return self.first_name, self.last_name"
+      "return self.first_name,"
+      'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-2hONlD ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x =="
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-2uqMP5 ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4:"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-f7dTlN ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print(x,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-KT9scw ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y);"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should-not (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-VHbUyU ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y); x,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-E5nIoH ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y); x, y ="
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-5FYYEH ()
+  (operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y); x, y = y,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-qxKIGs ()
+  (operator-test
+   ;; def __getattribute__(*args):
+      "def __getattribute__(*"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) ?*))))
+
+(ert-deftest operator-python-test-6QxMus ()
+  (operator-test
+      ;; if sys.version_info < (3, 5, 2):
+      "if sys."
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (point) 8))
+    (should (eq (char-before) ?.))))
+
+(ert-deftest operator-python-test-htZat5 ()
+  (operator-test
+      ;; if sys.version_info < (3, 5, 2):
+      "if sys.version_info<"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "if sys.version_info < " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-lbGFpL ()
+  (operator-test
+      ;; if sys.version_info < (3, 5, 2):
+      "if sys.version_info < (3,"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-NowbCJ ()
+  (operator-test
+      ;; 2 + ~3
+      "2 + ~"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (char-equal (char-before) ?~)))) 
+
+(ert-deftest operator-python-test-cgHjuh ()
+  (operator-test
+      ;; 2 ** 4
+      "2 **"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-7VGT6K ()
+  (operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) ?%))))
+
+(ert-deftest operator-python-test-mxZ2mS ()
+  (operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%(language)s has %(number)03d quote types.'%"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "print('%(language)s has %(number)03d quote types.' % " (line-beginning-position)))))
+
+(ert-deftest operator-python-test-iJlXlE ()
+  (operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%(language)s has %(number)03d quote types.' %
+       {'language':"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should-not (char-equal (char-before (- (point) 2)) 32))
+    (should (char-equal (char-before) 32))))
+
+
+(ert-deftest operator-python-test-glTH9g ()
+  (operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%(language)s has %(number)03d quote types.' %
+       {'language': \"Python\","
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-python-test-Ke7xUy ()
+  (operator-test
+      ;; echo(**kargs)
+      "echo(**"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) ?*))))
+
+(ert-deftest operator-python-test-9knueD ()
+  (operator-test
+      ;; for i in c:
+      "for i in c:"
+    'python-mode
+    operator-debug
+    (operator-do)
+    (should (looking-back "for i in c: " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-test-WG0LXr ()
+  (operator-test
+      ;; args <- getArgs
+      "args <-"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (looking-back "args <- " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-test-zEgH9T ()
+  (operator-test
+      "args<"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-haskell-test-tdazYl ()
+  (operator-test
+      ;; evens n = map f [1..n]
+      "evens n = map f [1."
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) ?.))))
+
+(ert-deftest operator-haskell-test-Im4yth ()
+  (operator-test
+      ;; evens n = map f [1..n]
+      "evens n = map f [1.."
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) ?.))))
+
+(ert-deftest operator-haskell-test-2c6LQO ()
+  (operator-test
+      ;; "f . g = \x -> g (f x)"
+      "f."
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (looking-back "f \. " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-test-uqZdXW ()
+  (operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should-not (eq (char-before) 32))
+    (should (looking-back "(>" (line-beginning-position)))))
+
+(ert-deftest operator-haskell-test-Vg8syM ()
+  (operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>=>) ::"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should-not (char-equal (char-before (- (point) 2)) 32))
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-haskell-test-TeUTY8 ()
+  (operator-test
+      ;; "Monad m =>"
+      "Monad m =>"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+
+(ert-deftest operator-haskell-test-VXpDst ()
+  (operator-test
+      ;; "pure (."
+      "pure (."
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) ?.))))
+
+(ert-deftest operator-haskell-test-TQ7boQ ()
+  (operator-test
+      ;; "pure ($ y) <*> u"
+      "pure ($"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest operator-haskell-test-qQJe8A ()
+  (operator-test
+      ;; "even <$> (2,2)"
+      "even <$> (2,"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should (char-equal (char-before) ?,))))
+
+
+(ert-deftest operator-haskell-test-VbyRmN ()
+  (operator-test
+      ;; "undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r). "
+      "undefined :: forall (r :: RuntimeRep)."
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should-not (char-equal (char-before (- (point) 2)) 32))
+    (should (char-equal (char-before) 32))))
+
+
+(ert-deftest operator-haskell-test-0M8tGE ()
+  (operator-test
+   ;; "(september <|> oktober)"
+   "(september<"
+   'haskell-mode
+   operator-debug
+   (operator-do)
+   (should (looking-back "(september < " (line-beginning-position)))
+   (should (char-equal (char-before) 32))))
+
+(ert-deftest operator-haskell-test-AzSYl6 ()
+  (operator-test
+   ;; "(september <|> oktober)"
+   "(september <|"
+   'haskell-mode
+   operator-debug
+   (operator-do)
+   (should (looking-back "(september <| " (line-beginning-position)))
+   (should (char-equal (char-before) 32))))
+
+(ert-deftest operator-haskell-test-7mv2Dp ()
+  (operator-test
+   ;; "(september <|> oktober)"
+   "(september <|>"
+   'haskell-mode
+   operator-debug
+   (operator-do)
+   (should (looking-back "(september <|> " (line-beginning-position)))
+   (should (char-equal (char-before) 32))))
+
+(provide 'operator-test)
+;;; operator-test.el ends here
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@d68 1
+a68 1
+    'emacs-lisp-mode
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@a462 9
+(ert-deftest operator-haskell-test-N1TFyW ()
+  (operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>=>) :"
+    'haskell-mode
+    operator-debug
+    (operator-do)
+    (should-not (eq (char-before) 32))))
+
+d470 1
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d129 1
+a129 1
+    if x>="
+d135 9
+d414 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d115 2
+a116 1
+    (should (looking-back "return 2\\*" (line-beginning-position)))))
+d325 1
+a325 1
+    (should (looking-back "2 \\+ ~" (line-beginning-position)))))
+@

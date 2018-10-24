@@ -1,0 +1,1313 @@
+head	1.19;
+access;
+symbols;
+locks
+	speck:1.19; strict;
+comment	@; @;
+
+
+1.19
+date	2018.10.22.11.46.36;	author speck;	state Exp;
+branches;
+next	1.18;
+
+1.18
+date	2018.10.21.19.31.48;	author speck;	state Exp;
+branches;
+next	1.17;
+
+1.17
+date	2018.10.21.17.53.15;	author speck;	state Exp;
+branches;
+next	1.16;
+
+1.16
+date	2018.10.21.07.09.22;	author speck;	state Exp;
+branches;
+next	1.15;
+
+1.15
+date	2018.10.20.19.54.43;	author speck;	state Exp;
+branches;
+next	1.14;
+
+1.14
+date	2018.10.19.09.16.01;	author speck;	state Exp;
+branches;
+next	1.13;
+
+1.13
+date	2018.10.18.20.07.36;	author speck;	state Exp;
+branches;
+next	1.12;
+
+1.12
+date	2018.10.18.19.02.42;	author speck;	state Exp;
+branches;
+next	1.11;
+
+1.11
+date	2018.10.18.18.55.30;	author speck;	state Exp;
+branches;
+next	1.10;
+
+1.10
+date	2018.10.18.18.44.45;	author speck;	state Exp;
+branches;
+next	1.9;
+
+1.9
+date	2018.10.18.18.30.13;	author speck;	state Exp;
+branches;
+next	1.8;
+
+1.8
+date	2018.10.18.17.52.01;	author speck;	state Exp;
+branches;
+next	1.7;
+
+1.7
+date	2018.10.18.14.04.47;	author speck;	state Exp;
+branches;
+next	1.6;
+
+1.6
+date	2018.10.18.13.53.17;	author speck;	state Exp;
+branches;
+next	1.5;
+
+1.5
+date	2018.10.18.13.03.29;	author speck;	state Exp;
+branches;
+next	1.4;
+
+1.4
+date	2018.10.18.12.39.24;	author speck;	state Exp;
+branches;
+next	1.3;
+
+1.3
+date	2018.10.18.10.42.31;	author speck;	state Exp;
+branches;
+next	1.2;
+
+1.2
+date	2018.10.18.10.22.52;	author speck;	state Exp;
+branches;
+next	1.1;
+
+1.1
+date	2018.10.18.08.45.38;	author speck;	state Exp;
+branches;
+next	;
+
+
+desc
+@@
+
+
+1.19
+log
+@*** empty log message ***
+@
+text
+@;;; simple-operator-test.el --- simple-operator tests  -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2018  Andreas Röhler
+
+;; Author: Andreas Röhler <andreas.roehler@@easy-emacs.de>
+;; Keywords: convenience
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+
+(require 'ert-x)
+(require 'python)
+(require 'haskell-mode)
+
+(defmacro simple-operator-test (contents mode debug &rest body)
+  "Create temp buffer inserting CONTENTS.
+
+BODY is code to be executed within the temp buffer "
+  (declare (indent 1) (debug t))
+  `(with-temp-buffer
+     (let (hs-minor-mode)
+       (insert ,contents)
+       (funcall ,mode)
+       (when ,debug
+	 (switch-to-buffer (current-buffer))
+	 (save-excursion (font-lock-fontify-region (point-min)(point-max)))
+       ,@@body))
+  ;; (sit-for 0.1)
+  ))
+
+(defmacro simple-operator-test-point-min (contents mode debug &rest body)
+  "Create temp buffer inserting CONTENTS.
+BODY is code to be executed within the temp buffer.  Point is
+ at the beginning of buffer."
+  (declare (indent 1) (debug t))
+  `(with-temp-buffer
+     (let (hs-minor-mode)
+       (funcall ,mode)
+       (insert ,contents)
+       (goto-char (point-min))
+       (when ,debug
+	 (switch-to-buffer (current-buffer))
+	 (save-excursion (font-lock-fontify-region (point-min)(point-max))))
+       ,@@body)))
+
+;; (ert-simulate-command (cons self-insert-command))
+
+(ert-deftest simple-operator-python-test-JSKBng ()
+  (simple-operator-test
+      "a*"
+    'emacs-lisp-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (char-equal (char-before) 32))
+    ))
+
+(ert-deftest simple-operator-python-test-Ye2u2d ()
+  (simple-operator-test
+      ;; "{a:1}"
+      ;; "{a: 1}"
+      "{a:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "{a: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-qk54K8 ()
+  (simple-operator-test
+      "a = itertools.starmap(lambda x,y:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "a = itertools.starmap(lambda x,y: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-b7WSVI ()
+  (simple-operator-test
+      "def f(x, y):"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "def f(x, y):" (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-wMe1nG ()
+  (simple-operator-test
+      "def f(x"
+    'python-mode
+    simple-operator-debug
+    (insert ",")
+    (simple-operator-do)
+    (should (looking-back "def f(x, " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-IWe5uE ()
+  (simple-operator-test
+      "def f(x): return 2*"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "return 2\\*" (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-sFlZBF ()
+  (simple-operator-test
+      "map(x.__add__,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "map(x.__add__, " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-zbLLBK ()
+  (simple-operator-test
+      "def foo(x):
+    if x>="
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "if x >= " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-r0usNr ()
+  (simple-operator-test
+      ;; a[2:-1]
+      "a[2:-"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    ;; (should (looking-back "a\[-2:-"))
+    (should (eq (char-before) ?-))
+    (should (eq (point) 6))))
+
+(ert-deftest simple-operator-python-test-lWxlOq ()
+  (simple-operator-test
+      ;; def munge() -> AnyStr:
+      "def munge()-"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "def munge() -" (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-j935xv ()
+  (simple-operator-test
+      ;; def munge() -> AnyStr:
+      "def munge() ->"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "def munge() -> " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-3jUN8a ()
+  (simple-operator-test
+      "foo = long_function_name(var_one,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "foo = long_function_name(var_one, " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-KEKwec ()
+  (simple-operator-test
+      "my_list = [
+    1,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-qJcBTq ()
+  (simple-operator-test
+      "result = some_function_that_takes_arguments(
+    'a',"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-a7WdXi ()
+  (simple-operator-test
+      "with open('/path/to/some/file/you/want/to/read') as file_1,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (point) 61))
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-bKwOMr ()
+  (simple-operator-test
+      "     open('/path/to/some/file', 'w') as file_2:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (point) 61))
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-xo23nI ()
+  (simple-operator-test
+   ;; "return self.first_name, self.last_name"
+      "return self.first_name,"
+      'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-2hONlD ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x =="
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-2uqMP5 ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-f7dTlN ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print(x,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-KT9scw ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y);"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should-not (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-VHbUyU ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y); x,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-E5nIoH ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y); x, y ="
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-5FYYEH ()
+  (simple-operator-test
+      ;; if x == 4: print (x, y); x, y = y, x
+      "if x == 4: print (x, y); x, y = y,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-qxKIGs ()
+  (simple-operator-test
+   ;; def __getattribute__(*args):
+      "def __getattribute__(*"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) ?*))))
+
+(ert-deftest simple-operator-python-test-6QxMus ()
+  (simple-operator-test
+      ;; if sys.version_info < (3, 5, 2):
+      "if sys."
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (point) 8))
+    (should (eq (char-before) ?.))))
+
+(ert-deftest simple-operator-python-test-htZat5 ()
+  (simple-operator-test
+      ;; if sys.version_info < (3, 5, 2):
+      "if sys.version_info<"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "if sys.version_info < " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-lbGFpL ()
+  (simple-operator-test
+      ;; if sys.version_info < (3, 5, 2):
+      "if sys.version_info < (3,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-NowbCJ ()
+  (simple-operator-test
+      ;; 2 + ~3
+      "2 + ~"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "2 \\+ ~" (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-cgHjuh ()
+  (simple-operator-test
+      ;; 2 ** 4
+      "2 **"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-7VGT6K ()
+  (simple-operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) ?%))))
+
+(ert-deftest simple-operator-python-test-mxZ2mS ()
+  (simple-operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%(language)s has %(number)03d quote types.'%"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "print('%(language)s has %(number)03d quote types.' % " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-iJlXlE ()
+  (simple-operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%(language)s has %(number)03d quote types.' %
+       {'language':"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "print('%(language)s has %(number)03d quote types.' %
+       {'language': " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-glTH9g ()
+  (simple-operator-test
+   ;; print('%(language)s has %(number)03d quote types.' %
+   ;;     {'language': "Python", "number": 2})
+      "print('%(language)s has %(number)03d quote types.' %
+       {'language': \"Python\","
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-python-test-Ke7xUy ()
+  (simple-operator-test
+      ;; echo(**kargs)
+      "echo(**"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) ?*))))
+
+(ert-deftest simple-operator-python-test-9knueD ()
+  (simple-operator-test
+      ;; for i in c: 
+      "for i in c:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "for i in c: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-haskell-test-WG0LXr ()
+  (simple-operator-test
+      ;; args <- getArgs
+      "args <-"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "args <- " (line-beginning-position)))))
+
+(ert-deftest simple-operator-haskell-test-zEgH9T ()
+  (simple-operator-test
+      "args<"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-haskell-test-tdazYl ()
+  (simple-operator-test
+      ;; evens n = map f [1..n]
+      "evens n = map f [1."
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) ?.))))
+
+(ert-deftest simple-operator-haskell-test-Im4yth ()
+  (simple-operator-test
+      ;; evens n = map f [1..n]
+      "evens n = map f [1.."
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) ?.))))
+
+(ert-deftest simple-operator-haskell-test-2c6LQO ()
+  (simple-operator-test
+      ;; "f . g = \x -> g (f x)"
+      "f."
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))
+    (should (looking-back "f \. " (line-beginning-position)))))
+
+(ert-deftest simple-operator-haskell-test-uqZdXW ()
+  (simple-operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should-not (eq (char-before) 32))
+    (should (looking-back "(>" (line-beginning-position)))))
+
+(ert-deftest simple-operator-haskell-test-N1TFyW ()
+  (simple-operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>=>) :"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should-not (eq (char-before) 32))))
+
+(ert-deftest simple-operator-haskell-test-Vg8syM ()
+  (simple-operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>=>) ::"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-haskell-test-TeUTY8 ()
+  (simple-operator-test
+      ;; "Monad m =>"
+      "Monad m =>"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+
+(ert-deftest simple-operator-haskell-test-VXpDst ()
+  (simple-operator-test
+      ;; "pure (."
+      "pure (."
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) ?.))))
+
+(ert-deftest simple-operator-haskell-test-TQ7boQ ()
+  (simple-operator-test
+      ;; "pure ($ y) <*> u"
+      "pure ($"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (eq (char-before) 32))))
+
+(ert-deftest simple-operator-haskell-test-qQJe8A ()
+  (simple-operator-test
+      ;; "even <$> (2,2)"
+      "even <$> (2,"
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (char-equal (char-before) ?,)))) 
+
+
+(ert-deftest simple-operator-haskell-test-VbyRmN ()
+  (simple-operator-test
+      ;; "undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r). "
+      "undefined :: forall (r :: RuntimeRep)."
+    'haskell-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should-not (char-equal (char-before (- (point) 2)) 32))
+    (should (char-equal (char-before) 32))))
+
+
+(provide 'simple-operator-test)
+;;; simple-operator-test.el ends here
+@
+
+
+1.18
+log
+@*** empty log message ***
+@
+text
+@d28 2
+a385 1
+
+d394 121
+@
+
+
+1.17
+log
+@*** empty log message ***
+@
+text
+@d375 19
+@
+
+
+1.16
+log
+@*** empty log message ***
+@
+text
+@d342 11
+a352 1
+(ert-deftest simple-operator-python-test-7VGT6K ()
+d357 1
+a357 2
+       {'language': "Python", "number": 2})
+"
+d362 1
+a362 2
+       {'language': "Python", "number": 2})
+" (line-beginning-position)))))
+d364 1
+a364 1
+(ert-deftest simple-operator-python-test-7VGT6K ()
+d369 1
+a369 2
+       {'language': "Python", "number": 2})
+"
+d373 2
+a374 3
+    (should (looking-back "print('%(language)s has %(number)03d quote types.' %
+       {'language': "Python", "number": 2})
+" (line-beginning-position)))))
+@
+
+
+1.15
+log
+@*** empty log message ***
+@
+text
+@d332 38
+@
+
+
+1.14
+log
+@*** empty log message ***
+@
+text
+@a80 20
+(ert-deftest simple-operator-python-test-hpVn6c ()
+  (simple-operator-test
+      ;; "{a:lambda x:x, b:2}"
+      ;; "{a: lambda x: x, b: 2}"
+      "{a: lambda x:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "{a: lambda x: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-0D1mgd ()
+  (simple-operator-test
+      ;; "lambda x:x[1:2]"
+      ;; "lambda x: x[1:2]"
+      "lambda x:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "lambda x: " (line-beginning-position)))))
+
+a249 1
+
+d277 36
+d314 8
+d323 8
+a330 4
+;; if x == 4: print (x, y); x, y = y, x
+;;  egold = 0
+;; >> > while egold < 10:
+;; >> >    ego1d = egold+1
+@
+
+
+1.13
+log
+@*** empty log message ***
+@
+text
+@a205 1
+
+a214 1
+
+d224 76
+d301 3
+@
+
+
+1.12
+log
+@*** empty log message ***
+@
+text
+@d216 12
+@
+
+
+1.11
+log
+@*** empty log message ***
+@
+text
+@a187 1
+
+d197 18
+@
+
+
+1.10
+log
+@*** empty log message ***
+@
+text
+@d180 19
+@
+
+
+1.9
+log
+@*** empty log message ***
+@
+text
+@d71 108
+a178 117
+;; (ert-deftest simple-operator-python-test-Ye2u2d ()
+;;   (simple-operator-test
+;;       ;; "{a:1}"
+;;       ;; "{a: 1}"
+;;       "{a"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (insert ":")
+;;     (simple-operator-do)
+;;     (should (looking-back "{a: " (line-beginning-position)))
+;;     ))
+
+;; (ert-deftest simple-operator-python-test-hpVn6c ()
+;;   (simple-operator-test
+;;       ;; "{a:lambda x:x, b:2}"
+;;       ;; "{a: lambda x: x, b: 2}"
+;;       "{a: lambda x:"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "{a: lambda x: " (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-0D1mgd ()
+;;   (simple-operator-test
+;;       ;; "lambda x:x[1:2]"
+;;       ;; "lambda x: x[1:2]"
+;;       "lambda x:"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "lambda x: " (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-qk54K8 ()
+;;   (simple-operator-test
+;;       "a = itertools.starmap(lambda x,y:"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "a = itertools.starmap(lambda x,y: " (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-b7WSVI ()
+;;   (simple-operator-test
+;;       "def f(x, y)"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (insert ":")
+;;     (simple-operator-do)
+;;     (should (looking-back "def f(x, y):" (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-wMe1nG ()
+;;   (simple-operator-test
+;;       "def f(x"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (insert ",")
+;;     (simple-operator-do)
+;;     (should (looking-back "def f(x, " (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-IWe5uE ()
+;;   (simple-operator-test
+;;       "def f(x): return 2*"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "return 2\\*" (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-sFlZBF ()
+;;   (simple-operator-test
+;;       "map(x.__add__,"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "map(x.__add__, " (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-zbLLBK ()
+;;   (simple-operator-test
+;;       "def foo(x):
+;;     if x>="
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "if x >= " (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test ()
+;;   (simple-operator-test
+;;    "a[1:"
+;; "a[1:"
+;;   ))
+
+;; (ert-deftest simple-operator-python-test-r0usNr ()
+;;   (simple-operator-test
+;;       ;; a[2:-1]
+;;       "a[2:-"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     ;; (should (looking-back "a\[-2:-"))
+;;     (should (eq (char-before) ?-))
+;;     (should (eq (point) 6))))
+
+;; (ert-deftest simple-operator-python-test-lWxlOq ()
+;;   (simple-operator-test
+;;       ;; def munge() -> AnyStr:
+;;       "def munge()-"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "def munge() -" (line-beginning-position)))))
+
+;; (ert-deftest simple-operator-python-test-j935xv ()
+;;   (simple-operator-test
+;;       ;; def munge() -> AnyStr:
+;;       "def munge() ->"
+;;     'python-mode
+;;     simple-operator-debug
+;;     (simple-operator-do)
+;;     (should (looking-back "def munge() -> " (line-beginning-position)))))
+@
+
+
+1.8
+log
+@*** empty log message ***
+@
+text
+@d64 1
+a64 1
+      "a"
+a66 1
+    (insert "*")
+@
+
+
+1.7
+log
+@*** empty log message ***
+@
+text
+@d72 117
+a188 132
+(ert-deftest simple-operator-python-test-Ye2u2d ()
+  (simple-operator-test
+      ;; "{a:1}"
+      ;; "{a: 1}"
+      "{a"
+    'python-mode
+    simple-operator-debug
+    (insert ":")
+    (simple-operator-do)
+    (should (looking-back "{a: " (line-beginning-position)))
+    ))
+
+(ert-deftest simple-operator-python-test-hpVn6c ()
+  (simple-operator-test
+      ;; "{a:lambda x:x, b:2}"
+      ;; "{a: lambda x: x, b: 2}"
+      "{a: lambda x:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "{a: lambda x: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-0D1mgd ()
+  (simple-operator-test
+      ;; "lambda x:x[1:2]"
+      ;; "lambda x: x[1:2]"
+      "lambda x:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "lambda x: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-qk54K8 ()
+  (simple-operator-test
+      "a = itertools.starmap(lambda x,y:"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "a = itertools.starmap(lambda x,y: " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-b7WSVI ()
+  (simple-operator-test
+      "def f(x, y)"
+    'python-mode
+    simple-operator-debug
+    (insert ":")
+    (simple-operator-do)
+    (should (looking-back "def f(x, y):" (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-wMe1nG ()
+  (simple-operator-test
+      "def f(x"
+    'python-mode
+    simple-operator-debug
+    (insert ",")
+    (simple-operator-do)
+    (should (looking-back "def f(x, " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-IWe5uE ()
+  (simple-operator-test
+      "def f(x): return 2*"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "return 2\\*" (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test-sFlZBF ()
+  (simple-operator-test
+      "map(x.__add__,"
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "map(x.__add__, " (line-beginning-position)))))
+
+
+
+(ert-deftest simple-operator-python-test-zbLLBK ()
+  (simple-operator-test
+      "def foo(x):
+    if x>="
+    'python-mode
+    simple-operator-debug
+    (simple-operator-do)
+    (should (looking-back "if x >= " (line-beginning-position)))))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "a[1:"
+"a[1:"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "a[-1:-2]"
+"a[-1:-2]"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "def foo(x:int)->str:"
+"def foo(x: int) -> str:"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "str: "
+"self._first_name:str = first_name"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "my_class.a"
+"my_class.a"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "a=b"
+"a = b"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "f(a=b)"
+"f(a=b)"
+  ))
+
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "lambda x=1: print x"
+"lambda x=1: print x"
+  ))
+@
+
+
+1.6
+log
+@*** empty log message ***
+@
+text
+@d88 1
+a88 1
+      "{a: lambda x"
+a90 1
+    (insert ":")
+d98 1
+a98 1
+      "lambda x"
+a100 1
+    (insert ":")
+d106 1
+a106 1
+      "a = itertools.starmap(lambda x,y"
+a108 1
+    (insert ":")
+a111 1
+
+a129 1
+
+a137 1
+
+d147 2
+a148 1
+(ert-deftest simple-operator-python-test-L4dSKQ ()
+d150 2
+a151 3
+      ;; "lambda x=y[1:5]:print x"
+      ;; "lambda x=y[1:5]: print x"
+      "lambda x=y[1:5]"
+a153 1
+    (insert ":")
+d155 1
+a155 1
+    (should (looking-back "lambda x=y[1:5]: " (line-beginning-position)))))
+@
+
+
+1.5
+log
+@*** empty log message ***
+@
+text
+@d135 18
+@
+
+
+1.4
+log
+@*** empty log message ***
+@
+text
+@a105 2
+;; a = itertools.starmap(lambda x,y: x+y, zip(itertools.repeat(x), y)
+
+d114 20
+@
+
+
+1.3
+log
+@*** empty log message ***
+@
+text
+@d81 1
+a81 2
+    ;; (should (char-equal (char-before) 32))
+    (should (looking-back "{a: " (line-beginning-position))) 
+d84 1
+a84 2
+
+(ert-deftest simple-operator-python-test ()
+d86 8
+a93 3
+   "{a:lambda x:x, b:2}"
+"{a: lambda x: x, b: 2}"
+   ))
+d95 1
+a95 1
+(ert-deftest simple-operator-python-test ()
+d97 8
+a104 3
+   "lambda x:{a:x, b:2}"
+"lambda x: {a: x, b: 2}"
+  ))
+d106 1
+a106 5
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "lambda x:x[1:2]"
+"lambda x: x[1:2]"
+  ))
+d108 1
+a108 1
+(ert-deftest simple-operator-python-test ()
+d110 6
+a115 3
+   "lambda x={a:1}:print x"
+"lambda x={a: 1}: print x"
+  ))
+d117 1
+a117 1
+(ert-deftest simple-operator-python-test ()
+d119 8
+a126 3
+   "lambda x=y[1:5]:print x"
+"lambda x=y[1:5]: print x"
+  ))
+@
+
+
+1.2
+log
+@*** empty log message ***
+@
+text
+@d40 1
+a40 1
+	 (font-lock-fontify-region (point-min)(point-max))
+d57 1
+a57 1
+	 (font-lock-fontify-region (point-min)(point-max)))
+d90 1
+d96 1
+d102 1
+d108 1
+d114 1
+d120 1
+d126 1
+d132 1
+d138 1
+d144 1
+d150 1
+d156 1
+d162 1
+@
+
+
+1.1
+log
+@Initial revision
+@
+text
+@d23 1
+a23 1
+;; 
+a37 1
+       (simple-operator-mode)
+a52 1
+       (simple-operator-mode)
+d60 3
+a62 1
+(ert-deftest simple-operator-python-test ()
+d64 20
+a83 5
+   "a*"
+   'emacs-lisp-mode
+   t
+   (ert-simulate-command (self-insert-command ?*)
+   (should (looking-back "a * b" (line-beginning-position))))))
+a84 12
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+"f(x)*a"
+"f(x) * a"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+"f(x)**a"
+"f(x) ** a"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+"f(a*b)"
+"f(a * b)"
+a87 60
+"a ** b"
+"f(a**b)"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "f(a ** b)"
+"f(*args)"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "f(*args)"
+"f(a,*args)"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "f(a, *args)"
+"*args)"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "f(**kwargs)"
+"f(**kwargs)"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "f(a,**kwargs)"
+"f(a, **kwargs)"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "if x:"
+"if x:"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "if x: "
+"if x: "
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "else:"
+"else:"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "elif y:"
+"elif y:"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "for x in y:"
+"for x in y:"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "while x:"
+"while x:"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "with X as Y:"
+"with X as Y:"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "{a:1}"
+"{a: 1}"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+   "lambda x:x"
+"lambda x: x"
+(ert-deftest simple-operator-python-test ()
+  (simple-operator-test
+d90 1
+d95 1
+d100 1
+d105 1
+d110 1
+d113 3
+a115 2
+   "a[1:2]"
+"a[1:2]"
+d120 1
+d125 1
+d130 1
+d135 1
+d140 1
+d145 1
+@

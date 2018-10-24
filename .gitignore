@@ -9,3 +9,10 @@
 
 # Undo-tree save-files
 *.~undo-tree
+
+RCS/
+befehle.org
+commit.txt
+test/RCS/*.el,v
+test/RCS/operator-test.el,v
+test/ehs.hs
