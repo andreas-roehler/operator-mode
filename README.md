@@ -2,7 +2,7 @@
 
 [![travis](https://travis-ci.org/andreas-roehler/operator-mode.svg?branch=master)](https://travis-ci.org/andreas-roehler/operator-mode)
 
-Add spaces around operators if appropriate.
+Auto-add spaces around operators if appropriate.
 
 For example typing
 
