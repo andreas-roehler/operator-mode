@@ -66,7 +66,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "a*"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     ))
@@ -77,7 +77,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "{a: 1}"
       "{a:"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "{a: " (line-beginning-position)))))
 
@@ -85,7 +85,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "a = itertools.starmap(lambda x,y:"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "a = itertools.starmap(lambda x,y: " (line-beginning-position)))))
 
@@ -93,7 +93,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "def f(x, y):"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "def f(x, y):" (line-beginning-position)))))
 
@@ -101,7 +101,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "def f(x"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (insert ",")
     (operator-do)
     (should (looking-back "def f(x, " (line-beginning-position)))))
@@ -110,7 +110,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "def f(x): return 2*"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?*)))) 
 
@@ -119,7 +119,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "map(x.__add__,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "map(x.__add__, " (line-beginning-position)))))
 
@@ -128,7 +128,7 @@ BODY is code to be executed within the temp buffer.  Point is
       "def foo(x):
     if x >="
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "if x >= " (line-beginning-position)))))
 
@@ -137,7 +137,7 @@ BODY is code to be executed within the temp buffer.  Point is
       "def foo(x):
     if x>"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "if x > " (line-beginning-position)))))
 
@@ -146,7 +146,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; a[2:-1]
       "a[2:-"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     ;; (should (looking-back "a\[-2:-"))
     (should (eq (char-before) ?-))
@@ -157,7 +157,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; def munge() -> AnyStr:
       "def munge()-"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "def munge() -" (line-beginning-position)))))
 
@@ -166,7 +166,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; def munge() -> AnyStr:
       "def munge() ->"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "def munge() -> " (line-beginning-position)))))
 
@@ -174,7 +174,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "foo = long_function_name(var_one,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "foo = long_function_name(var_one, " (line-beginning-position)))))
 
@@ -183,7 +183,7 @@ BODY is code to be executed within the temp buffer.  Point is
       "my_list = [
     1,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -192,7 +192,7 @@ BODY is code to be executed within the temp buffer.  Point is
       "result = some_function_that_takes_arguments(
     'a',"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -200,7 +200,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "with open('/path/to/some/file/you/want/to/read') as file_1,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (point) 61))
     (should (eq (char-before) 32))))
@@ -209,7 +209,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "open('/path/to/some/file', 'w') as file_2:"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should-not (char-equal (char-before (- (point) 2)) 32)) 
     (should (eq (char-before) 32))))
@@ -219,7 +219,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;; "return self.first_name, self.last_name"
       "return self.first_name,"
       'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -228,7 +228,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x =="
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -237,7 +237,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4:"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -246,7 +246,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print(x,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -255,7 +255,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y);"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should-not (eq (char-before (- (point) 2)) 32))
     (should (eq (char-before) 32))))
@@ -265,7 +265,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y); x,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -274,7 +274,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y); x, y ="
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -283,7 +283,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y); x, y = y,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -292,7 +292,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;; def __getattribute__(*args):
       "def __getattribute__(*"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?*))))
 
@@ -301,7 +301,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if sys.version_info < (3, 5, 2):
       "if sys."
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (point) 8))
     (should (eq (char-before) ?.))))
@@ -311,7 +311,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if sys.version_info < (3, 5, 2):
       "if sys.version_info<"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "if sys.version_info < " (line-beginning-position)))))
 
@@ -320,7 +320,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; if sys.version_info < (3, 5, 2):
       "if sys.version_info < (3,"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -329,7 +329,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; 2 + ~3
       "2 + ~"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?~)))) 
 
@@ -338,7 +338,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; 2 ** 4
       "2 **"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -348,7 +348,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;;     {'language': "Python", "number": 2})
       "print('%"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?%))))
 
@@ -358,7 +358,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;;     {'language': "Python", "number": 2})
       "print('%(language)s has %(number)03d quote types.'%"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "print('%(language)s has %(number)03d quote types.' % " (line-beginning-position)))))
 
@@ -369,7 +369,7 @@ BODY is code to be executed within the temp buffer.  Point is
       "print('%(language)s has %(number)03d quote types.' %
        {'language':"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should-not (char-equal (char-before (- (point) 2)) 32))
     (should (char-equal (char-before) 32))))
@@ -382,7 +382,7 @@ BODY is code to be executed within the temp buffer.  Point is
       "print('%(language)s has %(number)03d quote types.' %
        {'language': \"Python\","
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -391,7 +391,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; echo(**kargs)
       "echo(**"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?*))))
 
@@ -400,7 +400,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; for i in c:
       "for i in c:"
     'python-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (looking-back "for i in c: " (line-beginning-position)))))
 
@@ -409,7 +409,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; args <- getArgs
       "args <-"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (looking-back "args <- " (line-beginning-position)))))
@@ -418,7 +418,7 @@ BODY is code to be executed within the temp buffer.  Point is
   (operator-test
       "args<"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -427,7 +427,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; evens n = map f [1..n]
       "evens n = map f [1."
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?.))))
 
@@ -436,7 +436,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; evens n = map f [1..n]
       "evens n = map f [1.."
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?.))))
 
@@ -445,7 +445,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "f . g = \x -> g (f x)"
       "f."
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))
     (should (looking-back "f \. " (line-beginning-position)))))
@@ -455,7 +455,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
       "(>"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should-not (eq (char-before) 32))
     (should (looking-back "(>" (line-beginning-position)))))
@@ -465,7 +465,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
       "(>=>) ::"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should-not (char-equal (char-before (- (point) 2)) 32))
     (should (eq (char-before) 32))))
@@ -475,7 +475,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "Monad m =>"
       "Monad m =>"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -485,7 +485,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "pure (."
       "pure (."
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?.))))
 
@@ -494,7 +494,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "pure ($ y) <*> u"
       "pure ($"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
 
@@ -503,7 +503,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "even <$> (2,2)"
       "even <$> (2,"
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?,))))
 
@@ -513,7 +513,7 @@ BODY is code to be executed within the temp buffer.  Point is
       ;; "undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r). "
       "undefined :: forall (r :: RuntimeRep)."
     'haskell-mode
-    operator-debug
+    operator-mode-debug
     (operator-do)
     (should-not (char-equal (char-before (- (point) 2)) 32))
     (should (char-equal (char-before) 32))))
@@ -524,7 +524,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;; "(september <|> oktober)"
    "(september<"
    'haskell-mode
-   operator-debug
+   operator-mode-debug
    (operator-do)
    (should (looking-back "(september < " (line-beginning-position)))
    (should (char-equal (char-before) 32))))
@@ -534,7 +534,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;; "(september <|> oktober)"
    "(september <|"
    'haskell-mode
-   operator-debug
+   operator-mode-debug
    (operator-do)
    (should (looking-back "(september <| " (line-beginning-position)))
    (should (char-equal (char-before) 32))))
@@ -544,7 +544,7 @@ BODY is code to be executed within the temp buffer.  Point is
    ;; "(september <|> oktober)"
    "(september <|>"
    'haskell-mode
-   operator-debug
+   operator-mode-debug
    (operator-do)
    (should (looking-back "(september <|> " (line-beginning-position)))
    (should (char-equal (char-before) 32))))

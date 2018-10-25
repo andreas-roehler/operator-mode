@@ -52,7 +52,7 @@ echo "\$EMACS: $EMACS"
 hier () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
---eval "(setq operator-debug nil)" \
+--eval "(setq operator-mode-debug nil)" \
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
@@ -67,7 +67,7 @@ hier () {
 entfernt () {
     emacs -Q --batch \
 --eval "(message (emacs-version))" \
---eval "(setq operator-debug nil)" \
+--eval "(setq operator-mode-debug nil)" \
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \

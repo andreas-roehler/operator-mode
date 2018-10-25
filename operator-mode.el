@@ -25,7 +25,7 @@
 
 ;;; Code:
 
-(defvar operator-debug t
+(defvar operator-mode-debug t
   "Debugging mode")
 
 (defvar-local operator-known-operators-spaced-maybe (list ?| ?~ ?^ ?@ ?- ?+ ?* ?: ?. ?, ?! ?$ ?% ?& ?/ ?= ?< ?> ?\;)
