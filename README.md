@@ -14,8 +14,8 @@ according to language might result in
 
 Currently the following languages are supported:
 
-Emacs Lisp
-Haskell
+Emacs Lisp,
+Haskell,
 Python
 
 Bug-reports are welcome.
