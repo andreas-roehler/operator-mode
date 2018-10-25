@@ -77,7 +77,13 @@ Haskell: (>=>) :: Monad"
   (and in-list (char-equal list_start_c ?\()
        (member following_start_c operator-known-operators-spaced-maybe)))
 
+(defun operator--closing-colon (char)
+  (and (char-equal char ?:)
+       ;; (char-equal (char-before (- (point) 1)) ?\))
+       (not (char-equal (char-before (- (point) 1)) 32))))
+
 (defun operator--do-python-mode (char start charbef pps &optional notfirst notsecond unary)
+  "Python"
   (setq operator-known-operators-spaced-maybe (remove ?. operator-known-operators-spaced-maybe))
   (let* ((in-list-p (nth 1 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32))))))
@@ -91,7 +97,8 @@ Haskell: (>=>) :: Monad"
 		       ;; with open('/path/to/some/file') as file_1,
 		       (member char (list ?\; ?,))
 		       ;; def f(x, y):
-		       (and (char-equal char ?:) (char-equal (char-before (- (point) 1)) ?\)))
+		       ;; if len(sys.argv) == 1:
+		       (operator--closing-colon char)
 		       index-p
 		       (py-in-dict-p pps)
 		       (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
@@ -123,6 +130,7 @@ Haskell: (>=>) :: Monad"
     (operator--do char start notfirst notsecond unary)))
 
 (defun operator--do-haskell-mode (char start charbef pps &optional notfirst notsecond)
+  "Haskell"
   (let* ((in-list-p (nth 1 pps))
 	 list_start_char
 	 following_start_char
@@ -140,12 +148,10 @@ Haskell: (>=>) :: Monad"
 	 (notfirst (or notfirst
 		       ;; (september <|> oktober)
 		       (operator--continue-p)
-		       ;; "(>=>) :: Monad
 		       (operator--in-list-continue-p in-list-p list_start_char following_start_char)
 		       (and (char-equal ?* char) in-list-p)
 		       (and (nth 1 pps) (nth 3 pps))
 		       (member char (list ?\; ?,))
-		       (and (char-equal char ?:) (char-equal (char-before (- (point) 1)) ?\)))
 		       index-p
 		       (py-in-dict-p pps)
 		       (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
@@ -155,16 +161,13 @@ Haskell: (>=>) :: Monad"
 			;; "pure ($ y) <*> u"
 			(and in-list-p (char-equal char ?,)
 			     ;; operator spaced before?
-			     (not (char-equal 32 charbef))
-			     )
-			;; "(>=>) :: Monad
-			(and (operator--in-list-continue-p in-list-p list_start_char following_start_char) 
+			     (not (char-equal 32 charbef)))
+			(and (operator--in-list-continue-p in-list-p list_start_char following_start_char)
 			     ;; "(september <|> oktober)"
 			     (not (char-equal ?$ char)))
 			(and (char-equal ?* char) in-list-p)
 			(and (nth 1 pps) (nth 3 pps))
 			(char-equal char ?~)
-			(and (char-equal char ?:) (char-equal (char-before (- (point) 1)) ?\)))
 			index-p
 			(and
 			 ;; "even <$> (2,2)"
@@ -175,7 +178,15 @@ Haskell: (>=>) :: Monad"
 (defun operator--do (char start &optional notfirst notsecond unary)
   (when (member char operator-known-operators-spaced-maybe)
     (let ((orig (copy-marker (point))))
-      (unless unary (goto-char start))
+      (when
+	  ;; if len(sys.argv) == 1
+	  (not (or unary notfirst))
+	(goto-char start)
+	;; if x = =
+	(when (and (eq (char-before) 32)
+		   (member (char-before (- (point) 1)) operator-known-operators-spaced-maybe))
+	  (delete-char -1))
+	(goto-char start))
       (unless notfirst (just-one-space))
       (goto-char orig)
       (unless notsecond (just-one-space)))))
