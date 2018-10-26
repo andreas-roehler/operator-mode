@@ -55,7 +55,7 @@ Return position."
     ;; at least on operator
     (forward-char -1)
     (skip-chars-backward operator-known-operators-spaced-maybe-strg)
-    (cons (point) (char-before))))
+    (cons (point)(char-before))))
 ;; (when (char-equal 32 (char-before)) (delete-char -1)))
 
 (defun py-in-dict-p (pps)
@@ -187,7 +187,11 @@ Haskell: (>=>) :: Monad"
 		   (member (char-before (- (point) 1)) operator-known-operators-spaced-maybe))
 	  (delete-char -1))
 	(goto-char start))
-      (unless notfirst (just-one-space))
+      (unless (or notfirst
+		  ;; a = 3 **
+		  (member (char-before)  operator-known-operators-spaced-maybe))
+		  (just-one-space)
+)
       (goto-char orig)
       (unless notsecond (just-one-space)))))
 
@@ -214,7 +218,7 @@ Haskell: (>=>) :: Monad"
        (operator--do-haskell-mode char start charbef pps notfirst notsecond))
       (`inferior-haskell-mode
        (operator--do-haskell-mode char start charbef pps notfirst notsecond))
-      (_ (operator--do char start notfirst notsecond)))))
+      (_ (operator--final char start notfirst notsecond)))))
 
 (defun operator-do ()
   ""

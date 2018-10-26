@@ -549,5 +549,26 @@ BODY is code to be executed within the temp buffer.  Point is
    (should (looking-back "(september <|> " (line-beginning-position)))
    (should (char-equal (char-before) 32))))
 
+
+;; Ruby
+(ert-deftest operator-mode-ruby-test-YhoemK ()
+  (operator-test
+      ;; "a = 3 ** 2"
+      "a = 3*"
+    'ruby-mode
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))))
+
+(ert-deftest operator-mode-ruby-test-hcQUvu ()
+  (operator-test
+      ;; "a = 3 ** 2"
+      "a = 3 **"
+    'ruby-mode
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))))
+
+
 (provide 'operator-mode-test)
 ;;; operator-mode-test.el ends here
