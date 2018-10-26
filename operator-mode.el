@@ -127,7 +127,7 @@ Haskell: (>=>) :: Monad"
 	 (unary (or unary
 		    ;;  bitwise complement operator
 		    (char-equal char ?~))))
-    (operator--do char start notfirst notsecond unary)))
+    (operator--final char start notfirst notsecond unary)))
 
 (defun operator--do-haskell-mode (char start charbef pps &optional notfirst notsecond)
   "Haskell"
@@ -173,9 +173,9 @@ Haskell: (>=>) :: Monad"
 			 ;; "even <$> (2,2)"
 			 (not (char-equal char ?,))
 			 (looking-back "^return +[^ ]+.*" (line-beginning-position))))))
-    (operator--do char start notfirst notsecond)))
+    (operator--final char start notfirst notsecond)))
 
-(defun operator--do (char start &optional notfirst notsecond unary)
+(defun operator--final (char start &optional notfirst notsecond unary)
   (when (member char operator-known-operators-spaced-maybe)
     (let ((orig (copy-marker (point))))
       (when
