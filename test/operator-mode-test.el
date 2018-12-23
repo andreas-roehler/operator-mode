@@ -549,6 +549,22 @@ BODY is code to be executed within the temp buffer.  Point is
    (should (looking-back "(september <|> " (line-beginning-position)))
    (should (char-equal (char-before) 32))))
 
+(ert-deftest operator-haskell-test-Mi4QXD ()
+  (operator-test 
+      "maior (x:"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back "maior (x"))))
+
+(ert-deftest operator-haskell-test-tBhN5B ()
+  (operator-test 
+      "maior (x:xs) | (x > maior xs) =  x
+             |"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (eq (current-column) 15))))
 
 ;; Ruby
 (ert-deftest operator-mode-ruby-test-YhoemK ()

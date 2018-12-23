@@ -134,30 +134,30 @@ Haskell: (>=>) :: Monad"
   (let* ((in-list-p (nth 1 pps))
 	 list_start_char
 	 following_start_char
-	 (index-p
-	  (when in-list-p
-	    (save-excursion
-	      (goto-char (nth 1 pps))
-	      (and
-	       (setq list_start_char (char-after))
-	       (setq following_start_char (char-after (1+ (point))))
-	       (eq (char-after) ?\[)
-	       ;; evens n = map f [1
-	       ;; (not (eq (char-before) 32))
-	       ))))
+	 ;; (index-p
+	 ;;  (when in-list-p
+	 ;;    (save-excursion
+	 ;;      (goto-char (nth 1 pps))
+	 ;;      (and
+	 ;;       (setq list_start_char (char-after))
+	 ;;       (setq following_start_char (char-after (1+ (point))))
+	 ;;       (eq (char-after) ?\[)))))
 	 (notfirst (or notfirst
+		       ;; maior (x:
+		       in-list-p
 		       ;; (september <|> oktober)
 		       (operator--continue-p)
 		       (operator--in-list-continue-p in-list-p list_start_char following_start_char)
 		       (and (char-equal ?* char) in-list-p)
 		       (and (nth 1 pps) (nth 3 pps))
 		       (member char (list ?\; ?,))
-		       index-p
+		       ;; index-p
 		       (py-in-dict-p pps)
 		       (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
 		       (looking-back "return +[^ ]+" (line-beginning-position))
 		       (looking-back "forall +[^ ]+.*" (line-beginning-position))))
 	 (notsecond (or notsecond
+			in-list-p
 			;; "pure ($ y) <*> u"
 			(and in-list-p (char-equal char ?,)
 			     ;; operator spaced before?
@@ -168,7 +168,7 @@ Haskell: (>=>) :: Monad"
 			(and (char-equal ?* char) in-list-p)
 			(and (nth 1 pps) (nth 3 pps))
 			(char-equal char ?~)
-			index-p
+			;; index-p
 			(and
 			 ;; "even <$> (2,2)"
 			 (not (char-equal char ?,))
@@ -189,7 +189,8 @@ Haskell: (>=>) :: Monad"
 	(goto-char start))
       (unless (or notfirst
 		  ;; a = 3 **
-		  (member (char-before)  operator-known-operators-spaced-maybe))
+		  (member (char-before)  operator-known-operators-spaced-maybe)
+		  (looking-back "^[ \t]*"))
 		  (just-one-space)
 )
       (goto-char orig)
@@ -221,7 +222,7 @@ Haskell: (>=>) :: Monad"
       (_ (operator--final char start notfirst notsecond)))))
 
 (defun operator-do ()
-  ""
+  "Act according to operator before point, if any."
   (interactive "*")
   (when (member (char-before) operator-known-operators-spaced-maybe)
     (operator--do-intern (char-before))))
