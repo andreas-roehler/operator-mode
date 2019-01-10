@@ -86,8 +86,10 @@ Haskell: (>=>) :: Monad"
   "Python"
   (setq operator-known-operators-spaced-maybe (remove ?. operator-known-operators-spaced-maybe))
   (let* ((in-list-p (nth 1 pps))
+	 (in-string-or-comment-p (nth 8 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32))))))
 	 (notfirst (or notfirst
+		       in-string-or-comment-p
 		       ;; echo(**kargs)
 		       (and (char-equal ?* char) in-list-p)
 		       ;; print('%(language)s has %(number)03d quote types.' %
@@ -109,6 +111,7 @@ Haskell: (>=>) :: Monad"
 	 ;; py-dict-re "'\\_<\\w+\\_>':")
 	 ;; (looking-back "[<{]\\_<\\w+\\_>:")
 	 (notsecond (or notsecond
+			in-string-or-comment-p
 			;; echo(**kargs)
 			(and (char-equal ?* char) in-list-p)
 			;; print('%(language)s has %(number)03d quote types.' %
@@ -132,6 +135,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--do-haskell-mode (char start charbef pps &optional notfirst notsecond)
   "Haskell"
   (let* ((in-list-p (nth 1 pps))
+	 (in-string-or-comment-p (nth 8 pps))
 	 list_start_char
 	 following_start_char
 	 ;; (index-p
@@ -143,6 +147,7 @@ Haskell: (>=>) :: Monad"
 	 ;;       (setq following_start_char (char-after (1+ (point))))
 	 ;;       (eq (char-after) ?\[)))))
 	 (notfirst (or notfirst
+		       in-string-or-comment-p
 		       ;; maior (x:
 		       in-list-p
 		       ;; (september <|> oktober)
@@ -157,6 +162,7 @@ Haskell: (>=>) :: Monad"
 		       (looking-back "return +[^ ]+" (line-beginning-position))
 		       (looking-back "forall +[^ ]+.*" (line-beginning-position))))
 	 (notsecond (or notsecond
+			in-string-or-comment-p
 			in-list-p
 			;; "pure ($ y) <*> u"
 			(and in-list-p (char-equal char ?,)
