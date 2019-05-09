@@ -56,7 +56,7 @@ hier () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \".cask/24.4/elpa/haskell-mode-20180917.923\")" \
+--eval "(add-to-list 'load-path \".cask/25.2/elpa/haskell-mode-20190417.309\")" \
 --eval "(require 'haskell-mode)" \
 -load $FILE1 \
 \

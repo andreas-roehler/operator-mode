@@ -21,6 +21,7 @@
 
 ;;; Commentary: This is a still naive prototype
 
+
 ;;
 
 ;;; Code:
@@ -71,10 +72,10 @@ Return position."
   (when (member (char-before (- (point) 1)) operator-known-operators-spaced-maybe)
     'operator-continue))
 
-(defun operator--in-list-continue-p (in-list list_start_c following_start_c)
+(defun operator--in-list-continue-p (in-list &optional list_start_c following_start_c)
   "Use-cases:
 Haskell: (>=>) :: Monad"
-  (and in-list (char-equal list_start_c ?\()
+  (and list_start_c following_start_c in-list (char-equal list_start_c ?\()
        (member following_start_c operator-known-operators-spaced-maybe)))
 
 (defun operator--closing-colon (char)
@@ -86,10 +87,8 @@ Haskell: (>=>) :: Monad"
   "Python"
   (setq operator-known-operators-spaced-maybe (remove ?. operator-known-operators-spaced-maybe))
   (let* ((in-list-p (nth 1 pps))
-	 (in-string-or-comment-p (nth 8 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32))))))
 	 (notfirst (or notfirst
-		       in-string-or-comment-p
 		       ;; echo(**kargs)
 		       (and (char-equal ?* char) in-list-p)
 		       ;; print('%(language)s has %(number)03d quote types.' %
@@ -111,7 +110,6 @@ Haskell: (>=>) :: Monad"
 	 ;; py-dict-re "'\\_<\\w+\\_>':")
 	 ;; (looking-back "[<{]\\_<\\w+\\_>:")
 	 (notsecond (or notsecond
-			in-string-or-comment-p
 			;; echo(**kargs)
 			(and (char-equal ?* char) in-list-p)
 			;; print('%(language)s has %(number)03d quote types.' %
@@ -119,7 +117,14 @@ Haskell: (>=>) :: Monad"
 			;; don't space ‘%’
 			(and (nth 1 pps) (nth 3 pps))
 			(char-equal char ?~)
-			(and (char-equal char ?:) (char-equal (char-before (- (point) 1)) ?\)))
+			(and (char-equal char ?:)
+			     (or (char-equal (char-before (- (point) 1)) ?\))
+				 (save-excursion (back-to-indentation) 
+						 ;; (looking-at py-block-re)
+						 (looking-at "[ \t]*\\_<\\(class\\|def\\|async def\\|async for\\|for\\|if\\|try\\|while\\|with\\|async with\\)\\_>[:( \n\t]*")
+						 'opening-block)
+				 ))
+			
 			index-p
 			;; Function type annotations
 			(looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position) )
@@ -135,7 +140,6 @@ Haskell: (>=>) :: Monad"
 (defun operator--do-haskell-mode (char start charbef pps &optional notfirst notsecond)
   "Haskell"
   (let* ((in-list-p (nth 1 pps))
-	 (in-string-or-comment-p (nth 8 pps))
 	 list_start_char
 	 following_start_char
 	 ;; (index-p
@@ -146,28 +150,35 @@ Haskell: (>=>) :: Monad"
 	 ;;       (setq list_start_char (char-after))
 	 ;;       (setq following_start_char (char-after (1+ (point))))
 	 ;;       (eq (char-after) ?\[)))))
-	 (notfirst (or notfirst
-		       in-string-or-comment-p
-		       ;; maior (x:
-		       in-list-p
-		       ;; (september <|> oktober)
-		       (operator--continue-p)
-		       (operator--in-list-continue-p in-list-p list_start_char following_start_char)
-		       (and (char-equal ?* char) in-list-p)
-		       (and (nth 1 pps) (nth 3 pps))
-		       (member char (list ?\; ?,))
-		       ;; index-p
-		       (py-in-dict-p pps)
-		       (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
-		       (looking-back "return +[^ ]+" (line-beginning-position))
-		       (looking-back "forall +[^ ]+.*" (line-beginning-position))))
+	 (notfirst
+	  (cond (notfirst
+		 'notfirst)
+		;; maior (x:
+		((nth 1 pps)
+		 (unless (char-equal ?, char)
+		   'in-list-p))
+		;; (september <|> oktober)
+		((operator--continue-p)
+		 'operator--continue-p)
+		((operator--in-list-continue-p in-list-p list_start_char following_start_char)
+		 'and_operator--in-list-continue-p_in-list-p_list_start_char_following_start_char)
+		((and (char-equal ?* char) in-list-p)
+		 'char-equal-*-in-list-p)
+		((and (nth 1 pps) (nth 3 pps))
+		 'and-nth-1-pps-nth-3-pps)
+		((member char (list ?\; ?,)))
+		;; index-p
+		((py-in-dict-p pps))
+		((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+		((looking-back "return +[^ ]+" (line-beginning-position)))
+		((looking-back "import +[^ ]+" (line-beginning-position)))
+		((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
 	 (notsecond (or notsecond
-			in-string-or-comment-p
-			in-list-p
+			(and in-list-p (not (char-equal ?, char)))
 			;; "pure ($ y) <*> u"
-			(and in-list-p (char-equal char ?,)
-			     ;; operator spaced before?
-			     (not (char-equal 32 charbef)))
+			;; (and in-list-p (char-equal char ?,)
+			;;      ;; operator spaced before?
+			;;      (not (char-equal 32 charbef)))
 			(and (operator--in-list-continue-p in-list-p list_start_char following_start_char)
 			     ;; "(september <|> oktober)"
 			     (not (char-equal ?$ char)))
@@ -178,7 +189,8 @@ Haskell: (>=>) :: Monad"
 			(and
 			 ;; "even <$> (2,2)"
 			 (not (char-equal char ?,))
-			 (looking-back "^return +[^ ]+.*" (line-beginning-position))))))
+			 (looking-back "^return +[^ ]+.*" (line-beginning-position)))
+			(looking-back "import +[^ ]+." (line-beginning-position)))))
     (operator--final char start notfirst notsecond)))
 
 (defun operator--final (char start &optional notfirst notsecond unary)
@@ -204,12 +216,21 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--do-intern (char)
   (let* ((pps (parse-partial-sexp (point-min) (point)))
-	 (notfirst (and (nth 1 pps) (char-equal char ?,)))
+	 (in-string-or-comment-p (nth 8 pps))
+	 ;; generic
+	 (notfirst
+	  (cond ((and (nth 1 pps) (char-equal char ?,)))
+		(in-string-or-comment-p
+		 'in-string-or-comment-p)))
 	 ;; cons postition and char before operator
 	 (first (operator--beginning-of-op))
+	 ;; the start pos
 	 (start (car first))
+	 ;; the character before start pos - maybe an operator too?
 	 (charbef (cdr first))
-	 notsecond)
+	 (notsecond
+	  (cond (in-string-or-comment-p
+		 'in-string-or-comment-p))))
     (pcase major-mode
       (`python-mode
        (operator--do-python-mode char start charbef pps notfirst notsecond))
@@ -244,7 +265,7 @@ This is a local minor mode.  When enabled, typing an operator automatically
 inserts surrounding spaces, e.g., `=' might become ` = ',`+=' becomes ` += '."
   :global nil
   :group 'electricity
-  :lighter " _∧_ "
+  :lighter " _~_ "
 
   ;; body
   (if operator-mode

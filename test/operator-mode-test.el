@@ -479,6 +479,15 @@ BODY is code to be executed within the temp buffer.  Point is
     (operator-do)
     (should (eq (char-before) 32))))
 
+(ert-deftest operator-haskell-test-vlLlrH ()
+  (operator-test
+      ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
+      "(>=>) :: Monad m => (a ->"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
 
 (ert-deftest operator-haskell-test-VXpDst ()
   (operator-test
