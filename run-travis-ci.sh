@@ -31,6 +31,7 @@ FILE1=operator-mode.el
 #  FILE2=.cask/24.4/elpa/haskell-mode-20180917.923
 #  thingatpt-utils-core-setup-tests.el
 TEST1=${TESTDIR}operator-mode-test.el
+TEST2=${TESTDIR}operator-haskell-mode-test.el
 
 echo "\$TEST1: $TEST1"
 
@@ -61,6 +62,7 @@ hier () {
 -load $FILE1 \
 \
 -load $TEST1 \
+-load $TEST2 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -71,8 +73,6 @@ entfernt () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \".cask/25.2/elpa/haskell-mode-20190417.309\")" \
---eval "(require 'haskell-mode)" \
 -load $FILE1 \
 \
 -load $TEST1 \
