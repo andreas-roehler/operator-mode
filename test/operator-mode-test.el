@@ -575,6 +575,22 @@ BODY is code to be executed within the temp buffer.  Point is
     (operator-do)
     (should (eq (current-column) 15))))
 
+(ert-deftest operator-haskell-in-list-test-tBhN5B ()
+  (operator-test 
+      "[x, y | x<"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back "x < " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-in-list-test-QEM7xA ()
+  (operator-test 
+      "[x, y | x <-"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back "x <- " (line-beginning-position)))))
+
 ;; Ruby
 (ert-deftest operator-mode-ruby-test-YhoemK ()
   (operator-test
@@ -593,6 +609,7 @@ BODY is code to be executed within the temp buffer.  Point is
     operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))))
+
 
 
 (provide 'operator-mode-test)

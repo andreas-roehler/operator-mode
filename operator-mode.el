@@ -83,7 +83,7 @@ Haskell: (>=>) :: Monad"
        ;; (char-equal (char-before (- (point) 1)) ?\))
        (not (char-equal (char-before (- (point) 1)) 32))))
 
-(defun operator--do-python-mode (char start charbef pps &optional notfirst notsecond unary)
+(defun operator--do-python-mode (char start pps in-list-p list_start_char &optional notfirst notsecond unary)
   "Python"
   (setq operator-known-operators-spaced-maybe (remove ?. operator-known-operators-spaced-maybe))
   (let* ((in-list-p (nth 1 pps))
@@ -119,12 +119,12 @@ Haskell: (>=>) :: Monad"
 			(char-equal char ?~)
 			(and (char-equal char ?:)
 			     (or (char-equal (char-before (- (point) 1)) ?\))
-				 (save-excursion (back-to-indentation) 
+				 (save-excursion (back-to-indentation)
 						 ;; (looking-at py-block-re)
 						 (looking-at "[ \t]*\\_<\\(class\\|def\\|async def\\|async for\\|for\\|if\\|try\\|while\\|with\\|async with\\)\\_>[:( \n\t]*")
 						 'opening-block)
 				 ))
-			
+
 			index-p
 			;; Function type annotations
 			(looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position) )
@@ -137,11 +137,9 @@ Haskell: (>=>) :: Monad"
 		    (char-equal char ?~))))
     (operator--final char start notfirst notsecond unary)))
 
-(defun operator--do-haskell-mode (char start charbef pps &optional notfirst notsecond)
+(defun operator--do-haskell-mode (char start pps in-list-p list_start_char &optional notfirst notsecond)
   "Haskell"
-  (let* ((in-list-p (nth 1 pps))
-	 list_start_char
-	 following_start_char
+  (let* (following_start_char
 	 ;; (index-p
 	 ;;  (when in-list-p
 	 ;;    (save-excursion
@@ -154,9 +152,9 @@ Haskell: (>=>) :: Monad"
 	  (cond (notfirst
 		 'notfirst)
 		;; maior (x:
-		((nth 1 pps)
-		 (unless (char-equal ?, char)
-		   'in-list-p))
+		;; ((nth 1 pps)
+		;;  (unless (or (char-equal ?, char) (char-equal ?\[ list_start_char))
+		;;    'in-list-p))
 		;; (september <|> oktober)
 		((operator--continue-p)
 		 'operator--continue-p)
@@ -217,35 +215,46 @@ Haskell: (>=>) :: Monad"
 (defun operator--do-intern (char)
   (let* ((pps (parse-partial-sexp (point-min) (point)))
 	 (in-string-or-comment-p (nth 8 pps))
+	 (list_start_char
+	  (and (nth 1 pps) (save-excursion
+			     (goto-char (nth 1 pps)) (char-after))))
+	 (in-list-p
+          (and list_start_char
+	       (not (or (char-equal ?, char) (char-equal ?\[ list_start_char)))
+	       'in-list-p))
+	 list_start_char
+	 following_start_char
 	 ;; generic
 	 (notfirst
 	  (cond ((and (nth 1 pps) (char-equal char ?,)))
 		(in-string-or-comment-p
-		 'in-string-or-comment-p)))
+		 'in-string-or-comment-p)
+		(in-list-p)))
 	 ;; cons postition and char before operator
 	 (first (operator--beginning-of-op))
 	 ;; the start pos
 	 (start (car first))
 	 ;; the character before start pos - maybe an operator too?
-	 (charbef (cdr first))
+	 ;; (charbef (cdr first))
 	 (notsecond
 	  (cond (in-string-or-comment-p
-		 'in-string-or-comment-p))))
+		 'in-string-or-comment-p)
+		(in-list-p))))
     (pcase major-mode
       (`python-mode
-       (operator--do-python-mode char start charbef pps notfirst notsecond))
+       (operator--do-python-mode char start pps in-list-p list_start_char notfirst notsecond))
       (`py-python-shell-mode
-       (operator--do-python-mode char start charbef pps notfirst notsecond))
+       (operator--do-python-mode char start pps in-list-p list_start_char notfirst notsecond))
       (`py-ipython-shell-mode
-       (operator--do-python-mode char start charbef pps notfirst notsecond))
+       (operator--do-python-mode char start pps in-list-p list_start_char notfirst notsecond))
       ;; (`emacs-lisp-mode
-      ;;  (operator--do-emacs-lisp-mode char start charbef pps notfirst notsecond))
+      ;;  (operator--do-emacs-lisp-mode char start pps in-list-p list_start_char notfirst notsecond))
       (`haskell-mode
-       (operator--do-haskell-mode char start charbef pps notfirst notsecond))
+       (operator--do-haskell-mode char start pps in-list-p list_start_char notfirst notsecond))
       (`haskell-interactive-mode
-       (operator--do-haskell-mode char start charbef pps notfirst notsecond))
+       (operator--do-haskell-mode char start pps in-list-p list_start_char notfirst notsecond))
       (`inferior-haskell-mode
-       (operator--do-haskell-mode char start charbef pps notfirst notsecond))
+       (operator--do-haskell-mode char start pps in-list-p list_start_char notfirst notsecond))
       (_ (operator--final char start notfirst notsecond)))))
 
 (defun operator-do ()
