@@ -121,7 +121,6 @@ Haskell: (>=>) :: Monad"
 						 (looking-at "[ \t]*\\_<\\(class\\|def\\|async def\\|async for\\|for\\|if\\|try\\|while\\|with\\|async with\\)\\_>[:( \n\t]*")
 						 'opening-block)))
 
-			index-p
 			;; Function type annotations
 			(looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 			(and
@@ -151,10 +150,10 @@ Haskell: (>=>) :: Monad"
 		'char-equal-\*-in-list-p)
 	       ((nth 3 pps)
 		'and-nth-1-pps-nth-3-pps)
-	       ((py-in-dict-p pps))))
+	       ((py-in-dict-p pps))
+	       ((and (nth 1 pps) (not (member  char (list ?, ?\[ ?\] ?\)))))
+		'in-list-p)))
 	((member char (list ?\; ?,)))
-	;; index-p
-
 	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
 	((looking-back "return +[^ ]+" (line-beginning-position)))
 	((looking-back "import +[^ ]+" (line-beginning-position)))
@@ -162,8 +161,8 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--haskell-notsecond (char start pps list-start-char notfirst notsecond)
   (cond (notsecond)
-	((char-equal ?\[ char)
-		'list-opener)
+	((or (char-equal ?\[ char) (char-equal ?\( char))
+	 'list-opener)
 	((and notfirst (eq notfirst 'haskell-interactive-prompt))
 	 haskell-interactive-prompt)
 	(list-start-char
@@ -171,9 +170,10 @@ Haskell: (>=>) :: Monad"
 		'list-separator)
 	       ((and (char-equal ?\[ list-start-char)
 		     (char-equal ?, char))
-		'construct-for-export)))
-	;; ((and in-list-p (not (char-equal ?, char)))
-	;;  'in-list-p)
+		'construct-for-export)
+	       ((and (nth 1 pps) (not (char-equal ?, char)))
+		'in-list-p)))
+
 	;; "pure ($ y) <*> u"
 	;; (and in-list-p (char-equal char ?,)
 	;;      ;; operator spaced before?
@@ -194,8 +194,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--do-haskell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
   (let* ((notfirst (operator--haskell-notfirst char orig pps list-start-char notfirst notsecond))
-	 (notsecond (operator--haskell-notsecond char orig pps list-start-char notfirst notsecond)))
-    (operator--final char orig notfirst notsecond)))
+	 (notsecond (operator--haskell-notsecond char orig pps list-start-char notfirst notsecond))
+	 (nojoin (member char (list ?, ?\[ ?\] ?\)))))
+    (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--join-operators-maybe (orig)
   (save-excursion (goto-char (1- orig))
@@ -210,7 +211,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 (operator--join-operators-maybe orig))
 	((not notfirst)
-	 (or (operator--join-operators-maybe orig)
+	 (or (unless nojoin (operator--join-operators-maybe orig))
 	     (save-excursion (goto-char (1- orig))
 			     (unless (eq (char-before) ?\s)
 			       (just-one-space))))))
