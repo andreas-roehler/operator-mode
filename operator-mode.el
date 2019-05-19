@@ -232,7 +232,12 @@ Haskell: (>=>) :: Monad"
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))
 	 (notfirst
-	  (cond ((and (nth 1 pps) (char-equal char ?,)))
+	  (cond (
+		 ;; fails in haskell -
+		 ;; data Contact =  Contact { name :: String
+                 ;;                         ,"
+		 ;; (and (nth 1 pps) (char-equal char ?,))
+		 )
 		(in-string-or-comment-p
 		 'in-string-or-comment-p)))
 	 ;; cons postition and char before operator
