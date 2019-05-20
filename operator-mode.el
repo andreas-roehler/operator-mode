@@ -207,11 +207,12 @@ Haskell: (>=>) :: Monad"
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--join-operators-maybe (orig)
-  (save-excursion (goto-char (1- orig))
-		  ;; (skip-chars-backward operator-known-operators-strg)
-		  (and (eq (char-before) 32)
-		       (prog1 (member (char-before (- (point) 1)) operator-known-operators)
-			 (delete-char -1)))))
+  ;; (skip-chars-backward operator-known-operators-strg)
+  (and (eq (char-before (- (point) 1)) 32)
+       (member (char-before (- (point) 2)) operator-known-operators)
+       (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
+       (save-excursion (backward-char)
+		       (delete-char -1))))
 
 (defun operator--final (char orig &optional notfirst notsecond nojoin)
   ;; (when (member char operator-known-operators)
