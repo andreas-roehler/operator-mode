@@ -135,7 +135,7 @@ Haskell: (>=>) :: Monad"
 	 'notfirst)
 	((and (eq 'haskell-interactive-mode major-mode)
 	      (save-excursion (backward-char 1)
-			      (looking-back haskell-interactive-prompt)))
+			      (looking-back haskell-interactive-prompt (line-beginning-position))))
 	 'haskell-interactive-prompt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
@@ -165,18 +165,20 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond)
 	((or (char-equal ?\[ char) (char-equal ?\( char))
 	 'list-opener)
-	((and notfirst (eq notfirst 'haskell-interactive-prompt))
-	 haskell-interactive-prompt)
+	((and (eq 'haskell-interactive-mode major-mode)
+	      (save-excursion (backward-char)
+			      (looking-back (concat haskell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
+	 'haskell-interactive-prompt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
-		'list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
-		'construct-for-export)
-	       ((and (nth 1 pps) (not (char-equal ?, char)))
-		'in-list-p))))
+	   (cond ((char-equal ?, char)
+		  'list-separator)
+		 ((and (char-equal ?\[ list-start-char)
+		       (char-equal ?, char))
+		  'construct-for-export)
+		 ((and (nth 1 pps) (not (char-equal ?, char)))
+		  'in-list-p))))
 
 	;; "pure ($ y) <*> u"
 	;; (and in-list-p (char-equal char ?,)
@@ -232,12 +234,12 @@ Haskell: (>=>) :: Monad"
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))
 	 (notfirst
-	  (cond (
-		 ;; fails in haskell -
-		 ;; data Contact =  Contact { name :: String
-                 ;;                         ,"
-		 ;; (and (nth 1 pps) (char-equal char ?,))
-		 )
+	  (cond ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
+		 'email-adress)
+		;; fails in haskell -
+		;; data Contact =  Contact { name :: String
+                ;;                         ,"
+		;; (and (nth 1 pps) (char-equal char ?,))
 		(in-string-or-comment-p
 		 'in-string-or-comment-p)))
 	 ;; cons postition and char before operator
@@ -246,8 +248,11 @@ Haskell: (>=>) :: Monad"
 	 ;; the character before start pos - maybe an operator too?
 	 ;; (charbef (cdr first))
 	 (notsecond
-	  (cond (in-string-or-comment-p
-		 'in-string-or-comment-p))))
+	  (cond
+	   ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
+	    'email-adress)
+	   (in-string-or-comment-p
+	    'in-string-or-comment-p))))
     (pcase major-mode
       (`python-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
