@@ -288,5 +288,13 @@
     (operator-do)
     (should (looking-back "^ \\{24\\}, +" (line-beginning-position)))))
 
+(ert-deftest operator-haskell-after-minus-test-byuHkX ()
+  (operator-test
+      "speller :: [[char]] ->"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back " -> " (line-beginning-position)))))
+
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
