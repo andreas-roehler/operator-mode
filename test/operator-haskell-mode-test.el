@@ -266,19 +266,19 @@
     (should (eq (char-before) ?\s))))
 
 (ert-deftest operator-haskell-in-braced-data-test-lZ3VAf ()
-  (operator-test 
+  (operator-test
       "data Contact = Contact { name:" 'haskell-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "data Contact = Contact { name : " (line-beginning-position)))))
 
 (ert-deftest operator-haskell-in-braced-data-test-6xRxtO ()
-  (operator-test 
+  (operator-test
       "data Contact = Contact { name : :" 'haskell-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "data Contact = Contact { name :: " (line-beginning-position)))))
-    
+
 (ert-deftest operator-haskell-in-braced-data-test-byuHkX ()
   (operator-test
       "data Contact =  Contact { name :: String
@@ -290,11 +290,38 @@
 
 (ert-deftest operator-haskell-after-minus-test-byuHkX ()
   (operator-test
-      "speller :: [[char]] ->"
+      "foo :: [[char]] ->"
     'haskell-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back " -> " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-after-plus-test-byuHkX ()
+  (operator-test
+      "foo :: [[char]] ->"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back " -> " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-after-plus-test-IAAa4J ()
+  (operator-test
+      " foo x ++ \", \" ++"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back " ++ " (line-beginning-position)))))
+
+
+(ert-deftest operator-haskell-after-colon-test-IAAa4J ()
+  (operator-test
+      "data Record = MRecord {
+  name : :}"
+    'haskell-mode
+    operator-mode-debug
+    (backward-char) 
+    (operator-do)
+    (should (looking-back " :: " (line-beginning-position)))))
 
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
