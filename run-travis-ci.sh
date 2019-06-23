@@ -32,7 +32,8 @@ FILE1=operator-mode.el
 #  thingatpt-utils-core-setup-tests.el
 TEST1=${TESTDIR}operator-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
-
+TEST3=${TESTDIR}operator-python-mode-test.el
+TEST4=${TESTDIR}operator-ruby-mode-test.el
 echo "\$TEST1: $TEST1"
 
 EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
@@ -63,6 +64,8 @@ hier () {
 \
 -load $TEST1 \
 -load $TEST2 \
+-load $TEST3 \
+-load $TEST4 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -76,6 +79,7 @@ entfernt () {
 -load $FILE1 \
 \
 -load $TEST1 \
+-load $TEST3 \
 -f ert-run-tests-batch-and-exit
 }
 

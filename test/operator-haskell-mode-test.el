@@ -313,7 +313,19 @@
     (should (looking-back " ++ " (line-beginning-position)))))
 
 
-(ert-deftest operator-haskell-after-colon-test-IAAa4J ()
+(ert-deftest operator-haskell-comma-in-record-test-IAAa4J ()
+  (operator-test
+      "data Record = MRecord {
+  name :: String,}"
+    'haskell-mode
+    operator-mode-debug
+    (backward-char) 
+    (operator-do)
+    (should (looking-back "String," (line-beginning-position)))
+    (should-not (eq (char-before) ?\s))
+))
+
+(ert-deftest operator-haskell-colon-in-record-test-IAAa4J ()
   (operator-test
       "data Record = MRecord {
   name : :}"
