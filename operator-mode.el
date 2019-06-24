@@ -56,6 +56,23 @@
 	 (member (char-before) operator-known-operators)
 	 (char-before))))
 
+(defun op-in-string-or-comment-p (&optional pps)
+  "Returns beginning position if inside a string or comment,
+t at start,nil otherwise.
+
+Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
+  (interactive)
+  (let* ((erg (or (and pps (nth 8 pps))
+		  (nth 8 (parse-partial-sexp (point-min) (point)))
+		  (ignore-errors (eq 7 (car-safe (syntax-after (point)))))
+		  ;; (ignore-errors (eq 7 (car-safe (syntax-after (1- (point))))))
+		  (looking-at comment-start)
+		  (looking-at comment-start-skip)
+		  (looking-back comment-start (line-beginning-position))
+		  (looking-back comment-start-skip))))
+    (when (interactive-p) (message "%s" erg))
+    erg))
+
 (defun py-in-dict-p (pps)
   "Return t if inside a dictionary."
   (save-excursion
@@ -159,6 +176,8 @@ Haskell: (>=>) :: Monad"
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'join-known-operators)
+	((looking-back "^-" (line-beginning-position))
+	 'comment-start)
 	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
 	((looking-back "return +[^ ]+" (line-beginning-position)))
 	((looking-back "import +[^ ]+" (line-beginning-position)))
@@ -188,6 +207,8 @@ Haskell: (>=>) :: Monad"
 	  ;; "even <$> (2,2)"
 	  (not (char-equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'comment-start)
 	((looking-back "import +[^ ]+." (line-beginning-position)))))
 
 (defun operator--do-haskell-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -235,7 +256,7 @@ Haskell: (>=>) :: Monad"
 		;; data Contact =  Contact { name :: String
                 ;;                         ,"
 		;; (and (nth 1 pps) (char-equal char ?,))
-		(in-string-or-comment-p
+		((op-in-string-or-comment-p pps)
 		 'in-string-or-comment-p)))
 	 ;; cons postition and char before operator
 	 (first (following--operator-up))

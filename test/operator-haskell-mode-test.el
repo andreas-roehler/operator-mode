@@ -24,7 +24,6 @@
 
 ;;; Code:
 
-
 (require 'ert-x)
 (require 'operator-mode)
 
@@ -312,6 +311,13 @@
     (operator-do)
     (should (looking-back " ++ " (line-beginning-position)))))
 
+(ert-deftest operator-haskell-after-comment-first-char-test-IAAa4J ()
+  (operator-test
+      "-"
+    'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back "-" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-comma-in-record-test-IAAa4J ()
   (operator-test
