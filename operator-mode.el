@@ -120,7 +120,7 @@ Haskell: (>=>) :: Monad"
 		;; def f(x, y):
 		;; if len(sys.argv) == 1:
 		((operator--closing-colon char)
-		 operator--closing-colon)
+		 'operator--closing-colon)
 		(index-p
 		 'index-p)
 
