@@ -66,10 +66,11 @@ Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
 		  (nth 8 (parse-partial-sexp (point-min) (point)))
 		  (ignore-errors (eq 7 (car-safe (syntax-after (point)))))
 		  ;; (ignore-errors (eq 7 (car-safe (syntax-after (1- (point))))))
-		  (looking-at comment-start)
-		  (looking-at comment-start-skip)
-		  (looking-back comment-start (line-beginning-position))
-		  (looking-back comment-start-skip))))
+		  (and comment-start
+		       (or (looking-at comment-start)
+			   (looking-at comment-start-skip)
+			   (looking-back comment-start (line-beginning-position))
+			   (looking-back comment-start-skip))))))
     (when (interactive-p) (message "%s" erg))
     erg))
 
@@ -102,49 +103,66 @@ Haskell: (>=>) :: Monad"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((in-list-p (nth 1 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32))))))
-	 (notfirst (or notfirst
-		       ;; echo(**kargs)
-		       (and (char-equal ?* char) in-list-p)
-		       ;; print('%(language)s has %(number)03d quote types.' %
-		       ;;     {'language': "Python", "number": 2})
-		       ;; don't space ‘%’
-		       (and (nth 1 pps) (nth 3 pps))
-		       ;; with open('/path/to/some/file') as file_1,
-		       (member char (list ?\; ?,))
-		       ;; def f(x, y):
-		       ;; if len(sys.argv) == 1:
-		       (operator--closing-colon char)
-		       index-p
-		       (py-in-dict-p pps)
-		       (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
-		       ;; for i in c :
-		       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
-		       (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
-		       (looking-back "return +[^ ]+" (line-beginning-position))))
+	 (notfirst
+	  (cond (notfirst
+		 'notfirst)
+		;; echo(**kargs)
+		((and (char-equal ?* char) in-list-p)
+		 '*-in-list-p)
+		;; print('%(language)s has %(number)03d quote types.' %
+		;;     {'language': "Python", "number": 2})
+		;; don't space ‘%’
+		((and (nth 1 pps) (nth 3 pps)
+		      'string-in-list))
+		;; with open('/path/to/some/file') as file_1,
+		((member char (list ?\; ?, ?\( ?\)))
+		 'list-op)
+		;; def f(x, y):
+		;; if len(sys.argv) == 1:
+		((operator--closing-colon char)
+		 operator--closing-colon)
+		(index-p
+		 'index-p)
+
+		((py-in-dict-p pps)
+		 'py-in-dict-p)
+		((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
+		     ;; for i in c :
+		     (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
+		     (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
+		     (looking-back "return +[^ ]+" (line-beginning-position)))
+		 'after-symbol)))
 	 ;; py-dict-re "'\\_<\\w+\\_>':")
 	 ;; (looking-back "[<{]\\_<\\w+\\_>:")
-	 (notsecond (or notsecond
-			;; echo(**kargs)
-			(and (char-equal ?* char) in-list-p)
-			;; print('%(language)s has %(number)03d quote types.' %
-			;;     {'language': "Python", "number": 2})
-			;; don't space ‘%’
-			(and (nth 1 pps) (nth 3 pps))
-			(char-equal char ?~)
-			(and (char-equal char ?:)
-			     (or (char-equal (char-before (- (point) 1)) ?\))
-				 (save-excursion (back-to-indentation)
-						 ;; (looking-at py-block-re)
-						 (looking-at "[ \t]*\\_<\\(class\\|def\\|async def\\|async for\\|for\\|if\\|try\\|while\\|with\\|async with\\)\\_>[:( \n\t]*")
-						 'opening-block)))
+	 (notsecond
+	  (cond (notsecond
+		 'notsecond)
+		;; echo(**kargs)
+		((and (char-equal ?* char) in-list-p)
+		 *-in-list-p)
+		;; print('%(language)s has %(number)03d quote types.' %
+		;;     {'language': "Python", "number": 2})
+		;; don't space ‘%’
+		((and (nth 1 pps) (nth 3 pps))
+		 'string-in-list)
+		;; (char-equal char ?~)
+		;; with open('/path/to/some/file') as file_1,
+		((member char (list ?\; ?, ?\( ?\) ?~))
+		 'list-op)
+		((and (char-equal char ?:)
+		      (or (char-equal (char-before (- (point) 1)) ?\))
+			  (save-excursion (back-to-indentation)
+					  ;; (looking-at py-block-re)
+					  (looking-at "[ \t]*\\_<\\(class\\|def\\|async def\\|async for\\|for\\|if\\|try\\|while\\|with\\|async with\\)\\_>[:( \n\t]*"))))
+		 'opening-block)
 
-			;; Function type annotations
-			(looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
-			(and
-			 ;; return self.first_name, self.last_name
-			 (not (char-equal char ?,))
-			 (looking-back "return +[^ ]+.*" (line-beginning-position)))
-			(char-equal char ?~))))
+		;; Function type annotations
+		((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
+		     (and
+		      ;; return self.first_name, self.last_name
+		      (not (char-equal char ?,))
+		      (looking-back "return +[^ ]+.*" (line-beginning-position))))
+		 'after-symbol))))
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--haskell-notfirst (char start pps list-start-char notfirst notsecond)
