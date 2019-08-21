@@ -139,7 +139,7 @@ Haskell: (>=>) :: Monad"
 		 'notsecond)
 		;; echo(**kargs)
 		((and (char-equal ?* char) in-list-p)
-		 *-in-list-p)
+		 '*-in-list-p)
 		;; print('%(language)s has %(number)03d quote types.' %
 		;;     {'language': "Python", "number": 2})
 		;; don't space ‘%’
@@ -238,22 +238,51 @@ Haskell: (>=>) :: Monad"
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
-(defun operator--join-operators-maybe (orig)
+
+(defun operator--text-notfirst (char start pps list-start-char notfirst notsecond)
+  (cond (notfirst
+	 'notfirst)
+	((member char (list ?\; ?, ?. ?: ?\? ?!)))
+	((or (member (char-before (1- (point))) operator-known-operators)
+	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	 'join-known-operators)))
+
+(defun operator--text-notsecond (char start pps list-start-char notfirst notsecond)
+  (cond (notsecond)
+	((nth 3 pps)
+	 'in-string)))
+
+(defun operator--do-text-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Haskell"
+  (let* ((notfirst
+	  (operator--text-notfirst char orig pps list-start-char notfirst notsecond))
+	 (notsecond
+	  (operator--text-notsecond char orig pps list-start-char notfirst notsecond))
+	 (nojoin
+	  (cond ((member char (list ?, ?\[ ?\] ?\))))
+		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))))))
+    (operator--final char orig notfirst notsecond nojoin)))
+
+(defun operator--join-operators-maybe (char)
   ;; (skip-chars-backward operator-known-operators-strg)
-  (and (eq (char-before (- (point) 1)) 32)
-       (member (char-before (- (point) 2)) operator-known-operators)
+  (and (or (eq (char-before (- (point) 1)) 32)
+	   ;; print("Fehler: Richig war " ++
+	   (eq (char-before) char)
+	   )
+       (or (member (char-before (- (point) 2)) operator-known-operators)
+	   (member (char-before (- (point) 1)) operator-known-operators))
        (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
        (save-excursion (backward-char)
-		       (delete-char -1)
+		       (and (eq (char-before) 32)(delete-char -1))
 		       t)))
 
 (defun operator--final (char orig &optional notfirst notsecond nojoin)
   ;; (when (member char operator-known-operators)
 
   (cond (notfirst
-	 (operator--join-operators-maybe orig))
+	 (operator--join-operators-maybe char))
 	((not notfirst)
-	 (or (unless nojoin (operator--join-operators-maybe orig))
+	 (or (unless nojoin (operator--join-operators-maybe char))
 	     (save-excursion (goto-char (1- orig))
 			     (unless (eq (char-before) ?\s)
 			       (just-one-space))))))
@@ -302,6 +331,10 @@ Haskell: (>=>) :: Monad"
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-haskell-mode
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`text-mode
+       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
+      (`org-mode
+       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       (_ (operator--final char orig notfirst notsecond)))))
 
 (defun operator-do ()
