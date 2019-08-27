@@ -242,16 +242,21 @@ Haskell: (>=>) :: Monad"
 (defun operator--text-notfirst (char start pps list-start-char notfirst notsecond)
   (cond (notfirst
 	 'notfirst)
-	((member char (list ?\; ?, ?. ?: ?\? ?! ?-))
+	((member char (list ?\; ?, ?. ?: ?\? ?!))
 	 'punct-class)
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'join-known-operators)
 	((member char (list ?*))
-	 'org-special)))
+	 'org-special)
+	((looking-back "[[:alpha:]].")
+	 'in-word)
+	))
 
 (defun operator--text-notsecond (char start pps list-start-char notfirst notsecond)
   (cond (notsecond)
+	;; ((looking-back "[[:alpha:]].")
+	;;  'in-word)
 	((nth 3 pps)
 	 'in-string)))
 
@@ -320,6 +325,8 @@ Haskell: (>=>) :: Monad"
 	   (in-string-or-comment-p
 	    'in-string-or-comment-p))))
     (pcase major-mode
+      ((pred derived-mode-p)
+       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       (`python-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`py-python-shell-mode
