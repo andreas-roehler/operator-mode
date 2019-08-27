@@ -255,8 +255,8 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--text-notsecond (char start pps list-start-char notfirst notsecond)
   (cond (notsecond)
-	;; ((looking-back "[[:alpha:]].")
-	;;  'in-word)
+	((looking-back "[[:alpha:]][-]")
+	 'in-word)
 	((nth 3 pps)
 	 'in-string)))
 
