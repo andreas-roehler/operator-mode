@@ -147,8 +147,10 @@ Haskell: (>=>) :: Monad"
 		 'string-in-list)
 		;; (char-equal char ?~)
 		;; with open('/path/to/some/file') as file_1,
-		((member char (list ?\; ?, ?\( ?\) ?~))
+		((member char (list ?\; ?, ?\( ?\) ?~)) 
 		 'list-op)
+		((member char (list ?:))
+		 'colon)
 		((and (char-equal char ?:)
 		      (or (char-equal (char-before (- (point) 1)) ?\))
 			  (save-excursion (back-to-indentation)
@@ -242,7 +244,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--text-notfirst (char start pps list-start-char notfirst notsecond)
   (cond (notfirst
 	 'notfirst)
-	((member char (list ?\; ?, ?. ?: ?\? ?!))
+	((member char (list ?\; ?\( ?, ?. ?: ?\? ?!))
 	 'punct-class)
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
@@ -250,13 +252,14 @@ Haskell: (>=>) :: Monad"
 	((member char (list ?*))
 	 'org-special)
 	((looking-back "[[:alpha:]].")
-	 'in-word)
-	))
+	 'in-word)))
 
 (defun operator--text-notsecond (char start pps list-start-char notfirst notsecond)
   (cond (notsecond)
-	((looking-back "[[:alpha:]][-]")
+	((looking-back "[[:alpha:]][-/]")
 	 'in-word)
+	((member char (list ?\[ ?{ ?\( ?\" ?'))
+	 'open-paren)
 	((nth 3 pps)
 	 'in-string)))
 
