@@ -70,7 +70,7 @@ Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
 		       (or (looking-at comment-start)
 			   (looking-at comment-start-skip)
 			   (looking-back comment-start (line-beginning-position))
-			   (looking-back comment-start-skip))))))
+			   (looking-back comment-start-skip (line-beginning-position)))))))
     (when (interactive-p) (message "%s" erg))
     erg))
 
@@ -147,18 +147,10 @@ Haskell: (>=>) :: Monad"
 		 'string-in-list)
 		;; (char-equal char ?~)
 		;; with open('/path/to/some/file') as file_1,
-		((member char (list ?\; ?, ?\( ?\) ?~)) 
+		((member char (list ?\; ?, ?\( ?\) ?~))
 		 'list-op)
 		((member char (list ?:))
 		 'colon)
-		((and (char-equal char ?:)
-		      (or (char-equal (char-before (- (point) 1)) ?\))
-			  (save-excursion (back-to-indentation)
-					  ;; (looking-at py-block-re)
-					  (looking-at "[ \t]*\\_<\\(class\\|def\\|async def\\|async for\\|for\\|if\\|try\\|while\\|with\\|async with\\)\\_>[:( \n\t]*"))))
-		 'opening-block)
-
-		;; Function type annotations
 		((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 		     (and
 		      ;; return self.first_name, self.last_name
@@ -167,7 +159,7 @@ Haskell: (>=>) :: Monad"
 		 'after-symbol))))
     (operator--final char start notfirst notsecond nojoin)))
 
-(defun operator--haskell-notfirst (char start pps list-start-char notfirst notsecond)
+(defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'notfirst)
 	((and (eq 'haskell-interactive-mode major-mode)
@@ -187,12 +179,14 @@ Haskell: (>=>) :: Monad"
 		'operator--in-list-continue)
 	       ((char-equal ?* char)
 		'char-equal-\*-in-list-p)
+	       ((member char (list ?\( ?\) ?\]))
+		'listing)
 	       ((nth 3 pps)
 		'and-nth-1-pps-nth-3-pps)
 	       ;; ((py-in-dict-p pps))
 	       ((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 		'in-list-p)))
-	((member char (list ?\; ?,)))
+	;; ((member char (list ?\; ?,)))
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'join-known-operators)
@@ -203,7 +197,7 @@ Haskell: (>=>) :: Monad"
 	((looking-back "import +[^ ]+" (line-beginning-position)))
 	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
 
-(defun operator--haskell-notsecond (char start pps list-start-char notfirst notsecond)
+(defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond)
 	((or (char-equal ?\[ char) (char-equal ?\( char))
 	 'list-opener)
@@ -222,6 +216,8 @@ Haskell: (>=>) :: Monad"
 		'in-list-p)))
 	((nth 3 pps)
 	 'in-string)
+	((member char (list ?\( ?\) 93))
+	 'listing)
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
@@ -233,18 +229,18 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--do-haskell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
-  (let* ((notfirst (operator--haskell-notfirst char orig pps list-start-char notfirst notsecond))
-	 (notsecond (operator--haskell-notsecond char orig pps list-start-char notfirst notsecond))
+  (let* ((notfirst (operator--haskell-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--haskell-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 
-(defun operator--text-notfirst (char start pps list-start-char notfirst notsecond)
+(defun operator--text-notfirst (char start pps list-start-char notfirst)
   (cond (notfirst
 	 'notfirst)
-	((member char (list ?\; ?\( ?, ?. ?: ?\? ?!))
+	((member char (list ?\; ?\( ?, ?. ?: ?\? ?! ?@))
 	 'punct-class)
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
@@ -254,10 +250,14 @@ Haskell: (>=>) :: Monad"
 	((looking-back "[[:alpha:]].")
 	 'in-word)))
 
-(defun operator--text-notsecond (char start pps list-start-char notfirst notsecond)
+(defun operator--text-notsecond (char start pps list-start-char notsecond)
   (cond (notsecond)
 	((looking-back "[[:alpha:]][-/]")
 	 'in-word)
+	((member char (list ?@))
+	 'et)
+	((member char (list ?.))
+	 'dot)
 	((member char (list ?\[ ?{ ?\( ?\" ?'))
 	 'open-paren)
 	((nth 3 pps)
@@ -266,9 +266,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--do-text-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
   (let* ((notfirst
-	  (operator--text-notfirst char orig pps list-start-char notfirst notsecond))
+	  (operator--text-notfirst char orig pps list-start-char notfirst))
 	 (notsecond
-	  (operator--text-notsecond char orig pps list-start-char notfirst notsecond))
+	  (operator--text-notsecond char orig pps list-start-char  notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))))))
@@ -298,7 +298,8 @@ Haskell: (>=>) :: Monad"
 			     (unless (eq (char-before) ?\s)
 			       (just-one-space))))))
   (unless notsecond
-    (unless (eq (char-after) ?\s)
+    (if (eq (char-after) ?\s)
+	(forward-char 1)
       (just-one-space))))
 
 (defun operator--do-intern (char orig)
@@ -316,11 +317,6 @@ Haskell: (>=>) :: Monad"
 		;; (and (nth 1 pps) (char-equal char ?,))
 		((op-in-string-or-comment-p pps)
 		 'in-string-or-comment-p)))
-	 ;; cons postition and char before operator
-	 (first (following--operator-up))
-	 ;; the start pos
-	 ;; the character before start pos - maybe an operator too?
-	 ;; (charbef (cdr first))
 	 (notsecond
 	  (cond
 	   ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
@@ -328,8 +324,6 @@ Haskell: (>=>) :: Monad"
 	   (in-string-or-comment-p
 	    'in-string-or-comment-p))))
     (pcase major-mode
-      ((pred derived-mode-p)
-       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       (`python-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`py-python-shell-mode
@@ -347,6 +341,8 @@ Haskell: (>=>) :: Monad"
       (`text-mode
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       (`org-mode
+       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
+      ((pred derived-mode-p)
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       (_ (operator--final char orig notfirst notsecond)))))
 
