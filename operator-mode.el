@@ -98,71 +98,75 @@ Haskell: (>=>) :: Monad"
        ;; (char-equal (char-before (- (point) 1)) ?\))
        (not (char-equal (char-before (- (point) 1)) 32))))
 
+(defun operator--python-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
+  (let* ((in-list-p (nth 1 pps))
+	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
+    (cond (notfirst
+	   'notfirst)
+	  ;; echo(**kargs)
+	  ((and (char-equal ?* char) in-list-p)
+	   '*-in-list-p)
+	  ;; print('%(language)s has %(number)03d quote types.' %
+	  ;;     {'language': "Python", "number": 2})
+	  ;; don't space ‘%’
+	  ((and (nth 1 pps) (nth 3 pps)
+		'string-in-list))
+	  ;; with open('/path/to/some/file') as file_1,
+	  ((member char (list ?\; ?, 40 41))
+	   'list-op)
+	  ((member char (list ?.))
+	   'dot)
+	  ;; def f(x, y):
+	  ;; if len(sys.argv) == 1:
+	  ((operator--closing-colon char)
+	   'operator--closing-colon)
+	  (index-p
+	   'index-p)
+
+	  ((py-in-dict-p pps)
+	   'py-in-dict-p)
+	  ((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
+	       ;; for i in c :
+	       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
+	       (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
+	       (looking-back "return +[^ ]+" (line-beginning-position)))
+	   'after-symbol))))
+
+(defun operator--python-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
+  (let* ((in-list-p (nth 1 pps))
+	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
+    (cond (notsecond
+	   'notsecond)
+	  ;; echo(**kargs)
+	  ((and (char-equal ?* char) in-list-p)
+	   '*-in-list-p)
+	  ((and (char-equal ?- char) in-list-p)
+	   '--in-list-p)
+	  ;; print('%(language)s has %(number)03d quote types.' %
+	  ;;     {'language': "Python", "number": 2})
+	  ;; don't space ‘%’
+	  ((and (nth 1 pps) (nth 3 pps))
+	   'string-in-list)
+	  ;; (char-equal char ?~)
+	  ;; with open('/path/to/some/file') as file_1,
+	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\]))
+	   'list-op)
+	  ((member char (list ?.))
+	   'dot)
+	  ((member char (list ?:))
+	   'colon)
+	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
+	       (and
+		;; return self.first_name, self.last_name
+		(not (char-equal char ?,))
+		(looking-back "return +[^ ]+.*" (line-beginning-position))))
+	   'after-symbol))))
+
 (defun operator--do-python-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
-  (let* ((in-list-p (nth 1 pps))
-	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32))))))
-	 (notfirst
-	  (cond (notfirst
-		 'notfirst)
-		;; echo(**kargs)
-		((and (char-equal ?* char) in-list-p)
-		 '*-in-list-p)
-		;; print('%(language)s has %(number)03d quote types.' %
-		;;     {'language': "Python", "number": 2})
-		;; don't space ‘%’
-		((and (nth 1 pps) (nth 3 pps)
-		      'string-in-list))
-		;; with open('/path/to/some/file') as file_1,
-		((member char (list ?\; ?, 40 41))
-		 'list-op)
-		((member char (list ?.))
-		 'dot)
-		;; def f(x, y):
-		;; if len(sys.argv) == 1:
-		((operator--closing-colon char)
-		 'operator--closing-colon)
-		(index-p
-		 'index-p)
-
-		((py-in-dict-p pps)
-		 'py-in-dict-p)
-		((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
-		     ;; for i in c :
-		     (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
-		     (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
-		     (looking-back "return +[^ ]+" (line-beginning-position)))
-		 'after-symbol)))
-	 ;; py-dict-re "'\\_<\\w+\\_>':")
-	 ;; (looking-back "[<{]\\_<\\w+\\_>:")
-	 (notsecond
-	  (cond (notsecond
-		 'notsecond)
-		;; echo(**kargs)
-		((and (char-equal ?* char) in-list-p)
-		 '*-in-list-p)
-		((and (char-equal ?- char) in-list-p)
-		 '--in-list-p)
-		;; print('%(language)s has %(number)03d quote types.' %
-		;;     {'language': "Python", "number": 2})
-		;; don't space ‘%’
-		((and (nth 1 pps) (nth 3 pps))
-		 'string-in-list)
-		;; (char-equal char ?~)
-		;; with open('/path/to/some/file') as file_1,
-		((member char (list ?\; ?, ?\( ?\) ?~ ?\[ ?\]))
-		 'list-op)
-		((member char (list ?.))
-		 'dot)
-		((member char (list ?:))
-		 'colon)
-		((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
-		     (and
-		      ;; return self.first_name, self.last_name
-		      (not (char-equal char ?,))
-		      (looking-back "return +[^ ]+.*" (line-beginning-position))))
-		 'after-symbol))))
+  (let* ((notfirst (operator--python-notfirst char start pps list-start-char notfirst notsecond nojoin))
+	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin)))
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
@@ -376,7 +380,6 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--do-intern (char orig)
   (let* ((pps (parse-partial-sexp (point-min) (point)))
-	 (in-string-or-comment-p (nth 8 pps))
 	 (list-start-char
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))
@@ -393,7 +396,7 @@ Haskell: (>=>) :: Monad"
 	  (cond
 	   ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
 	    'email-adress)
-	   (in-string-or-comment-p
+	   ((op-in-string-or-comment-p pps)
 	    'in-string-or-comment-p))))
     (pcase major-mode
       (`python-mode
