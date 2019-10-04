@@ -246,16 +246,15 @@ Haskell: (>=>) :: Monad"
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
-(defun operator--org-notfirst (char pps list-start-char notfirst)
+(defun operator--org-notfirst (char pps &optional list-start-char notfirst)
   (cond (notfirst 'notfirst)
 	((char-equal ?, char)
 	 'list-separator)
 	((looking-back "[[:alpha:]äöüß.]")
 	 'in-word)
-	((and (char-equal ?\[ list-start-char)
-	      (char-equal ?. char))
-	 'construct-for-export)
-	((and (char-equal ?\[ list-start-char)
+	((member char (list ?\[ ?. ?:))
+	 'intro)
+	((and (eq ?\[ list-start-char)
 	      (char-equal ?, char))
 	 'operator--in-list-continue)
 	((char-equal ?* char)
@@ -274,7 +273,7 @@ Haskell: (>=>) :: Monad"
 	((looking-back "^<s?" (line-beginning-position))
 	 'src-block)))
 
-(defun operator--org-notsecond (char pps list-start-char notsecond)
+(defun operator--org-notsecond (char pps &optional list-start-char notsecond)
   (cond (notsecond
 	 'notsecond)
 	((or (char-equal ?\[ char) (char-equal ?\( char))
@@ -285,7 +284,7 @@ Haskell: (>=>) :: Monad"
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ((char-equal ?, char)
 		'list-separator)
-	       ((and (char-equal ?\[ list-start-char)
+	       ((and (eq ?\[ list-start-char)
 		     (char-equal ?, char))
 		'construct-for-export)
 	       ((and (nth 1 pps) (not (member char (list ?: ?,))))
