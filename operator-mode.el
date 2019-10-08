@@ -122,9 +122,10 @@ Haskell: (>=>) :: Monad"
 	   'operator--closing-colon)
 	  (index-p
 	   'index-p)
-
-	  ((py-in-dict-p pps)
-	   'py-in-dict-p)
+	  ((looking-back "[[:alpha:]ÄÖÜäöüß.]")
+	   'in-word)
+	  ;; ((py-in-dict-p pps)
+	  ;;  'py-in-dict-p)
 	  ((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
 	       ;; for i in c :
 	       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
@@ -137,6 +138,8 @@ Haskell: (>=>) :: Monad"
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
     (cond (notsecond
 	   'notsecond)
+	  ((eq char list-start-char)
+	   'list-start-char)
 	  ;; echo(**kargs)
 	  ((and (char-equal ?* char) in-list-p)
 	   '*-in-list-p)
@@ -155,6 +158,8 @@ Haskell: (>=>) :: Monad"
 	   'dot)
 	  ((member char (list ?:))
 	   'colon)
+	  ((looking-back "[[:alpha:]ÄÖÜäöüß.]")
+	   'in-word)
 	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 	       (and
 		;; return self.first_name, self.last_name
@@ -166,7 +171,8 @@ Haskell: (>=>) :: Monad"
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((notfirst (operator--python-notfirst char start pps list-start-char notfirst notsecond nojoin))
-	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin)))
+	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin))
+	 (nojoin (or nojoin (eq char list-start-char))))
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
@@ -193,7 +199,6 @@ Haskell: (>=>) :: Monad"
 		'listing)
 	       ((nth 3 pps)
 		'and-nth-1-pps-nth-3-pps)
-	       ;; ((py-in-dict-p pps))
 	       ((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 		'in-list-p)))
 	;; ((member char (list ?\; ?,)))
@@ -250,7 +255,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst 'notfirst)
 	((char-equal ?, char)
 	 'list-separator)
-	((looking-back "[[:alpha:]äöüß.]")
+	((looking-back "[[:alpha:]ÄÖÜäöüß.]")
 	 'in-word)
 	((member char (list ?\[ ?. ?:))
 	 'intro)
@@ -263,7 +268,6 @@ Haskell: (>=>) :: Monad"
 	 'listing)
 	((nth 3 pps)
 	 'and-nth-1-pps-nth-3-pps)
-	;; ((py-in-dict-p pps))
 	((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 	 'in-list-p)
 	;; ((member char (list ?\; ?,)))
@@ -278,7 +282,7 @@ Haskell: (>=>) :: Monad"
 	 'notsecond)
 	((or (char-equal ?\[ char) (char-equal ?\( char))
 	 'list-opener)
-	((looking-back "[[:alpha:]äöüß.]")
+	((looking-back "[[:alpha:]ÖÄÜäöüß.]")
 	 'in-word)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
