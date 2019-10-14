@@ -23,17 +23,17 @@ ORT=${ORT:-1}
 
 echo "\$ORT: $ORT"
 
-TESTDIR=test/
+TESTDIR=$PWD/test/
 export TESTDIR
 
 
 FILE1=operator-mode.el
+FILE2=$HOME/arbeit/emacs-lisp/haskell/haskell-mode/haskell-mode.el
 #  FILE2=.cask/24.4/elpa/haskell-mode-20180917.923
 #  thingatpt-utils-core-setup-tests.el
 TEST1=${TESTDIR}operator-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
 TEST3=${TESTDIR}operator-python-mode-test.el
-TEST4=${TESTDIR}operator-ruby-mode-test.el
 echo "\$TEST1: $TEST1"
 
 EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
@@ -58,14 +58,14 @@ hier () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \".cask/25.2/elpa/haskell-mode-20190417.309\")" \
---eval "(require 'haskell-mode)" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
 -load $FILE1 \
+-load $FILE2 \
+--eval "(require 'haskell-mode)" \
 \
 -load $TEST1 \
 -load $TEST2 \
 -load $TEST3 \
--load $TEST4 \
 -f ert-run-tests-batch-and-exit
 }
 

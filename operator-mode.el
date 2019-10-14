@@ -1,6 +1,6 @@
 ;;; operator-mode.el --- simple electric operator  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018  Andreas Röhler
+;; Copyright (C) 2018-2019  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@online.de>
 ;; Keywords: convenience
@@ -102,7 +102,7 @@ Haskell: (>=>) :: Monad"
   (let* ((in-list-p (nth 1 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
     (cond (notfirst
-	   'notfirst)
+	   notfirst)
 	  ;; echo(**kargs)
 	  ((and (char-equal ?* char) in-list-p)
 	   '*-in-list-p)
@@ -122,10 +122,9 @@ Haskell: (>=>) :: Monad"
 	   'operator--closing-colon)
 	  (index-p
 	   'index-p)
-	  ((looking-back "[[:alpha:]ÄÖÜäöüß.]")
-	   'in-word)
-	  ;; ((py-in-dict-p pps)
-	  ;;  'py-in-dict-p)
+
+	  ((py-in-dict-p pps)
+	   'py-in-dict-p)
 	  ((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
 	       ;; for i in c :
 	       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
@@ -137,9 +136,7 @@ Haskell: (>=>) :: Monad"
   (let* ((in-list-p (nth 1 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
     (cond (notsecond
-	   'notsecond)
-	  ((eq char list-start-char)
-	   'list-start-char)
+	   notsecond)
 	  ;; echo(**kargs)
 	  ((and (char-equal ?* char) in-list-p)
 	   '*-in-list-p)
@@ -158,8 +155,6 @@ Haskell: (>=>) :: Monad"
 	   'dot)
 	  ((member char (list ?:))
 	   'colon)
-	  ((looking-back "[[:alpha:]ÄÖÜäöüß.]")
-	   'in-word)
 	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 	       (and
 		;; return self.first_name, self.last_name
@@ -171,8 +166,7 @@ Haskell: (>=>) :: Monad"
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((notfirst (operator--python-notfirst char start pps list-start-char notfirst notsecond nojoin))
-	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin))
-	 (nojoin (or nojoin (eq char list-start-char))))
+	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin)))
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
@@ -199,6 +193,7 @@ Haskell: (>=>) :: Monad"
 		'listing)
 	       ((nth 3 pps)
 		'and-nth-1-pps-nth-3-pps)
+	       ;; ((py-in-dict-p pps))
 	       ((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 		'in-list-p)))
 	;; ((member char (list ?\; ?,)))
@@ -251,15 +246,16 @@ Haskell: (>=>) :: Monad"
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
-(defun operator--org-notfirst (char pps &optional list-start-char notfirst)
+(defun operator--org-notfirst (char pps list-start-char notfirst)
   (cond (notfirst 'notfirst)
 	((char-equal ?, char)
 	 'list-separator)
-	((looking-back "[[:alpha:]ÄÖÜäöüß.]")
+	((looking-back "[[:alpha:]äöüß.]")
 	 'in-word)
-	((member char (list ?\[ ?. ?:))
-	 'intro)
-	((and (eq ?\[ list-start-char)
+	((and (char-equal ?\[ list-start-char)
+	      (char-equal ?. char))
+	 'construct-for-export)
+	((and (char-equal ?\[ list-start-char)
 	      (char-equal ?, char))
 	 'operator--in-list-continue)
 	((char-equal ?* char)
@@ -268,6 +264,7 @@ Haskell: (>=>) :: Monad"
 	 'listing)
 	((nth 3 pps)
 	 'and-nth-1-pps-nth-3-pps)
+	;; ((py-in-dict-p pps))
 	((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 	 'in-list-p)
 	;; ((member char (list ?\; ?,)))
@@ -277,18 +274,18 @@ Haskell: (>=>) :: Monad"
 	((looking-back "^<s?" (line-beginning-position))
 	 'src-block)))
 
-(defun operator--org-notsecond (char pps &optional list-start-char notsecond)
+(defun operator--org-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'notsecond)
 	((or (char-equal ?\[ char) (char-equal ?\( char))
 	 'list-opener)
-	((looking-back "[[:alpha:]ÖÄÜäöüß.]")
+	((looking-back "[[:alpha:]äöüß.]")
 	 'in-word)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ((char-equal ?, char)
 		'list-separator)
-	       ((and (eq ?\[ list-start-char)
+	       ((and (char-equal ?\[ list-start-char)
 		     (char-equal ?, char))
 		'construct-for-export)
 	       ((and (nth 1 pps) (not (member char (list ?: ?,))))
@@ -419,8 +416,6 @@ Haskell: (>=>) :: Monad"
       (`inferior-haskell-mode
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`text-mode
-       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
-      (`org-mode
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       ((pred derived-mode-p)
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
