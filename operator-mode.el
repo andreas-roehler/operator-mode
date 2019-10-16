@@ -300,7 +300,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--text-notfirst (char start pps list-start-char notfirst)
   (cond (notfirst
 	 'notfirst)
-	((member char (list ?\; ?\( ?, ?. ?: ?\? ?! ?@))
+	((member char (list ?\; ?\( ?, ?. ?: ?\? ?! ?@ ?-))
 	 'punct-class)
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
