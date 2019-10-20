@@ -254,7 +254,7 @@ Haskell: (>=>) :: Monad"
 	 'org-in-word)
 	((char-equal ?* char)
 	 'org-char-equal-\*-in-list-p)
-	((member char (list ?\( ?\) ?\]))
+	((member char (list ?\( ?\) ?\] 47))
 	 'org-listing)
 	((nth 3 pps)
 	 'org-and-nth-1-pps-nth-3-pps)
@@ -277,7 +277,7 @@ Haskell: (>=>) :: Monad"
 	 'org-in-word)
 	((nth 3 pps)
 	 'org-in-string)
-	((member char (list ?\( 41 93))
+	((member char (list ?\( 41 93 47))
 	 'org-listing)
 	;; index-p
 	((and
