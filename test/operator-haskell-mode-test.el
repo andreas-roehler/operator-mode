@@ -341,5 +341,15 @@
     (operator-do)
     (should (looking-back " :: " (line-beginning-position)))))
 
+(ert-deftest operator-haskell-colon-in-list-test-IAAa4J ()
+  (operator-test
+      "maxhelper a (x:"
+    'haskell-mode
+    operator-mode-debug
+    (backward-char) 
+    (operator-do)
+    (forward-char 1)
+    (should (looking-back "x:" (line-beginning-position)))))
+
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
