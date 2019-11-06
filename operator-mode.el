@@ -201,6 +201,8 @@ Haskell: (>=>) :: Monad"
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'haskell-join-known-operators)
+	((looking-back "<*" (line-beginning-position))
+		'haskell-<)
 	((looking-back "^-" (line-beginning-position))
 	 'haskell-comment-start)
 	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
@@ -238,7 +240,9 @@ Haskell: (>=>) :: Monad"
 	((looking-back "^-" (line-beginning-position))
 	 'haskell-comment-start)
 	((looking-back "import +[^ ]+." (line-beginning-position))
-	 'haskell-import)))
+	 'haskell-import)
+	((looking-back "<*" (line-beginning-position))
+	 'haskell->)))
 
 (defun operator--do-haskell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
