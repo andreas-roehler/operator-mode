@@ -69,8 +69,9 @@ Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
 		  ;; (ignore-errors (eq 7 (car-safe (syntax-after (1- (point))))))
 		  (and comment-start
 		       (or (looking-at comment-start)
-			   (looking-at comment-start-skip)
-			   (looking-back comment-start (line-beginning-position))
+			   (looking-back comment-start (line-beginning-position))))
+		  (and comment-start-skip
+		       (or (looking-at comment-start-skip)
 			   (looking-back comment-start-skip (line-beginning-position)))))))
     (when (interactive-p) (message "%s" erg))
     erg))
@@ -253,6 +254,89 @@ Haskell: (>=>) :: Monad"
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
+(defun operator--agda-notfirst (char pps list-start-char notfirst)
+  (cond (notfirst
+	 'agda-notfirst)
+	((and (eq 'agda-interactive-mode major-mode)
+	      (save-excursion (backward-char 1)
+			      (looking-back agda-interactive-prompt (line-beginning-position))))
+	 'agda-agda-interactive-prompt)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 ;; (unless (eq list-start-char ?{)
+	 (cond ((char-equal ?, char)
+		'agda-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?. char))
+		'agda-construct-for-export)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'agda-operator--in-list-continue)
+	       ((char-equal ?* char)
+		'agda-char-equal-\*-in-list-p)
+	       ((member char (list ?\( ?\) ?\]))
+		'agda-listing)
+	       ((nth 3 pps)
+		'agda-and-nth-1-pps-nth-3-pps)
+	       ;; ((py-in-dict-p pps))
+	       ((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
+		'agda-in-list-p)))
+	;; ((member char (list ?\; ?,)))
+	((or (member (char-before (1- (point))) operator-known-operators)
+	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	 'agda-join-known-operators)
+	((looking-back "<\\*" (line-beginning-position))
+		'agda-<)
+	((looking-back "^-" (line-beginning-position))
+	 'agda-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'agda-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+
+(defun operator--agda-notsecond (char pps list-start-char notsecond)
+  (cond (notsecond)
+	((or (char-equal ?\[ char) (char-equal ?\( char))
+	 'agda-list-opener)
+	((and (eq 'agda-interactive-mode major-mode)
+	      (save-excursion (backward-char)
+			      (looking-back (concat agda-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
+	 'agda-agda-interactive-prompt)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 (cond ((char-equal ?, char)
+		'agda-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'agda-construct-for-export)
+	       ((and (nth 1 pps) (not (member char (list ?: ?,))))
+		'agda-in-list-p)))
+	((nth 3 pps)
+	 'agda-in-string)
+	((member char (list ?\( 41 93))
+	 'agda-listing)
+	;; index-p
+	((and
+	  ;; "even <$> (2,2)"
+	  (not (char-equal char ?,))
+	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'agda-comment-start)
+	((looking-back "import +[^ ]+." (line-beginning-position))
+	 'agda-import)
+	((looking-back "<\\*" (line-beginning-position))
+	 'agda->)))
+
+(defun operator--do-agda-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Haskell"
+  (let* ((notfirst (operator--agda-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--agda-notsecond char pps list-start-char notsecond))
+	 (nojoin
+	  (cond ((member char (list ?, ?\[ ?\] ?\))))
+		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
+    (operator--final char orig notfirst notsecond nojoin)))
+
 (defun operator--org-notfirst (char pps list-start-char notfirst)
   (cond (notfirst 'org-notfirst)
 	((char-equal ?, char)
@@ -407,6 +491,10 @@ Haskell: (>=>) :: Monad"
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`haskell-interactive-mode
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`agda2-mode
+       (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
+      (`haskell-interactive-mode
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-haskell-mode
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`text-mode
@@ -446,5 +534,4 @@ With prefix-key ‘C-q’ inserts character literally."
 		 ;; #'operator-post-self-insert-function t)))
 		 #'operator-do t)))
 
-(provide 'operator-mode)
-;;; operator-mode.el ends here
+(provide 'operator-mode);;; operator-mode.el ends here
