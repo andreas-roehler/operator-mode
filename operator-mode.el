@@ -106,7 +106,7 @@ Haskell: (>=>) :: Monad"
     (cond (notfirst
 	   notfirst)
 	  ;; echo(**kargs)
-	  ((and (char-equal ?* char) in-list-p)
+	  ((and (member char (list ?* ?=)) in-list-p)
 	   'python-*-in-list-p)
 	  ;; print('%(language)s has %(number)03d quote types.' %
 	  ;;     {'language': "Python", "number": 2})
@@ -114,7 +114,7 @@ Haskell: (>=>) :: Monad"
 	  ((and (nth 1 pps) (nth 3 pps)
 		'python-string-in-list))
 	  ;; with open('/path/to/some/file') as file_1,
-	  ((member char (list ?\; ?, 40 41))
+	  ((member char (list ?\; ?, 40 41 ?@))
 	   'python-list-op)
 	  ((member char (list ?.))
 	   'python-dot)
@@ -140,7 +140,7 @@ Haskell: (>=>) :: Monad"
     (cond (notsecond
 	   notsecond)
 	  ;; echo(**kargs)
-	  ((and (char-equal ?* char) in-list-p)
+	  ((and (member char (list ?* ?=)) in-list-p)
 	   'python-*-in-list-p)
 	  ((and (char-equal ?- char) in-list-p)
 	   'python---in-list-p)
@@ -151,7 +151,7 @@ Haskell: (>=>) :: Monad"
 	   'python-string-in-list)
 	  ;; (char-equal char ?~)
 	  ;; with open('/path/to/some/file') as file_1,
-	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\]))
+	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
 	   'python-list-op)
 	  ((member char (list ?.))
 	   'python-dot)
@@ -359,7 +359,9 @@ Haskell: (>=>) :: Monad"
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'org-join-known-operators)
 	((looking-back "^<s?" (line-beginning-position))
-	 'org-src-block)))
+	 'org-src-block)
+	((looking-back "^ *#\\+TBLFM:.*" (line-beginning-position))
+	 'org-TBLFM)))
 
 (defun operator--org-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
@@ -378,7 +380,10 @@ Haskell: (>=>) :: Monad"
 	  (not (char-equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^<s?" (line-beginning-position))
-	 'org-src-block)))
+	 'org-src-block)
+	((looking-back "^ *#\\+TBLFM:.*" (line-beginning-position))
+	 'org-TBLFM)
+	))
 
 (defun operator--do-org-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
