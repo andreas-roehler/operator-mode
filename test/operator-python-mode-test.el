@@ -364,5 +364,17 @@
     (operator-do)
     (should (looking-back "for i in c: " (line-beginning-position)))))
 
+(ert-deftest operator-python-test-bhxLZC ()
+  (operator-test
+      ;; for i in c:
+      "foo -="
+    'python-mode
+    operator-mode-debug
+    (forward-char -1) 
+    (operator-do)
+    (should (looking-back "for i in c: " (line-beginning-position)))))
+
+
 (provide 'operator-python-mode-test)
 ;;; operator-python-mode-test.el ends here
+
