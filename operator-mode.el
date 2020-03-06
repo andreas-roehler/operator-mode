@@ -1,6 +1,6 @@
 ;;; operator-mode.el --- simple electric operator  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2019  Andreas Röhler
+;; Copyright (C) 2018-2020  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@online.de>
 ;; Keywords: convenience
@@ -169,6 +169,55 @@ Haskell: (>=>) :: Monad"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((notfirst (operator--python-notfirst char start pps list-start-char notfirst notsecond nojoin))
 	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin)))
+    (operator--final char start notfirst notsecond nojoin)))
+
+(defun operator--sql-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
+  (let* ((in-list-p (nth 1 pps))
+	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
+    (cond (notfirst
+	   notfirst)
+	  ((and (member char (list ?* ?=)) in-list-p)
+	   'sql-*-in-list-p)
+	  ((and (nth 1 pps) (nth 3 pps)
+		'sql-string-in-list))
+	  ((member char (list ?\; ?, 40 41 ?@))
+	   'sql-list-op)
+	  ((member char (list ?.))
+	   'sql-dot)
+	  ((operator--closing-colon char)
+	   'sql-operator--closing-colon)
+	  (index-p
+	   'sql-index-p)
+
+	  ((py-in-dict-p pps)
+	   'sql-py-in-dict-p)
+	  ((or
+	    (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position)))
+	   'sql-after-symbol))))
+
+(defun operator--sql-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
+  (let* ((in-list-p (nth 1 pps))
+	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
+    (cond (notsecond
+	   notsecond)
+	  ((and (member char (list ?* ?=)) in-list-p)
+	   'sql-*-in-list-p)
+	  ((and (char-equal ?- char) in-list-p)
+	   'sql---in-list-p)
+	  ((and (nth 1 pps) (nth 3 pps))
+	   'sql-string-in-list)
+	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
+	   'sql-list-op)
+	  ((member char (list ?.))
+	   'sql-dot)
+	  ((member char (list ?:))
+	   'sql-colon))))
+
+(defun operator--do-sql-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
+  "Sql"
+  (setq operator-known-operators (remove ?. operator-known-operators))
+  (let* ((notfirst (operator--sql-notfirst char start pps list-start-char notfirst notsecond nojoin))
+	 (notsecond (operator--sql-notsecond char start pps list-start-char notfirst notsecond nojoin)))
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
@@ -482,24 +531,24 @@ Haskell: (>=>) :: Monad"
 	   ((op-in-string-or-comment-p pps)
 	    'in-string-or-comment-p))))
     (pcase major-mode
+      (`agda2-mode
+       (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
+      (`haskell-mode
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`haskell-interactive-mode
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`inferior-haskell-mode
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`org-mode
+       (operator--do-org-mode char orig pps list-start-char notfirst notsecond))
       (`python-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`py-python-shell-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`py-ipython-shell-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
-      ;; (`emacs-lisp-mode
-      ;;  (operator--do-emacs-lisp-mode char orig pps list-start-char notfirst notsecond))
-      (`org-mode
-       (operator--do-org-mode char orig pps list-start-char notfirst notsecond))
-      (`haskell-mode
-       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
-      (`haskell-interactive-mode
-       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
-      (`agda2-mode
-       (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
-      (`inferior-haskell-mode
-       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`sql-mode
+       (operator--do-sql-mode char orig pps list-start-char notfirst notsecond))
       (`text-mode
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       ((pred derived-mode-p)

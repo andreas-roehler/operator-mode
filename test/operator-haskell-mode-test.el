@@ -1,6 +1,6 @@
 ;;; operator-haskell-mode-test.el --- haskell-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019  Andreas Röhler
+;; Copyright (C) 2019-2020  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
