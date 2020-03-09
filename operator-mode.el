@@ -176,7 +176,7 @@ Haskell: (>=>) :: Monad"
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
     (cond (notfirst
 	   notfirst)
-	  ((and (member char (list ?* ?=)) in-list-p)
+	  (in-list-p
 	   'sql-*-in-list-p)
 	  ((and (nth 1 pps) (nth 3 pps)
 		'sql-string-in-list))
@@ -202,8 +202,8 @@ Haskell: (>=>) :: Monad"
 	   notsecond)
 	  ((and (member char (list ?* ?=)) in-list-p)
 	   'sql-*-in-list-p)
-	  ((and (char-equal ?- char) in-list-p)
-	   'sql---in-list-p)
+	  (in-list-p
+	   'sql-in-list-p)
 	  ((and (nth 1 pps) (nth 3 pps))
 	   'sql-string-in-list)
 	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
@@ -388,6 +388,8 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--org-notfirst (char pps list-start-char notfirst)
   (cond (notfirst 'org-notfirst)
+	((nth 1 pps)
+	 'org-in-list-p)
 	((char-equal ?, char)
 	 'org-list-separator)
 	((member char (list ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
@@ -415,6 +417,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--org-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'org-notsecond)
+	((nth 1 pps)
+	 'org-in-list-p)
 	((looking-back "[[:alpha:]äöüß.-]")
 	 'org-in-word)
 	((nth 3 pps)
@@ -431,8 +435,7 @@ Haskell: (>=>) :: Monad"
 	((looking-back "^<s?" (line-beginning-position))
 	 'org-src-block)
 	((looking-back "^ *#\\+TBLFM:.*" (line-beginning-position))
-	 'org-TBLFM)
-	))
+	 'org-TBLFM)))
 
 (defun operator--do-org-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
