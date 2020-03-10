@@ -124,7 +124,6 @@ Haskell: (>=>) :: Monad"
 	   'python-operator--closing-colon)
 	  (index-p
 	   'python-index-p)
-
 	  ((py-in-dict-p pps)
 	   'python-py-in-dict-p)
 	  ((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
@@ -171,6 +170,75 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--python-notsecond char start pps list-start-char notfirst notsecond nojoin)))
     (operator--final char start notfirst notsecond nojoin)))
 
+
+(defun operator--java-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
+  (let* ((in-list-p (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{)))))
+	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
+    (cond (notfirst
+	   notfirst)
+	  ;; echo(**kargs)
+	  ((and (member char (list ?* ?=)) in-list-p)
+	   'java-*-in-list-p)
+	  ;; print('%(language)s has %(number)03d quote types.' %
+	  ;;     {'language': "Python", "number": 2})
+	  ;; don'java-t space ‘%’
+	  ((and (nth 1 pps) (nth 3 pps)
+		'java-string-in-list))
+	  ;; with open('/path/to/some/file') as file_1,
+	  ((member char (list ?\; ?, 40 41 ?@))
+	   'java-list-op)
+	  ((member char (list ?.))
+	   'java-dot)
+	  ;; def f(x, y):
+	  ;; if len(sys.argv) == 1:
+	  ((operator--closing-colon char)
+	   'java-operator--closing-colon)
+	  (index-p
+	   'java-index-p)
+	  ((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
+	       ;; for i in c :
+	       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
+	       (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
+	       (looking-back "return +[^ ]+" (line-beginning-position)))
+	   'java-after-symbol))))
+
+(defun operator--java-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
+  (let* ((in-list-p (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{)))))
+	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
+    (cond (notsecond
+	   notsecond)
+	  ;; echo(**kargs)
+	  ((and (member char (list ?* ?=)) in-list-p)
+	   'java-*-in-list-p)
+	  ((and (char-equal ?- char) in-list-p)
+	   'java---in-list-p)
+	  ;; print('%(language)s has %(number)03d quote types.' %
+	  ;;     {'language': "Python", "number": 2})
+	  ;; don't space ‘%’
+	  ((and (nth 1 pps) (nth 3 pps))
+	   'java-string-in-list)
+	  ;; (char-equal char ?~)
+	  ;; with open('/path/to/some/file') as file_1,
+	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
+	   'java-list-op)
+	  ((member char (list ?.))
+	   'java-dot)
+	  ((member char (list ?:))
+	   'java-colon)
+	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
+	       (and
+		;; return self.first_name, self.last_name
+		(not (char-equal char ?,))
+		(looking-back "return +[^ ]+.*" (line-beginning-position))))
+	   'java-after-symbol))))
+
+(defun operator--do-java-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
+  "Python"
+  (setq operator-known-operators (remove ?. operator-known-operators))
+  (let* ((notfirst (operator--java-notfirst char start pps list-start-char notfirst notsecond nojoin))
+	 (notsecond (operator--java-notsecond char start pps list-start-char notfirst notsecond nojoin)))
+    (operator--final char start notfirst notsecond nojoin)))
+
 (defun operator--sql-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
   (let* ((in-list-p (nth 1 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
@@ -188,9 +256,6 @@ Haskell: (>=>) :: Monad"
 	   'sql-operator--closing-colon)
 	  (index-p
 	   'sql-index-p)
-
-	  ((py-in-dict-p pps)
-	   'sql-py-in-dict-p)
 	  ((or
 	    (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position)))
 	   'sql-after-symbol))))
@@ -244,7 +309,6 @@ Haskell: (>=>) :: Monad"
 		'haskell-listing)
 	       ((nth 3 pps)
 		'haskell-and-nth-1-pps-nth-3-pps)
-	       ;; ((py-in-dict-p pps))
 	       ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
 		'haskell-in-list-p)))
 	;; ((member char (list ?\; ?,)))
@@ -327,7 +391,6 @@ Haskell: (>=>) :: Monad"
 		'agda-listing)
 	       ((nth 3 pps)
 		'agda-and-nth-1-pps-nth-3-pps)
-	       ;; ((py-in-dict-p pps))
 	       ((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 		'agda-in-list-p)))
 	;; ((member char (list ?\; ?,)))
@@ -402,7 +465,6 @@ Haskell: (>=>) :: Monad"
 	 'org-listing)
 	((nth 3 pps)
 	 'org-and-nth-1-pps-nth-3-pps)
-	;; ((py-in-dict-p pps))
 	((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 	 'org-in-list-p)
 	;; ((member char (list ?\; ?,)))
@@ -542,6 +604,8 @@ Haskell: (>=>) :: Monad"
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-haskell-mode
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`java-mode
+       (operator--do-java-mode char orig pps list-start-char notfirst notsecond))
       (`org-mode
        (operator--do-org-mode char orig pps list-start-char notfirst notsecond))
       (`python-mode
