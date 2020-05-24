@@ -26,6 +26,12 @@
 
 ;;; Code:
 
+(defcustom operator-mode-in-comments-p nil
+  "If operator-mode should expand inside comments.
+
+Default is nil."
+  )
+
 (defvar operator-mode-debug t
   "Debugging mode")
 
@@ -111,8 +117,9 @@ Haskell: (>=>) :: Monad"
 	  ;; print('%(language)s has %(number)03d quote types.' %
 	  ;;     {'language': "Python", "number": 2})
 	  ;; don'python-t space ‘%’
-	  ((and (nth 1 pps) (nth 3 pps)
-		'python-string-in-list))
+	  ;; print(f"Elementweise Addition: {m1 + m2}
+	  ;; ((and (nth 1 pps) (nth 3 pps)
+	  ;; 	'python-string-in-list))
 	  ;; with open('/path/to/some/file') as file_1,
 	  ((member char (list ?\; ?, 40 41 ?@))
 	   'python-list-op)
@@ -146,8 +153,9 @@ Haskell: (>=>) :: Monad"
 	  ;; print('%(language)s has %(number)03d quote types.' %
 	  ;;     {'language': "Python", "number": 2})
 	  ;; don't space ‘%’
-	  ((and (nth 1 pps) (nth 3 pps))
-	   'python-string-in-list)
+	  ;; print(f"Elementweise Addition: {m1 + m2}
+	  ;; ((and (nth 1 pps) (nth 3 pps))
+	  ;;  'python-string-in-list)
 	  ;; (char-equal char ?~)
 	  ;; with open('/path/to/some/file') as file_1,
 	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
@@ -182,8 +190,8 @@ Haskell: (>=>) :: Monad"
 	  ;; print('%(language)s has %(number)03d quote types.' %
 	  ;;     {'language': "Python", "number": 2})
 	  ;; don'java-t space ‘%’
-	  ((and (nth 1 pps) (nth 3 pps)
-		'java-string-in-list))
+	  ;; ((and (nth 1 pps) (nth 3 pps)
+	  ;; 	'java-string-in-list))
 	  ;; with open('/path/to/some/file') as file_1,
 	  ((member char (list ?\; ?, 40 41 ?@))
 	   'java-list-op)
@@ -575,6 +583,9 @@ Haskell: (>=>) :: Monad"
 	(forward-char 1)
       (just-one-space))))
 
+(defvar operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?*)
+  "Chars used in combined assigments like +=")
+
 (defun operator--do-intern (char orig)
   (let* ((pps (parse-partial-sexp (point-min) (point)))
 	 (list-start-char
@@ -583,18 +594,22 @@ Haskell: (>=>) :: Monad"
 	 (notfirst
 	  (cond ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
 		 'email-adress)
+		((and (char-equal ?= char) (member (char-before (1- (point))) operator-mode-combined-assigment-chars))
+		 'operator-mode-combined-assigment)
 		;; fails in haskell -
 		;; data Contact =  Contact { name :: String
                 ;;                         ,"
 		;; (and (nth 1 pps) (char-equal char ?,))
-		((op-in-string-or-comment-p pps)
-		 'in-string-or-comment-p)))
+		;; ((op-in-string-or-comment-p pps)
+		;;  'in-string-or-comment-p)
+		))
 	 (notsecond
 	  (cond
 	   ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
 	    'email-adress)
-	   ((op-in-string-or-comment-p pps)
-	    'in-string-or-comment-p))))
+	   ;; ((op-in-string-or-comment-p pps)
+	   ;;  'in-string-or-comment-p)
+	   )))
     (pcase major-mode
       (`agda2-mode
        (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
@@ -625,8 +640,12 @@ Haskell: (>=>) :: Monad"
 (defun operator-do ()
   "Act according to operator before point, if any."
   (interactive "*")
-  (when (member (char-before) operator-known-operators)
-    (operator--do-intern (char-before) (copy-marker (point)))))
+  (and  (member (char-before) operator-known-operators)
+	(or
+	 ;; must not check if allowed anyway
+	 operator-mode-in-comments-p
+	 (not (nth 8 (parse-partial-sexp (point-min) (point)))))
+	(operator--do-intern (char-before) (copy-marker (point)))))
 
 (define-minor-mode operator-mode
   "Toggle automatic insertion of spaces around operators if appropriate.

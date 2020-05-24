@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 
-;; 
+;;
 
 ;;; Code:
 
@@ -74,7 +74,7 @@
     'python-mode
     operator-mode-debug
     (operator-do)
-    (should (char-equal (char-before) ?*)))) 
+    (should (char-equal (char-before) ?*))))
 
 (ert-deftest operator-python-test-sFlZBF ()
   (operator-test
@@ -172,7 +172,7 @@
     'python-mode
     operator-mode-debug
     (operator-do)
-    (should-not (char-equal (char-before (- (point) 2)) 32)) 
+    (should-not (char-equal (char-before (- (point) 2)) 32))
     (should (eq (char-before) 32))))
 
 (ert-deftest operator-python-test-xo23nI ()
@@ -292,7 +292,7 @@
     'python-mode
     operator-mode-debug
     (operator-do)
-    (should (char-equal (char-before) ?~)))) 
+    (should (char-equal (char-before) ?~))))
 
 (ert-deftest operator-python-test-cgHjuh ()
   (operator-test
@@ -364,17 +364,24 @@
     (operator-do)
     (should (looking-back "for i in c: " (line-beginning-position)))))
 
-(ert-deftest operator-python-test-bhxLZC ()
+(ert-deftest operator-python-test-wPqRz3 ()
   (operator-test
-      ;; for i in c:
-      "foo -="
+      "# foo="
     'python-mode
     operator-mode-debug
-    (forward-char -1) 
     (operator-do)
-    (should (looking-back "for i in c: " (line-beginning-position)))))
+    ;; don't take action inside comments by default
+    (should (looking-back "foo=" (line-beginning-position)))))
 
+(ert-deftest operator-python-test-6aAoLt ()
+  (operator-test
+      "# foo="
+    'python-mode
+    operator-mode-debug
+    (let ((operator-mode-in-comments-p t))
+      (operator-do)
+      ;; take action inside comments if operator-mode-in-comments-p is t
+      (should (looking-back "foo = " (line-beginning-position))))))
 
 (provide 'operator-python-mode-test)
 ;;; operator-python-mode-test.el ends here
-
