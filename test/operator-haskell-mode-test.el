@@ -325,7 +325,7 @@
   name :: String,}"
     'haskell-mode
     operator-mode-debug
-    (backward-char) 
+    (backward-char)
     (operator-do)
     (should (looking-back "String," (line-beginning-position)))
     (should-not (eq (char-before) ?\s))
@@ -337,7 +337,7 @@
   name : :}"
     'haskell-mode
     operator-mode-debug
-    (backward-char) 
+    (backward-char)
     (operator-do)
     (should (looking-back " :: " (line-beginning-position)))))
 
@@ -346,10 +346,56 @@
       "maxhelper a (x:"
     'haskell-mode
     operator-mode-debug
-    (backward-char) 
+    (backward-char)
     (operator-do)
     (forward-char 1)
     (should (looking-back "x:" (line-beginning-position)))))
+
+(ert-deftest operator-haskell-semicolon-test-IAAa4J ()
+  (operator-test
+      "https://www\.haskell\.org/onlinereport/haskell2010/haskellch2\.html#x7-210002\.7
+Figure 2\.1: A sample program
+
+module AStack( Stack, push, pop, top, size ) where
+{data Stack a = Empty
+             | MkStack a (Stack a)
+
+\;push :: a -> Stack a -> Stack a
+\;push x s = MkStack x s
+
+\;size :: Stack a -> Int
+\;size s = length (stkToLst s)  where
+           {stkToLst  Empty         = \[]
+           \;stkToLst (MkStack x s)  = x:xs where {xs = stkToLst s
+
+}}\;pop :: Stack a -> (a, Stack a)
+\;pop (MkStack x s)
+  = (x, case s of {r -> i r where {i x = x}}) -- (pop Empty) is an error
+
+\;top :: Stack a -> a
+\;top (MkStack x s) = x                        -- (top Empty) is an error
+}
+"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward ";top")
+    (forward-char 1)
+    (operator-do)
+    (should (eq (char-before) ?\;))))
+
+(ert-deftest operator-haskell-semicolon-test-fxnPvk ()
+  (operator-test
+      "let foo s f = Command s (\\x -> do f x;return x)"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward ";")
+    (forward-char 1) 
+    (operator-do)
+    (should (looking-back "f x ; " (line-beginning-position)))))
+    
+     
 
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
