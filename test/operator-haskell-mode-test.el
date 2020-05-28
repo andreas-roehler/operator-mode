@@ -394,8 +394,15 @@ module AStack( Stack, push, pop, top, size ) where
     (forward-char 1) 
     (operator-do)
     (should (looking-back "f x ; " (line-beginning-position)))))
-    
-     
+
+(ert-deftest operator-haskell-pattern-match-list-test-fxnPvk ()
+  (operator-test    
+      "rvrs (x:"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (operator-do)
+    (should (looking-back "rvrs (x:" (line-beginning-position)))))
 
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
