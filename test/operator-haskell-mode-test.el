@@ -404,5 +404,13 @@ module AStack( Stack, push, pop, top, size ) where
     (operator-do)
     (should (looking-back "rvrs (x:" (line-beginning-position)))))
 
+(ert-deftest operator-haskell-unequal-test-fxnPvk ()
+  (operator-test    
+      "x /="
+        'haskell-mode
+    operator-mode-debug
+    (operator-do)
+    (should (looking-back "x /= " (line-beginning-position)))))
+
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here

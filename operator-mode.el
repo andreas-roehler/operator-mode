@@ -594,8 +594,9 @@ Haskell: (>=>) :: Monad"
 	(forward-char 1)
       (just-one-space))))
 
-(defvar operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?*)
+(defvar operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/)
   "Chars used in combined assigments like +=")
+;; (setq operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/))
 
 (defun operator--do-intern (char orig)
   (let* ((pps (parse-partial-sexp (point-min) (point)))
