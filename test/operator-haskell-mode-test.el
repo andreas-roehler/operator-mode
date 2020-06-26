@@ -418,10 +418,20 @@ module AStack( Stack, push, pop, top, size ) where
         'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
-    (backward-char) 
+    (backward-char 2) 
     (operator-do)
     (goto-char (point-max)) 
     (should (looking-back "(,)" (line-beginning-position)))))
+
+(ert-deftest operator-haskell-parentized-function-test-h7s455 ()
+  (operator-test    
+      "(->)"
+        'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (operator-do)
+    (goto-char (point-max)) 
+    (should (looking-back "(->)" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-parentized-function-test-hrH9t0 ()
   (operator-test    
@@ -430,6 +440,17 @@ module AStack( Stack, push, pop, top, size ) where
     operator-mode-debug
     (goto-char (point-max))
     (backward-char) 
+    (operator-do)
+    (goto-char (point-max)) 
+    (should (looking-back "(->)" (line-beginning-position)))))
+
+(ert-deftest operator-haskell-parentized-function-test-uZAVSK ()
+  (operator-test    
+      "(->)"
+        'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (backward-char 2)
     (operator-do)
     (goto-char (point-max)) 
     (should (looking-back "(->)" (line-beginning-position)))))

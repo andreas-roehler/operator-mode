@@ -341,17 +341,16 @@ Haskell: (>=>) :: Monad"
 	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
 
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
-  (cond (notsecond)
-	((or (char-equal ?\[ char) (char-equal ?\( char))
-	 'haskell-list-opener)
+  (cond (notsecond
+	 'haskell-notsecond)
+	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	 'haskell-list-delimter)
 	((and (eq 'haskell-interactive-mode major-mode)
 	      (save-excursion (backward-char)
 			      (looking-back (concat haskell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
 	 'haskell-haskell-interactive-prompt)
 	((nth 3 pps)
 	 'haskell-in-string)
-	((member char (list ?\( 41 93))
-	 'haskell-listing)
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
@@ -365,7 +364,7 @@ Haskell: (>=>) :: Monad"
 	 'haskell->)
 	((and (nth 1 pps)
 	      (or (eq (1- (current-column)) (current-indentation))
-		  (eq (- (point) 2)(nth 1 pps))))
+		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 'haskell-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
