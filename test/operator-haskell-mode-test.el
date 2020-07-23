@@ -466,5 +466,7 @@ module AStack( Stack, push, pop, top, size ) where
     (goto-char (point-max)) 
     (should (looking-back "(-)" (line-beginning-position)))))
 
+
+
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
