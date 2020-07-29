@@ -300,7 +300,10 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((and (eq 'haskell-interactive-mode major-mode)
 	      (save-excursion (backward-char 1)
-			      (looking-back haskell-interactive-prompt (line-beginning-position))))
+			      (looking-back
+			       (concat haskell-interactive-prompt "*")
+			       ;; haskell-interactive-prompt
+			       (line-beginning-position))))
 	 'haskell-haskell-interactive-prompt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
@@ -351,7 +354,10 @@ Haskell: (>=>) :: Monad"
 	 'haskell-list-delimter)
 	((and (eq 'haskell-interactive-mode major-mode)
 	      (save-excursion (backward-char)
-			      (looking-back (concat haskell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
+			      (looking-back
+			       (concat haskell-interactive-prompt "*")
+			       ;; haskell-interactive-prompt
+			       (line-beginning-position))))
 	 'haskell-haskell-interactive-prompt)
 	((nth 3 pps)
 	 'haskell-in-string)
@@ -366,14 +372,15 @@ Haskell: (>=>) :: Monad"
 	 'haskell-import)
 	((looking-back "<\\*" (line-beginning-position))
 	 'haskell->)
-	((and (nth 1 pps)
-	      (or (eq (1- (current-column)) (current-indentation))
-		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
-	 'haskell-in-list-p)
+	;; ((and (nth 1 pps)
+	;;       (or (eq (1- (current-column)) (current-indentation))
+	;; 	  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	;;  'haskell-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
-		'haskell-list-separator)
+	 (cond ;; (
+	       ;; 	(char-equal ?, char)
+	       ;; 	'haskell-list-separator)
 	       ((and (char-equal ?\[ list-start-char)
 		     (char-equal ?, char))
 		'haskell-construct-for-export)

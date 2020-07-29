@@ -391,12 +391,12 @@ module AStack( Stack, push, pop, top, size ) where
     operator-mode-debug
     (goto-char (point-max))
     (search-backward ";")
-    (forward-char 1) 
+    (forward-char 1)
     (operator-do)
     (should (looking-back "f x ; " (line-beginning-position)))))
 
 (ert-deftest operator-haskell-pattern-match-list-test-fxnPvk ()
-  (operator-test    
+  (operator-test
       "rvrs (x:"
     'haskell-mode
     operator-mode-debug
@@ -405,7 +405,7 @@ module AStack( Stack, push, pop, top, size ) where
     (should (looking-back "rvrs (x:" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-unequal-test-fxnPvk ()
-  (operator-test    
+  (operator-test
       "x /="
         'haskell-mode
     operator-mode-debug
@@ -413,59 +413,68 @@ module AStack( Stack, push, pop, top, size ) where
     (should (looking-back "x /= " (line-beginning-position)))))
 
 (ert-deftest operator-haskell-parentized-function-test-fxnPvk ()
-  (operator-test    
+  (operator-test
       "(,)"
         'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
-    (backward-char 2) 
+    (backward-char 2)
     (operator-do)
-    (goto-char (point-max)) 
+    (goto-char (point-max))
     (should (looking-back "(,)" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-parentized-function-test-h7s455 ()
-  (operator-test    
+  (operator-test
       "(->)"
         'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
     (operator-do)
-    (goto-char (point-max)) 
+    (goto-char (point-max))
     (should (looking-back "(->)" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-parentized-function-test-hrH9t0 ()
-  (operator-test    
+  (operator-test
       "(->)"
         'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
-    (backward-char) 
+    (backward-char)
     (operator-do)
-    (goto-char (point-max)) 
+    (goto-char (point-max))
     (should (looking-back "(->)" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-parentized-function-test-uZAVSK ()
-  (operator-test    
+  (operator-test
       "(->)"
         'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
     (backward-char 2)
     (operator-do)
-    (goto-char (point-max)) 
+    (goto-char (point-max))
     (should (looking-back "(->)" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-parentized-function-test-iTVzcO ()
-  (operator-test    
+  (operator-test
       "(-)"
         'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
-    (backward-char) 
+    (backward-char)
     (operator-do)
-    (goto-char (point-max)) 
+    (goto-char (point-max))
     (should (looking-back "(-)" (line-beginning-position)))))
 
+(ert-deftest operator-haskell-deriving-list-test-iTVzcO ()
+    (operator-test
+	"deriving (Eq,Ord, Show)"
+      'haskell-mode
+      operator-mode-debug
+      (goto-char (point-max))
+      (search-backward "O")
+      (operator-do)
+      (should (looking-back "deriving (Eq, " (line-beginning-position)))))
 
 
 (provide 'operator-haskell-mode-test)
