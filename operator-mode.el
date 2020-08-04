@@ -701,7 +701,7 @@ Haskell: (>=>) :: Monad"
 			       ;; (looking-back shell-interactive-prompt (line-beginning-position))
 			       )))
 	 'shell-shell-interactive-prompt)
-	((member char (list ?. ?-))
+	((member char (list ?. ?- ?:))
 	 'shell-punkt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
@@ -746,7 +746,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?. ?-))
+	((member char (list ?. ?- ?:))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -787,13 +787,17 @@ Haskell: (>=>) :: Monad"
   "Haskell"
   (let* ((notfirst (operator--shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
-	 (nojoin
-	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) )))
-		((and (eq 'shell-mode major-mode))
-		 (save-excursion (backward-char 1)
-				 (looking-back shell-prompt-pattern (line-beginning-position))
-				 )))))
+	 (nojoin t
+	  ;; (cond ((member char (list ?, ?\[ ?\] ?\))))
+	  ;; 	((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) )))
+	  ;; 	((and (eq 'shell-mode major-mode))
+	  ;; 	 (save-excursion (progn (backward-char 1)
+	  ;; 			 (skip-chars-backward " \t\r\n\f")
+	  ;; 			 (eq (char-before) ?>)
+	  ;; 			 ;; (looking-back shell-prompt-pattern (line-beginning-position))
+	  ;; 			 ;; (looking-back ">[	 ]*" (line-beginning-position))
+	  ;; 			 ))))
+	  ))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
@@ -1049,8 +1053,8 @@ Haskell: (>=>) :: Monad"
 	 'text-in-word)
 	((member char (list ?@))
 	 'text-et)
-	;; ((member char (list ?.))
-	;;  'text-dot)
+	((member char (list ?.))
+	 'text-dot)
 	((member char (list ?\[ ?{ ?\( ?\" ?'))
 	 'text-open-paren)
 	((nth 3 pps)
@@ -1085,7 +1089,7 @@ Haskell: (>=>) :: Monad"
   ;; (when (member char operator-known-operators)
 
   (cond (notfirst
-	 (operator--join-operators-maybe char))
+	 (unless nojoin (operator--join-operators-maybe char)))
 	((not notfirst)
 	 (or (unless nojoin (operator--join-operators-maybe char))
 	     (save-excursion (goto-char (1- orig))
@@ -1158,6 +1162,8 @@ Haskell: (>=>) :: Monad"
       (`sql-mode
        (operator--do-sql-mode char orig pps list-start-char notfirst notsecond))
       (`text-mode
+       (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
+      (`english-mode
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
       ((pred derived-mode-p)
        (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
