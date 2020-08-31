@@ -981,7 +981,8 @@ Haskell: (>=>) :: Monad"
 	((char-equal ?, char)
 	 'org-list-separator)
 	((member char (list ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
-	 'org-punct-class)
+	 (unless (and (eq char ?-) (looking-back " .-" (line-beginning-position) ))
+	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]")
 	 'org-in-word)
 	((char-equal ?* char)
@@ -1078,6 +1079,8 @@ Haskell: (>=>) :: Monad"
 	   ;; print("Fehler: Richig war " ++
 	   (eq (char-before) char)
 	   )
+       ;; ∅ -> 
+       (not (member (char-before (- (point) 1)) (list ?∅)))
        (or (member (char-before (- (point) 2)) operator-known-operators)
 	   (member (char-before (- (point) 1)) operator-known-operators))
        (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
@@ -1114,6 +1117,9 @@ Haskell: (>=>) :: Monad"
 		 'email-adress)
 		((and (char-equal ?= char) (member (char-before (1- (point))) operator-mode-combined-assigment-chars))
 		 'operator-mode-combined-assigment)
+		;; ((and (char-equal ?- char) (save-excursion (backward-char) (not (looking-back "\\\_<." (line-beginning-position) ))))
+		;; 'generic-on-symbols)
+
 		;; fails in haskell -
 		;; data Contact =  Contact { name :: String
                 ;;                         ,"
@@ -1128,6 +1134,7 @@ Haskell: (>=>) :: Monad"
 	   ;; ((op-in-string-or-comment-p pps)
 	   ;;  'in-string-or-comment-p)
 	   )))
+    ;; generic settings above
     (pcase major-mode
       (`agda2-mode
        (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
