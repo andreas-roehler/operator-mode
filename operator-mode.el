@@ -746,7 +746,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?. ?- ?:))
+	((member char (list ?. ?- ?: ?$))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1079,8 +1079,9 @@ Haskell: (>=>) :: Monad"
 	   ;; print("Fehler: Richig war " ++
 	   (eq (char-before) char)
 	   )
-       ;; ∅ -> 
-       (not (member (char-before (- (point) 1)) (list ?∅)))
+       ;; ∅ ->
+       ;; _+_ = ;; agda
+       (not (member (char-before (- (point) 1)) (list ?∅ ?_)))
        (or (member (char-before (- (point) 2)) operator-known-operators)
 	   (member (char-before (- (point) 1)) operator-known-operators))
        (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
