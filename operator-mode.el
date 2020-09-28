@@ -1157,7 +1157,7 @@ Haskell: (>=>) :: Monad"
        (operator--do-org-mode char orig pps list-start-char notfirst notsecond))
       (`python-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
-      (`py-python-shell-mode
+      (`py-shell-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`py-ipython-shell-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
