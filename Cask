@@ -22,7 +22,7 @@
  ;; (depends-on "cl-lib")
  ;; (depends-on "cl-extra")
  (depends-on "python-mode")
- (depends-on "haskell-mode")
+;;  (depends-on "haskell-mode")
  ;; (depends-on "julia-mode")
  ;; (depends-on "php-mode")
  )
