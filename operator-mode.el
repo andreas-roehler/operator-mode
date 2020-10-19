@@ -372,10 +372,10 @@ Haskell: (>=>) :: Monad"
 	 'haskell-import)
 	((looking-back "<\\*" (line-beginning-position))
 	 'haskell->)
-	;; ((and (nth 1 pps)
-	;;       (or (eq (1- (current-column)) (current-indentation))
-	;; 	  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
-	;;  'haskell-in-list-p)
+	((and (nth 1 pps)
+	      (or (eq (1- (current-column)) (current-indentation))
+		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	 'haskell-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ;; (
@@ -393,8 +393,8 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--haskell-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
-    (operator--final char orig notfirst notsecond nojoin)))
+		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))))))
+    (operator--final char orig notfirst notsecond nojoin (eq notsecond 'haskell-in-list-p))))
 
 (defun operator--idris-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
@@ -1089,7 +1089,7 @@ Haskell: (>=>) :: Monad"
 		       (and (eq (char-before) 32)(delete-char -1))
 		       t)))
 
-(defun operator--final (char orig &optional notfirst notsecond nojoin)
+(defun operator--final (char orig &optional notfirst notsecond nojoin char-forward)
   ;; (when (member char operator-known-operators)
 
   (cond (notfirst
@@ -1102,7 +1102,8 @@ Haskell: (>=>) :: Monad"
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
-      (just-one-space))))
+      (just-one-space)))
+  (when char-forward (forward-char 1)))
 
 (defvar operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/)
   "Chars used in combined assigments like +=")
