@@ -459,9 +459,10 @@ Haskell: (>=>) :: Monad"
 		'haskell-and-nth-1-pps-nth-3-pps)
 	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
 	       ;; 	'haskell-in-list-p)
-	       ((and (nth 1 pps)
-		     (or (eq (1- (current-column)) (current-indentation))
-			 (eq (- (point) 2)(nth 1 pps))))
+	       ((and 
+		(nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
+		;; (or (eq (1- (current-column)) (current-indentation))
+		;; 	 (eq (- (point) 2)(nth 1 pps)))
 		'haskell-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
@@ -511,7 +512,7 @@ Haskell: (>=>) :: Monad"
 	      (or (eq (1- (current-column)) (current-indentation))
 		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 (save-excursion (goto-char (nth 1 pps))
-			 (setq haskell-in-list-p (operator--return-complement-char-maybe (char-after)))))	 
+			 (setq haskell-in-list-p (operator--return-complement-char-maybe (char-after)))))
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ;; (
@@ -530,7 +531,7 @@ Haskell: (>=>) :: Monad"
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))))))
-    (operator--final char orig notfirst notsecond nojoin haskell-in-list-p)))
+    (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--idris-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
@@ -882,7 +883,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?. ?- ?: ?$))
+	((member char (list ?. ?- ?: ?$ ?~))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
