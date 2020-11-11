@@ -1150,7 +1150,7 @@ Haskell: (>=>) :: Monad"
 	 'org-in-string)
 	((member char (list ?\[ ?\] ?\( ?\) ?\/))
 	 'org-listing)
-	((member char (list ?@))
+	((member char (list ?@ ?- ?: ?.))
 	 'org-punct-class)
 	;; index-p
 	((and
