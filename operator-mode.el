@@ -459,7 +459,7 @@ Haskell: (>=>) :: Monad"
 		'haskell-and-nth-1-pps-nth-3-pps)
 	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
 	       ;; 	'haskell-in-list-p)
-	       ((and 
+	       ((and
 		(nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
 		;; (or (eq (1- (current-column)) (current-indentation))
 		;; 	 (eq (- (point) 2)(nth 1 pps)))
@@ -831,6 +831,8 @@ Haskell: (>=>) :: Monad"
 	 'shell-notfirst)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
+	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'rm-attention)
 	((and (or (eq 'shell-interactive-mode major-mode)(eq 'shell-mode major-mode))
 	      (save-excursion (backward-char 1)
 			      (or
@@ -885,6 +887,8 @@ Haskell: (>=>) :: Monad"
 	 'shell-notsecond)
 	((member char (list ?. ?- ?: ?$ ?~))
 		'shell-punkt)
+	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'rm-attention)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
@@ -924,17 +928,7 @@ Haskell: (>=>) :: Monad"
   "Haskell"
   (let* ((notfirst (operator--shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
-	 (nojoin t
-	  ;; (cond ((member char (list ?, ?\[ ?\] ?\))))
-	  ;; 	((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) )))
-	  ;; 	((and (eq 'shell-mode major-mode))
-	  ;; 	 (save-excursion (progn (backward-char 1)
-	  ;; 			 (skip-chars-backward " \t\r\n\f")
-	  ;; 			 (eq (char-before) ?>)
-	  ;; 			 ;; (looking-back shell-prompt-pattern (line-beginning-position))
-	  ;; 			 ;; (looking-back ">[	 ]*" (line-beginning-position))
-	  ;; 			 ))))
-	  ))
+	 (nojoin t))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
