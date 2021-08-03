@@ -1117,7 +1117,7 @@ Haskell: (>=>) :: Monad"
 	 'org-in-list-p)
 	((char-equal ?, char)
 	 'org-list-separator)
-	((member char (list ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
+	((member char (list ?$ ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
 	 (unless (and (eq char ?-) (looking-back " .-" (line-beginning-position) ))
 	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]")
@@ -1150,7 +1150,7 @@ Haskell: (>=>) :: Monad"
 	 'org-in-string)
 	((member char (list ?\[ ?\] ?\( ?\) ?\/))
 	 'org-listing)
-	((member char (list ?@ ?- ?: ?.))
+	((member char (list ?$ ?@ ?- ?: ?.))
 	 'org-punct-class)
 	;; index-p
 	((and
