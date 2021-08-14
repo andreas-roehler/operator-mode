@@ -934,7 +934,7 @@ Haskell: (>=>) :: Monad"
   "Haskell"
   (let* ((notfirst (operator--shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
-	 (nojoin t))
+	 (nojoin (unless (member char (list ?& ?|)) t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
