@@ -431,6 +431,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
+	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
+	 'haskell-font-lock-keyword)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((and (eq 'haskell-interactive-mode major-mode)
@@ -460,7 +462,7 @@ Haskell: (>=>) :: Monad"
 	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
 	       ;; 	'haskell-in-list-p)
 	       ((and
-		(nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
+		 (nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
 		;; (or (eq (1- (current-column)) (current-indentation))
 		;; 	 (eq (- (point) 2)(nth 1 pps)))
 		'haskell-in-list-p)
@@ -934,7 +936,7 @@ Haskell: (>=>) :: Monad"
   "Haskell"
   (let* ((notfirst (operator--shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (member char (list ?& ?|)) t)))
+	 (nojoin (unless (member char (list ?& ?| ?=)) t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
