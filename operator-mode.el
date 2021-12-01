@@ -241,6 +241,121 @@ Haskell: (>=>) :: Monad"
        ;; (char-equal (char-before (- (point) 1)) ?\))
        (not (char-equal (char-before (- (point) 1)) 32))))
 
+(defun operator--clojure-notfirst (char pps list-start-char notfirst)
+  (cond (notfirst
+	 'clojure-notfirst)
+	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) clojure-font-lock-keywords)
+	 'clojure-font-lock-keyword)
+	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((and (eq 'clojure-interactive-mode major-mode)
+	      (save-excursion (backward-char 1)
+			      (looking-back
+			       (concat clojure-interactive-prompt "*")
+			       ;; clojure-interactive-prompt
+			       (line-beginning-position))))
+	 'clojure-clojure-interactive-prompt)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 ;; (unless (eq list-start-char ?{)
+	 (cond ((char-equal ?, char)
+		'clojure-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?. char))
+		'clojure-construct-for-export)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'clojure-operator--in-list-continue)
+	       ((char-equal ?* char)
+		'clojure-char-equal-\*-in-list-p)
+	       ((member char (list ?\( ?\) ?\]))
+		'clojure-listing)
+	       ((nth 3 pps)
+		'clojure-and-nth-1-pps-nth-3-pps)
+	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
+	       ;; 	'clojure-in-list-p)
+	       ((and
+		 (nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
+		'clojure-in-list-p)
+	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+		'pattern-match-on-list)
+	       ))
+	;; ((member char (list ?\; ?,)))
+	((or (member (char-before (1- (point))) operator-known-operators)
+	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	 'clojure-join-known-operators)
+	((looking-back "<\\*" (line-beginning-position))
+	 'clojure-<)
+	((looking-back "^-" (line-beginning-position))
+	 'clojure-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'clojure-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+
+(defun operator--clojure-notsecond (char pps list-start-char notsecond)
+  (cond (notsecond
+	 'clojure-notsecond)
+	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	 'clojure-list-delimter)
+	((and (eq 'clojure-interactive-mode major-mode)
+	      (save-excursion (backward-char)
+			      (looking-back
+			       (concat clojure-interactive-prompt "*")
+			       ;; clojure-interactive-prompt
+			       (line-beginning-position))))
+	 'clojure-clojure-interactive-prompt)
+	((nth 3 pps)
+	 'clojure-in-string)
+	;; index-p
+	((and
+	  ;; "even <$> (2,2)"
+	  (not (char-equal char ?,))
+	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'clojure-comment-start)
+	((looking-back "import +[^ ]+." (line-beginning-position))
+	 'clojure-import)
+	((looking-back "<\\*" (line-beginning-position))
+	 'clojure->)
+	((and
+		 (nth 1 pps)
+		 (not (member char (list ?, ?\[ ?\] ?\))))
+		 ;; ->
+		 (not (looking-back "-." (line-beginning-position))))
+		'clojure-in-list-p)
+	;; ((and (nth 1 pps)
+	;;       (or (eq (1- (current-column)) (current-indentation))
+	;; 	  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	;;  (save-excursion (goto-char (nth 1 pps))
+	;; 		 (setq clojure-in-list-p (operator--return-complement-char-maybe (char-after)))))
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 (cond ;; (
+	       ;; 	(char-equal ?, char)
+	       ;; 	'clojure-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'clojure-construct-for-export)
+	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+		'pattern-match-on-list)))))
+
+(defun operator--do-clojure-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Haskell"
+  (let* ((notfirst (operator--clojure-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--clojure-notsecond char pps list-start-char notsecond))
+	 (nojoin
+	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
+		((and (member char (list ?= ))
+		     (save-excursion (backward-char)
+				     (looking-back "_ +" (line-beginning-position)))))
+		((save-excursion (backward-char)
+				 (looking-back ") +" (line-beginning-position)))))))
+    (operator--final char orig notfirst notsecond nojoin)))
+
 (defun operator--python-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
   (let* ((in-list-p (nth 1 pps))
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
@@ -463,8 +578,6 @@ Haskell: (>=>) :: Monad"
 	       ;; 	'haskell-in-list-p)
 	       ((and
 		 (nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
-		;; (or (eq (1- (current-column)) (current-indentation))
-		;; 	 (eq (- (point) 2)(nth 1 pps)))
 		'haskell-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
@@ -510,11 +623,17 @@ Haskell: (>=>) :: Monad"
 	 'haskell-import)
 	((looking-back "<\\*" (line-beginning-position))
 	 'haskell->)
-	((and (nth 1 pps)
-	      (or (eq (1- (current-column)) (current-indentation))
-		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
-	 (save-excursion (goto-char (nth 1 pps))
-			 (setq haskell-in-list-p (operator--return-complement-char-maybe (char-after)))))
+	((and
+		 (nth 1 pps)
+		 (not (member char (list ?, ?\[ ?\] ?\))))
+		 ;; ->
+		 (not (looking-back "-." (line-beginning-position))))
+		'haskell-in-list-p)
+	;; ((and (nth 1 pps)
+	;;       (or (eq (1- (current-column)) (current-indentation))
+	;; 	  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	;;  (save-excursion (goto-char (nth 1 pps))
+	;; 		 (setq haskell-in-list-p (operator--return-complement-char-maybe (char-after)))))
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ;; (
@@ -919,7 +1038,9 @@ Haskell: (>=>) :: Monad"
 	((looking-back "<\\*" (line-beginning-position))
 	 'shell->)
 	((and (nth 1 pps)
-	      (or (eq (1- (current-column)) (current-indentation))
+	      (or
+	       (member char (list ?@))
+	       (eq (1- (current-column)) (current-indentation))
 		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 'shell-in-list-p)
 	(list-start-char
