@@ -1,0 +1,12 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    paths-ignore:
+    - '**.md'
+
+jobs:
+  build:
+    - name: Check startup
+      run: ./../test-startup.sh
