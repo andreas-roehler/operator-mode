@@ -6,17 +6,7 @@ steps: &steps
     - run:
         name: ERT tests
         command: |
-          emacs -Q --batch -l .circleci/provide.el --funcall make-ert
-
-    - run:
-        name: Compile
-        command: |
-          emacs -Q --batch -l .circleci/provide.el --funcall make-compile operator-mode.el
-
-    - run:
-        name: Lint
-        command: |
-          emacs -Q --batch -l .circleci/provide.el --funcall make-lint operator-mode.el
+          test-startup.sh
 
 jobs:
   emacs-27:
