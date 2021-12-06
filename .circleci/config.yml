@@ -6,7 +6,7 @@ steps: &steps
     - run:
         name: ERT tests
         command: |
-          ./test-startup.sh
+          test-startup.sh
 
 jobs:
   emacs-27:
