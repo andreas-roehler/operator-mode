@@ -6,7 +6,18 @@ steps: &steps
     - run:
         name: ERT tests
         command: |
-          test-startup.sh
+          emacs -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(setq python-indent-offset 4)" \
+--eval "(setq python-indent-guess-indent-offset nil)" \
+--eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+-load $FILE1 \
+\
+-load $TEST1 \
+-load $TEST3 \
+-load $TEST4 \
+-f ert-run-tests-batch-and-exit
 
 jobs:
   emacs-27:
