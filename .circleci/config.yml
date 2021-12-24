@@ -6,13 +6,6 @@ jobs:
       - image: silex/emacs:27.2
     working_directory: /operator-mode
     steps:
-      - run: apt update && apt install -y git ssh make
-      - checkout
-      - run:
-          name: Install packages
-          command: |
-            emacs -Q --batch -l .circleci/make.el --funcall make-install-packages
-
       - run:
           name: ERT tests
           command: |
