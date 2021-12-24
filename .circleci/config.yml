@@ -9,4 +9,4 @@ jobs:
       - run:
           name: ERT tests
           command: |
-            emacs -Q --batch --eval \"(message (emacs-version))\"
+            emacs -Q --batch --eval "(message (emacs-version))"
