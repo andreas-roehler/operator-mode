@@ -1,26 +1,19 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine.
-# See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-# Define a job to be invoked later in a workflow.
-# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+  build:
     docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+      - image: silex/emacs:27.1
+    working_directory: /operator-mode
     steps:
+      - run: apt update && apt install -y git ssh make
       - checkout
       - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
+          name: Install packages
+          command: |
+            emacs -Q --batch -l .circleci/make.el --funcall make-install-packages
 
-# Invoke jobs via workflows
-# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
-workflows:
-  say-hello-workflow:
-    jobs:
-      - say-hello
+      - run:
+          name: ERT tests
+          command: |
+            emacs -Q --batch --eval \"(message (emacs-version))\"
