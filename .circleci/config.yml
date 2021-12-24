@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: silex/emacs:27.1
+      - image: silex/emacs:27.2
     working_directory: /operator-mode
     steps:
       - run: apt update && apt install -y git ssh make
