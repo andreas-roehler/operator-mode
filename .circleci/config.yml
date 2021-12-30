@@ -10,4 +10,4 @@ jobs:
           command: |
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
-            --eval "(load (expand-file-name \"operator-mode.el\"  ))"
+            --eval "(load \"operator-mode.el\")"
