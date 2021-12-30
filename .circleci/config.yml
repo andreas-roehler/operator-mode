@@ -6,7 +6,6 @@ jobs:
       - image: silex/emacs:27.2
     working_directory: ~/
     steps:
-      - checkout
       - run:
           name: Umgebung
           command: |
