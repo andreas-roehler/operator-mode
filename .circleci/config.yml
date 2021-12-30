@@ -3,10 +3,11 @@ version: 2.1
 jobs:
   opemode:
     docker:
-      - image: alpine:3.7
-      # - image: silex/emacs:27.2
+      # - image: alpine:3.7
+      - image: silex/emacs:27.2
     working_directory: ~/
     steps:
+      run: apt update && apt install -y git ssh
       - checkout
       - run:
           name: Umgebung
