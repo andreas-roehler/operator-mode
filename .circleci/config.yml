@@ -4,7 +4,7 @@ jobs:
   build:
     docker:
       - image: silex/emacs:27.2
-    working_directory: 
+    working_directory: /operator-mode
     steps:
       - run:
           name: ERT tests
