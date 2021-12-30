@@ -25,7 +25,7 @@
 ;;; Code:
 
 (require 'ert-x)
-(require 'python)
+;; (require 'python)
 (require 'operator-mode)
 
 (defmacro operator-test (contents mode debug &rest body)

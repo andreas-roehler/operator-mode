@@ -9,4 +9,6 @@ jobs:
       - run:
           name: ERT tests
           command: |
-            emacs -Q --batch --eval "(message (emacs-version))" && bash /operator-mode/test-startup.sh
+            emacs -Q --batch \
+	    --eval "(message (emacs-version))" \
+	    --eval "(load (expand-file-name \"operator-mode.el\"  ))"
