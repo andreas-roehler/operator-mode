@@ -7,7 +7,7 @@ jobs:
       - image: silex/emacs:27.2
     working_directory: ~/
     steps:
-      run: apt update && apt install -y git ssh
+      - run: apt update && apt install -y git ssh
       - checkout
       - run:
           name: Umgebung
