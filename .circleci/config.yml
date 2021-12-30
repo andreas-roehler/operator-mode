@@ -10,7 +10,6 @@ jobs:
           name: Umgebung
           command: |
             echo "Gebe Umgebung aus"
-    steps:
       - run:
           name: ERT tests
           command: |
