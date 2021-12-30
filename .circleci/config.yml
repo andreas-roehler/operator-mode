@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   opemode:
     docker:
-      - image: alpine:3.7
+      - image: ubuntu
       # - image: silex/emacs:27.2
     working_directory: ~/
     steps:
