@@ -3,7 +3,7 @@ version: 2.1
 jobs:
   opemode:
     docker:
-      - image: ubuntu
+      - image: ubuntu-2004:202010-01
       # - image: silex/emacs:27.2
     working_directory: ~/
     steps:
