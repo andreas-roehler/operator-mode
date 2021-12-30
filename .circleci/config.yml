@@ -9,8 +9,8 @@ jobs:
       - run:
           name: Umgebung
           command: |
-            echo "Gebe Umgebung aus"
-            echo "ls -lart"
+            echo "Gebe Umgebung aus" 
+            ls -lart
       - run:
           name: ERT tests
           command: |
