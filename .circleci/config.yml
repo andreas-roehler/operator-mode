@@ -10,4 +10,4 @@ jobs:
           command: |
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
-            --eval "(load \"operator-mode.el\")"
+            --eval "(message (getenv \"PWD\"))"
