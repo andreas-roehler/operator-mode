@@ -12,3 +12,4 @@ jobs:
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))"
+            --eval "(load (expand-file-name \"operator-mode.el\"))"
