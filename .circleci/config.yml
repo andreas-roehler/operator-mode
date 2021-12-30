@@ -1,11 +1,12 @@
 version: 2.1
 
 jobs:
-  build:
+  opemode:
     docker:
       - image: silex/emacs:27.2
     working_directory: ~/
     steps:
+      - checkout
       - run:
           name: Umgebung
           command: |
@@ -18,3 +19,8 @@ jobs:
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))"
             # --eval "(load (expand-file-name \"/operator-mode/operator-mode.el\"))"
+
+workflows:
+  opemode-workflow:
+    jobs:
+      - opemode  
