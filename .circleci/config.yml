@@ -20,7 +20,7 @@ jobs:
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))"
-            # --eval "(load (expand-file-name \"/operator-mode/operator-mode.el\"))"
+            --eval "(load (expand-file-name \"/operator-mode/operator-mode.el\"))"
 
 workflows:
   opemode-workflow:
