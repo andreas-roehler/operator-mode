@@ -26,7 +26,9 @@ jobs:
             --eval "(setq python-indent-guess-indent-offset nil)" \
             --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
             --eval "(load (expand-file-name \"test/operator-mode-test.el\"))" \
-            --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))"
+            --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
 
 
 workflows:
