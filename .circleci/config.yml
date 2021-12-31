@@ -5,10 +5,10 @@ jobs:
     docker:
       # - image: ubuntu-2004:202010-01
       - image: silex/emacs:27.2
-    working_directory: ~/
+    working_directory: ~/operator-mode
     steps:
       - run: apt update && apt install -y git ssh emacs
-        #  - checkout
+        - checkout
       - run:
           name: Umgebung
           command: |
