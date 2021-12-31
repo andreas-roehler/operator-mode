@@ -8,7 +8,7 @@ jobs:
     working_directory: ~/operator-mode
     steps:
       - run: apt update && apt install -y git ssh emacs
-        - checkout
+      - checkout
       - run:
           name: Umgebung
           command: |
