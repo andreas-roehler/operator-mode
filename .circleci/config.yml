@@ -18,7 +18,7 @@ jobs:
       - checkout
       - run:
           name: Umgebung
-          aktion
+      - aktion
       - run:
           name: ERT tests
           command: |
