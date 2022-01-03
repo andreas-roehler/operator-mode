@@ -18,7 +18,7 @@ jobs:
       - checkout
       - run:
           name: Umgebung
-          command:|
+          command:
             echo "Gebe Umgebung aus" 
             ls -lart
 
