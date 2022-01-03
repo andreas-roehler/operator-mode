@@ -18,7 +18,7 @@ jobs:
       - run:
           name: Umgebung
           command: |
-            aktion: 
+            aktion
       - run:
           name: ERT tests
           command: |
