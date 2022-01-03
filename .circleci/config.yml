@@ -4,8 +4,8 @@ version: 2.1
   #   - Tipi di Evento
 
 aktion:
-  echo "Gebe Umgebung aus" 
-  ls -lart
+  eins: echo "Gebe Umgebung aus" 
+  zwei: ls -lart
 
 jobs:
   opemode:
@@ -19,9 +19,8 @@ jobs:
       - run:
           name: Umgebung
           command:
-            echo "Gebe Umgebung aus" 
-            ls -lart
-
+            ${{aktion.eins}}
+            ${{aktion.zwei}} 
       - run:
           name: ERT tests
           command: |
@@ -37,7 +36,6 @@ jobs:
             --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
             --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
             --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
-
 
 workflows:
   opemode-workflow:
