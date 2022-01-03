@@ -3,7 +3,7 @@ version: 2.1
   #   - Introduzione
   #   - Tipi di Evento
 
-'aktion':
+aktion:
   echo "Gebe Umgebung aus" 
             ls -lart
 jobs:
