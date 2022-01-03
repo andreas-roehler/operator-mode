@@ -1,5 +1,11 @@
 version: 2.1
+  # 'Capitolo 1':
+  #   - Introduzione
+  #   - Tipi di Evento
 
+'aktion':
+  echo "Gebe Umgebung aus" 
+            ls -lart
 jobs:
   opemode:
     docker:
@@ -12,8 +18,7 @@ jobs:
       - run:
           name: Umgebung
           command: |
-            echo "Gebe Umgebung aus" 
-            ls -lart
+            aktion: 
       - run:
           name: ERT tests
           command: |
