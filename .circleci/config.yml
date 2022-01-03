@@ -4,8 +4,9 @@ version: 2.1
   #   - Tipi di Evento
 
 aktion:
-  echo "Gebe Umgebung aus" 
-            ls -lart
+  command: 
+    echo "Gebe Umgebung aus" 
+    ls -lart
 jobs:
   opemode:
     docker:
@@ -17,8 +18,7 @@ jobs:
       - checkout
       - run:
           name: Umgebung
-          command: |
-            aktion
+          aktion
       - run:
           name: ERT tests
           command: |
