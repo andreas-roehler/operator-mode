@@ -1,2 +1,42 @@
-aktion: "echo \"Gebe Umgebung aus\"; ls -lart"
 version: 2.1
+
+aktion:
+  echo "Gebe Umgebung aus" 
+  ls -lart
+
+jobs:
+  opemode:
+    docker:
+      # - image: ubuntu-2004:202010-01
+      - image: silex/emacs:27.2
+    working_directory: ~/operator-mode
+    steps:
+      - run: apt update && apt install -y git ssh emacs
+      - checkout
+      - run:
+          name: Umgebung
+          command:
+            echo "Gebe Umgebung aus" 
+            ls -lart
+
+      - run:
+          name: ERT tests
+          command: |
+            emacs -Q --batch \
+            --eval "(message (emacs-version))" \
+            --eval "(message (getenv \"PWD\"))" \
+            --eval "(load (expand-file-name \"operator-mode.el\"))" \
+            --eval "(setq operator-mode-debug nil)" \
+            --eval "(setq python-indent-offset 4)" \
+            --eval "(setq python-indent-guess-indent-offset nil)" \
+            --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+            --eval "(load (expand-file-name \"test/operator-mode-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
+
+
+workflows:
+  opemode-workflow:
+    jobs:
+      - opemode  
