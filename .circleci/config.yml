@@ -21,7 +21,7 @@ jobs:
 
       - run:
           name: ERT tests
-          command: |
+          ausf: |
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))" \
