@@ -1,8 +1,8 @@
 version: 2.1
 
-# aktion:
-#   echo "Gebe Umgebung aus" 
-#   ls -lart
+aktion:
+  echo "Gebe Umgebung aus" 
+  ls -lart
 
 jobs:
   opemode:
@@ -21,7 +21,7 @@ jobs:
 
       - run:
           name: ERT tests
-          ausf: |
+          command: |
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))" \
@@ -34,7 +34,6 @@ jobs:
             --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
             --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
             --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
-
 
 workflows:
   opemode-workflow:
