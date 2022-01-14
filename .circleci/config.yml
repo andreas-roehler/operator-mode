@@ -1,9 +1,5 @@
 version: 2.1
 
-aktion:
-  echo "Gebe Umgebung aus" 
-  ls -lart
-
 jobs:
   opemode:
     docker:
