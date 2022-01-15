@@ -1,6 +1,6 @@
 version: 2.1
 
-command: |
+command: &ausfuehren |
   emacs -Q --batch \
   --eval "(message (emacs-version))" \
   --eval "(message (getenv \"PWD\"))" \
@@ -25,7 +25,7 @@ jobs:
       - checkout
       - run:
           name: Umgebung
-          command
+          command: *ausfuehren
             echo "Gebe Umgebung aus" 
             ls -lart
 
