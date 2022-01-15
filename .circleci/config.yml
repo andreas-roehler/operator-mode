@@ -11,8 +11,8 @@ jobs:
       - checkout
       - run:
           name: Umgebung
-          run: echo "Gebe Umgebung aus" 
-               ls -lart
+          echo "Gebe Umgebung aus"
+          ls -lart
 
       - run:
           name: ERT tests
