@@ -1,19 +1,5 @@
 version: 2.1
 
-command: &ausfuehren |
-  emacs -Q --batch \
-  --eval "(message (emacs-version))" \
-  --eval "(message (getenv \"PWD\"))" \
-  --eval "(load (expand-file-name \"operator-mode.el\"))" \
-  --eval "(setq operator-mode-debug nil)" \
-  --eval "(setq python-indent-offset 4)" \
-  --eval "(setq python-indent-guess-indent-offset nil)" \
-  --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
-  --eval "(load (expand-file-name \"test/operator-mode-test.el\"))" \
-  --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
-  --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
-  --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
-
 jobs:
   opemode:
     docker:
@@ -25,13 +11,25 @@ jobs:
       - checkout
       - run:
           name: Umgebung
-          command: *ausfuehren
-          echo "Gebe Umgebung aus" 
-          ls -lart
+          command:
+            echo "Gebe Umgebung aus" 
+            ls -lart
 
       - run:
           name: ERT tests
-          - command
+          command: |
+            emacs -Q --batch \
+            --eval "(message (emacs-version))" \
+            --eval "(message (getenv \"PWD\"))" \
+            --eval "(load (expand-file-name \"operator-mode.el\"))" \
+            --eval "(setq operator-mode-debug nil)" \
+            --eval "(setq python-indent-offset 4)" \
+            --eval "(setq python-indent-guess-indent-offset nil)" \
+            --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+            --eval "(load (expand-file-name \"test/operator-mode-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
+            --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
 
 workflows:
   opemode-workflow:
