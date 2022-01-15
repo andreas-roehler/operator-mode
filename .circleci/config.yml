@@ -1,4 +1,11 @@
 version: 2.1
+  # 'Capitolo 1':
+  #   - Introduzione
+  #   - Tipi di Evento
+
+aktion:
+  echo "Gebe Umgebung aus" 
+  ls -lart
 
 jobs:
   opemode:
@@ -30,6 +37,7 @@ jobs:
             --eval "(load (expand-file-name \"test/operator-python-mode-test.el\"))" \
             --eval "(load (expand-file-name \"test/operator-other-test.el\"))" \
             --eval "(load (expand-file-name \"test/operator-haskell-mode-test.el\"))"
+
 
 workflows:
   opemode-workflow:
