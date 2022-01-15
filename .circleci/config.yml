@@ -26,8 +26,8 @@ jobs:
       - run:
           name: Umgebung
           command: *ausfuehren
-            echo "Gebe Umgebung aus" 
-            ls -lart
+          echo "Gebe Umgebung aus" 
+          ls -lart
 
       - run:
           name: ERT tests
