@@ -38,4 +38,4 @@ jobs:
 workflows:
   opemode-workflow:
     jobs:
-      - *id001
+      *id001
