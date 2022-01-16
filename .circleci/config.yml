@@ -1,7 +1,4 @@
 version: 2.1
-  # 'Capitolo 1':
-  #   - Introduzione
-  #   - Tipi di Evento
 
 aktion:
   echo "Gebe Umgebung aus" 
