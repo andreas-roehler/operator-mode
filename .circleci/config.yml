@@ -5,7 +5,7 @@ aktion:
   ls -lart
 
 jobs:
-  opemode: &id001
+  opemode:
     docker:
       # - image: ubuntu-2004:202010-01
       - image: silex/emacs:27.2
@@ -38,4 +38,4 @@ jobs:
 workflows:
   opemode-workflow:
     jobs:
-      *id001
+      - opemode  
