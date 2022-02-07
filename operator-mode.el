@@ -954,7 +954,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'shell-notfirst)
-	((member char (list ?. ?- ?: ?$ ?~))
+	((member char (list ?. ?- ?: ?$ ?~ ?_))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1012,7 +1012,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?. ?- ?: ?$ ?~))
+	((member char (list ?. ?- ?: ?$ ?~ ?_))
 		'shell-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
