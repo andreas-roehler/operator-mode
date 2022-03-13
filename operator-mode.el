@@ -576,13 +576,13 @@ Haskell: (>=>) :: Monad"
 		'haskell-and-nth-1-pps-nth-3-pps)
 	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
 	       ;; 	'haskell-in-list-p)
-	       ((and
-		 (nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
-		'haskell-in-list-p)
+	       ;; ((and
+	       ;; 	 (nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
+	       ;; 	'haskell-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
 	       ))
-	;; ((member char (list ?\; ?,)))
+	((member char (list ?\; ?,)))
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'haskell-join-known-operators)
@@ -954,7 +954,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'shell-notfirst)
-	((member char (list ?. ?- ?: ?$ ?~ ?_))
+	;; EMACS=emacs
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?&))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1012,7 +1013,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?. ?- ?: ?$ ?~ ?_))
+	;; EMACS=emacs 
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?&))
 		'shell-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
