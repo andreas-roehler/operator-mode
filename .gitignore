@@ -1,3 +1,4 @@
+.gitignore
 # Compiled
 *.elc
 
@@ -16,3 +17,8 @@ commit.txt
 test/RCS/*.el,v
 test/RCS/operator-test.el,v
 test/ehs.hs
+*.txt
+*.log
+ablage/
+ein.sh
+*.hs

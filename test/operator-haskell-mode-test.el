@@ -1,6 +1,6 @@
 ;;; operator-haskell-mode-test.el --- haskell-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2020  Andreas Röhler
+;; Copyright (C) 2019-2022  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
@@ -26,6 +26,9 @@
 
 (require 'ert-x)
 (require 'operator-mode)
+
+(straight-use-package 'haskell-mode nil nil)
+(require 'haskell)
 
 (ert-deftest operator-haskell-test-WG0LXr ()
   (operator-test
@@ -81,7 +84,7 @@
     operator-mode-debug
     (operator-do)
     (should-not (eq (char-before) 32))
-    (should (looking-back "(>" (line-beginning-position)))))
+    (should (looking-back "( >" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-test-Vg8syM ()
   (operator-test
@@ -127,7 +130,9 @@
     'haskell-mode
     operator-mode-debug
     (operator-do)
-    (should (eq (char-before) 32))))
+    (should (eq (char-before 8) ?$))
+    (should (eq (char-before) 32))
+    ))
 
 (ert-deftest operator-haskell-test-qQJe8A ()
   (operator-test
@@ -136,7 +141,9 @@
     'haskell-mode
     operator-mode-debug
     (operator-do)
-    (should (char-equal (char-before) ?,))))
+    (should-not (char-equal (char-before) ?,))
+    (should (char-equal (char-before (1- (point))) ?,))
+    ))
 
 (ert-deftest operator-haskell-test-VbyRmN ()
   (operator-test
@@ -155,8 +162,8 @@
    'haskell-mode
    operator-mode-debug
    (operator-do)
-   (should (looking-back "(september < " (line-beginning-position)))
-   (should (char-equal (char-before) 32))))
+   (should (looking-back "(september <" (line-beginning-position)))
+   (should (char-equal (char-before) ?<))))
 
 (ert-deftest operator-haskell-test-AzSYl6 ()
   (operator-test
@@ -165,8 +172,8 @@
    'haskell-mode
    operator-mode-debug
    (operator-do)
-   (should (looking-back "(september <| " (line-beginning-position)))
-   (should (char-equal (char-before) 32))))
+   (should (looking-back "(september <|" (line-beginning-position)))
+   (should (char-equal (char-before) ?|))))
 
 (ert-deftest operator-haskell-test-O0DZ72 ()
   (operator-test
@@ -183,14 +190,19 @@
     'haskell-mode
     operator-mode-debug
     (operator-do)
-    (should (looking-back "[2,3] \\+\\+"))))
+    (should (eq (char-after 9) 32))
+    (should (eq (char-after 8) ?+))
+    (should (eq (char-after 7) ?+))
+    (should (eq (char-after 6) 32))))
 
 (ert-deftest operator-haskell-test-y0Tbwj ()
   (operator-test
       "[2,3] ++["
     'haskell-mode
     operator-mode-debug
+    (backward-char)
     (operator-do)
+    (forward-char 1)
     (should (looking-back " \\["))
     (should (eq (char-before) ?\[))))
 
@@ -210,7 +222,7 @@
     'haskell-mode
     operator-mode-debug
     (operator-do)
-    (should (looking-back "maior (x"))))
+    (should (looking-back "maior (x:"))))
 
 (ert-deftest operator-haskell-test-tBhN5B ()
   (operator-test
@@ -309,7 +321,11 @@
     'haskell-mode
     operator-mode-debug
     (operator-do)
-    (should (looking-back " ++ " (line-beginning-position)))))
+    (should (eq (char-after 10) 32))
+    (should (eq (char-after 9) ?+))
+    (should (eq (char-after 8) ?+))
+    (should (eq (char-after 7) 32))
+    ))
 
 (ert-deftest operator-haskell-after-comment-first-char-test-IAAa4J ()
   (operator-test
@@ -334,12 +350,12 @@
 (ert-deftest operator-haskell-colon-in-record-test-IAAa4J ()
   (operator-test
       "data Record = MRecord {
-  name : :}"
+  name : : }"
     'haskell-mode
     operator-mode-debug
-    (backward-char)
+    (backward-char 2)
     (operator-do)
-    (should (looking-back " :: " (line-beginning-position)))))
+    (should (looking-back " ::" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-colon-in-list-test-IAAa4J ()
   (operator-test
@@ -393,7 +409,7 @@ module AStack( Stack, push, pop, top, size ) where
     (search-backward ";")
     (forward-char 1)
     (operator-do)
-    (should (looking-back "f x ; " (line-beginning-position)))))
+    (should (looking-back "f x; " (line-beginning-position)))))
 
 (ert-deftest operator-haskell-pattern-match-list-test-fxnPvk ()
   (operator-test

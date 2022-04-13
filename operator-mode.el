@@ -557,6 +557,17 @@ Haskell: (>=>) :: Monad"
 			       ;; haskell-interactive-prompt
 			       (line-beginning-position))))
 	 'haskell-haskell-interactive-prompt)
+	((member char (list ?\; ?,))
+	 'separator)
+	((looking-back "<\\*" (line-beginning-position))
+	 'haskell-<)
+	((looking-back "^-" (line-beginning-position))
+	 'haskell-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'haskell-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -568,33 +579,19 @@ Haskell: (>=>) :: Monad"
 	       ((and (char-equal ?\[ list-start-char)
 		     (char-equal ?, char))
 		'haskell-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'haskell-char-equal-\*-in-list-p)
+	       ;; let x = 5 in x * x
+	       ;; ((char-equal ?* char)
+	       ;; 	'haskell-char-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'haskell-listing)
+	       ((and (nth 1 pps)(member char (list ?$)))
+		;; "pure ($ y) <*> u"
+		'in-list)
 	       ((nth 3 pps)
 		'haskell-and-nth-1-pps-nth-3-pps)
-	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
-	       ;; 	'haskell-in-list-p)
-	       ;; ((and
-	       ;; 	 (nth 1 pps)(not (member char (list ?, ?\[ ?\] ?\)))))
-	       ;; 	'haskell-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
-	       ))
-	((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
-	 'haskell-join-known-operators)
-	((looking-back "<\\*" (line-beginning-position))
-	 'haskell-<)
-	((looking-back "^-" (line-beginning-position))
-	 'haskell-comment-start)
-	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
-	((looking-back "return +[^ ]+" (line-beginning-position)))
-	((looking-back "import +[^ ]+" (line-beginning-position))
-	 'haskell-import)
-	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+	       ))))
 
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
@@ -625,16 +622,12 @@ Haskell: (>=>) :: Monad"
 	 'haskell->)
 	((and
 		 (nth 1 pps)
-		 (not (member char (list ?, ?\[ ?\] ?\))))
+		 ;; "(september <|> oktober)"
+		 (not (member char (list ?, ?\[ ?\] ?\) ?$ ?>)))
 		 ;; ->
 		 (not (looking-back "-." (line-beginning-position))))
 		'haskell-in-list-p)
-	;; ((and (nth 1 pps)
-	;;       (or (eq (1- (current-column)) (current-indentation))
-	;; 	  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
-	;;  (save-excursion (goto-char (nth 1 pps))
-	;; 		 (setq haskell-in-list-p (operator--return-complement-char-maybe (char-after)))))
-	(list-start-char
+		(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ;; (
 	       ;; 	(char-equal ?, char)
@@ -955,7 +948,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'shell-notfirst)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?&))
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1013,8 +1006,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	;; EMACS=emacs 
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?&))
+	;; EMACS=emacs
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
 		'shell-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
@@ -1372,7 +1365,11 @@ Haskell: (>=>) :: Monad"
 ;; (setq operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/))
 
 (defun operator--do-intern (char orig)
-  (let* ((pps (parse-partial-sexp (point-min) (point)))
+  (let* ((min (cond ((member major-mode (list  'shell-mode 'py-shell-mode 'inferior-python-mode)))
+		    ((eq major-mode 'haskell-interactive-mode)
+		     haskell-interactive-mode-prompt-start)
+		     (t (point-min))))
+	 (pps (parse-partial-sexp min (point)))
 	 (list-start-char
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))

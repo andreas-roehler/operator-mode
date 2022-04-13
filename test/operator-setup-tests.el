@@ -1,6 +1,6 @@
-;;; operator-mode-test.el --- operator-mode tests  -*- lexical-binding: t; -*-
+;;; operator-setup-tests.el --- operator-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2020 Andreas Röhler
+;; Copyright (C) 2018-2022 Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
@@ -27,6 +27,22 @@
 (require 'ert-x)
 ;; (require 'python)
 (require 'operator-mode)
+
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+      (bootstrap-version 5))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+
+;; (straight-use-package 'php-mode)
+;; (require 'php-mode)
 
 (defmacro operator-test (contents mode debug &rest body)
   "Create temp buffer inserting CONTENTS.
@@ -61,6 +77,5 @@ BODY is code to be executed within the temp buffer.  Point is
 
 ;; (ert-simulate-command (cons self-insert-command))
 
-
-(provide 'operator-mode-test)
-;;; operator-mode-test.el ends here
+(provide 'operator-setup-tests)
+;;; operator-setup-tests.el ends here

@@ -23,6 +23,10 @@
 ;;
 
 ;;; Code:
+(require 'operator-setup-tests)
+
+(straight-use-package 'python-mode)
+(require 'python-mode)
 
 (ert-deftest operator-python-test-JSKBng ()
   (operator-test

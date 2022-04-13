@@ -18,29 +18,37 @@
 
 # Code:
 
-# This var is set in my bashrc to 0
-ORT=${ORT:-1}
+if [ $1 == e28 ]; then
+    export EMACS=$(echo $(alias e28) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck/\1,g')
+elif
+    [ $1 == e29 ];then
+    export EMACS=$(echo $(alias e29) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck/\1,g')
+fi
 
-echo "\$ORT: $ORT"
+echo "before shift \$EMACS: $EMACS"
+shift
 
-TESTDIR=$PWD/test/
-export TESTDIR
+echo "\$*: $*"
+PDIR=$PWD
+echo "\$PWD: $PWD"
+# WERKSTATT set in .bashrc, thus unset remotly
+WERKSTATT=${WERKSTATT:=1}
+echo "\$WERKSTATT: $WERKSTATT"
 
+TESTDIR=$PDIR/test/
+#  export TESTDIR
+echo "\$TESTDIR: $TESTDIR"
 
 FILE1=operator-mode.el
-FILE2=$HOME/arbeit/emacs-lisp/haskell/haskell-mode/haskell-mode.el
-#  FILE2=.cask/24.4/elpa/haskell-mode-20180917.923
-#  thingatpt-utils-core-setup-tests.el
-TEST1=${TESTDIR}operator-mode-test.el
+FILE2=${TESTDIR}operator-setup-tests.el
+FILE3=$HOME/arbeit/emacs-lisp/haskell/haskell-mode/haskell-mode.el
+TEST1=${TESTDIR}operator-python-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
-TEST3=${TESTDIR}operator-python-mode-test.el
+TEST3=${TESTDIR}operator-elisp-mode-test.el
 TEST4=${TESTDIR}operator-other-test.el
 echo "\$TEST1: $TEST1"
 
 EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
-
-echo "\$TESTDIR: $TESTDIR"
-#  echo \$EU27Q: $EU27Q
 
 if [ -s $EU27Q ]; then
     EMACS=$EU27Q
@@ -51,6 +59,63 @@ else
 fi
 
 echo "\$EMACS: $EMACS"
+
+h1 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(setq python-indent-offset 4)" \
+--eval "(setq python-indent-guess-indent-offset nil)" \
+--eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+-load $FILE1 \
+-load $FILE2 \
+\
+-load $TEST1 \
+-f ert-run-tests-batch-and-exit
+}
+
+h2 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+-load $FILE1 \
+-load $FILE2 \
+\
+-load $TEST2 \
+-f ert-run-tests-batch-and-exit
+}
+
+h3 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(setq python-indent-offset 4)" \
+--eval "(setq python-indent-guess-indent-offset nil)" \
+--eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+-load $FILE1 \
+-load $FILE2 \
+--eval "(require 'haskell-mode)" \
+\
+-load $TEST3 \
+-f ert-run-tests-batch-and-exit
+}
+
+h4 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(setq python-indent-offset 4)" \
+--eval "(setq python-indent-guess-indent-offset nil)" \
+--eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+-load $FILE1 \
+-load $FILE2 \
+--eval "(require 'haskell-mode)" \
+\
+-load $TEST4 \
+-f ert-run-tests-batch-and-exit
+}
 
 hier () {
     $EMACS -Q --batch \
@@ -86,13 +151,62 @@ entfernt () {
 -f ert-run-tests-batch-and-exit
 }
 
-if [ $ORT -eq 0 ]; then
-    hier
-    echo "Lade testumgebung \"$HOSTNAME\""
+# echo "cp -u $HOME/arbeit/emacs-lisp/python-modes/components-python-mode/test/py-setup-ert-tests.el $PWD"
+# cp -u $HOME/arbeit/emacs-lisp/python-modes/components-python-mode/test/py-setup-ert-tests.el $PWD
+
+if [ $WERKSTATT -eq 0 ]; then
+    while getopts 123456789abcdefghijklmpqrstuvx option
+    do
+        case $option in
+	    1) echo "h1: Lade \$TEST1: \"$TEST1\"";h1;;
+	    2) echo "h2: Lade \$TEST2: \"$TEST2\"";h2;;
+	    #  3) echo "h3: Lade \$TEST3: \"$TEST3\"";h3;;
+	    #  4) echo "h4: Lade \$TEST4: \"$TEST4\"";h4;;
+	    #  5) echo "h5: Lade \$TEST5: \"$TEST5\"";h5;;
+	    #  6) echo "h6: Lade \$TEST6: \"$TEST6\"";h6;;
+	    #  7) echo "h7: Lade \$TEST7: \"$TEST7\"";h7;;
+	    #  8) echo "h8: Lade \$TEST8: \"$TEST8\"";h8;;
+	    #  9) echo "h9: Lade \$TEST9: \"$TEST9\"";h9;;
+	    #  a) echo "h10: Lade \$TEST10: \"$TEST10\"";h10;;
+	    #  b) echo "h11: Lade \$TEST11: \"$TEST11\"";h11;;
+	    #  c) echo "h12: Lade \$TEST12: \"$TEST12\"";h12;;
+	    #  d) echo "h13: Lade \$TEST13: \"$TEST13\"";h13;;
+	    #  e) echo "h14: Lade \$TEST14: \"$TEST14\"";h14;;
+	    #  f) echo "h15: Lade \$TEST15: \"$TEST15\"";h15;;
+	    #  g) echo "h16: Lade \$TEST16: \"$TEST16\"";h16;;
+            #  h) echo "h17: Running python-tests.el";h17;;
+	    #  i) ;;
+	    #  j) echo "h19: Lade \$TEST19: \"$TEST19\"";h19;;
+	    #  k) echo "h20: Lade \$TEST20: \"$TEST20\"";h20;;
+	    l) echo "hier: Lade Testumgebung ‘hier’";hier;;
+	    #  m) echo "h20: Lade \$TEST20: \"$TEST20\"";h20;;
+
+	esac
+	#  shift
+	echo "\$*: $*"
+	EMACS=$1
+	
+    done
+
+    # hier1
+    # echo "Lade testumgebung \"HIER1\""
+    # hier2
+    # echo "Lade testumgebung \"HIER1\""
+
 else
     echo "entfernt"
+    echo "\$WERKSTATT: $WERKSTATT"
     echo "Lade testumgebung \"ENTFERNT\""
     entfernt
 fi
+
+# if [ $ORT -eq 0 ]; then
+#     hier
+#     echo "Lade testumgebung \"$HOSTNAME\""
+# else
+#     echo "entfernt"
+#     echo "Lade testumgebung \"ENTFERNT\""
+#     entfernt
+# fi
 
 # -load $FILE3 \
