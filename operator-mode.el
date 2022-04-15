@@ -1365,7 +1365,8 @@ Haskell: (>=>) :: Monad"
 ;; (setq operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/))
 
 (defun operator--do-intern (char orig)
-  (let* ((min (cond ((member major-mode (list  'shell-mode 'py-shell-mode 'inferior-python-mode)))
+  (let* ((min (cond ((member major-mode (list  'shell-mode 'py-shell-mode 'inferior-python-mode))
+		     (cdr comint-last-prompt))
 		    ((eq major-mode 'haskell-interactive-mode)
 		     haskell-interactive-mode-prompt-start)
 		     (t (point-min))))
