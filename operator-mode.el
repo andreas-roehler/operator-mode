@@ -948,7 +948,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'scala-notfirst)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
+	((member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?*))
 		'scala-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1007,7 +1007,7 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'scala-notsecond)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
+	((member char (list ?. ?- ?$ ?~ ?_ ?^ ?& ?*))
 		'scala-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
