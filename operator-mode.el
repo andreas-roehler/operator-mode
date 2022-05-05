@@ -944,6 +944,117 @@ Haskell: (>=>) :: Monad"
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
+(defun operator--scala-notfirst (char pps list-start-char notfirst)
+  (cond (notfirst
+	 'scala-notfirst)
+	;; EMACS=emacs
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
+		'scala-punkt)
+	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'rm-attention)
+	((and (or (eq 'shell-interactive-mode major-mode)(eq 'shell-mode major-mode))
+	      (save-excursion (backward-char 1)
+			      (or
+			       (looking-back shell-prompt-pattern (line-beginning-position))
+			       ;; (looking-back shell-interactive-prompt (line-beginning-position))
+			       )))
+	 'scala-shell-interactive-prompt)
+	((member char (list ?. ?- ?:))
+	 'scala-punkt)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 ;; (unless (eq list-start-char ?{)
+	 (cond ((char-equal ?, char)
+		'scala-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?. char))
+		'scala-construct-for-export)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'scala-operator--in-list-continue)
+	       ((char-equal ?* char)
+		'scala-char-equal-\*-in-list-p)
+	       ((member char (list ?\( ?\) ?\]))
+		'scala-listing)
+	       ((nth 3 pps)
+		'scala-and-nth-1-pps-nth-3-pps)
+	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
+	       ;; 	'scala-in-list-p)
+	       ((and (nth 1 pps)
+		     (or (eq (1- (current-column)) (current-indentation))
+			 (eq (- (point) 2)(nth 1 pps))))
+		'scala-in-list-p)
+	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+		'pattern-match-on-list)
+	       ))
+	;; ((member char (list ?\; ?,)))
+	((or (member (char-before (1- (point))) operator-known-operators)
+	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	 'scala-join-known-operators)
+	((looking-back "<\\*" (line-beginning-position))
+	 'scala-<)
+	((looking-back "^-" (line-beginning-position))
+	 'scala-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'scala-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+
+(defun operator--scala-notsecond (char pps list-start-char notsecond)
+  (cond (notsecond
+	 'scala-notsecond)
+	;; EMACS=emacs
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
+		'scala-punkt)
+	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'rm-attention)
+	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	 'scala-list-delimter)
+	((and (eq 'shell-interactive-mode major-mode)
+	      (save-excursion (backward-char)
+			      (looking-back (concat shell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
+	 'scala-shell-interactive-prompt)
+	((nth 3 pps)
+	 'scala-in-string)
+	;; index-p
+	((and
+	  ;; "even <$> (2,2)"
+	  (not (char-equal char ?,))
+	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'scala-comment-start)
+	((looking-back "import +[^ ]+." (line-beginning-position))
+	 'scala-import)
+	((looking-back "<\\*" (line-beginning-position))
+	 'scala->)
+	((and (nth 1 pps)
+	      (or
+	       (member char (list ?@))
+	       (eq (1- (current-column)) (current-indentation))
+		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	 'scala-in-list-p)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 (cond ((char-equal ?, char)
+		'scala-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'scala-construct-for-export)
+	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+		'pattern-match-on-list)))))
+
+(defun operator--do-scala-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Haskell"
+  (let* ((notfirst (operator--scala-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
+	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
+    (operator--final char orig notfirst notsecond nojoin)))
+
 (defun operator--shell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'shell-notfirst)
@@ -1369,7 +1480,7 @@ Haskell: (>=>) :: Monad"
 		     (cdr comint-last-prompt))
 		    ((eq major-mode 'haskell-interactive-mode)
 		     haskell-interactive-mode-prompt-start)
-		     (t (point-min))))
+		    (t (point-min))))
 	 (pps (parse-partial-sexp min (point)))
 	 (list-start-char
 	  (and (nth 1 pps) (save-excursion
@@ -1423,7 +1534,9 @@ Haskell: (>=>) :: Monad"
       (`py-ipython-shell-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
-       (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
+       (if (ignore-errors (shell-command ":sh env"))
+	   (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+	 (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode
