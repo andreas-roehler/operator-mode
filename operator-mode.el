@@ -1007,13 +1007,14 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'scala-notsecond)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?$ ?~ ?_ ?^ ?& ?*))
+	;; :help
+	((member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?*))
 		'scala-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	((member char (list ?\[  ?\( ?\] ?\)))
 	 'scala-list-delimter)
 	((and (eq 'shell-interactive-mode major-mode)
 	      (save-excursion (backward-char)
@@ -1477,7 +1478,7 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--do-intern (char orig)
   (let* ((min (cond ((member major-mode (list  'shell-mode 'py-shell-mode 'inferior-python-mode))
-		     (cdr comint-last-prompt))
+		     (or (cdr comint-last-prompt) (line-beginning-position)))
 		    ((eq major-mode 'haskell-interactive-mode)
 		     haskell-interactive-mode-prompt-start)
 		    (t (point-min))))
