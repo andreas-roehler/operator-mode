@@ -34,7 +34,7 @@ jobs:
             --eval "(load \"/root/operator-mode/test/operator-other-test.el\")" \
             --eval "(load \"/root/operator-mode/test/operator-haskell-mode-test.el\")" \
             --eval "(sit-for 1)" \
-            -f ert-run-tests-batch-and-exit"
+            -f ert-run-tests-batch-and-exit
 
 
 workflows:
