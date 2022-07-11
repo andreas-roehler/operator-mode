@@ -29,7 +29,7 @@ jobs:
             --eval "(setq python-indent-offset 4)" \
             --eval "(setq python-indent-guess-indent-offset nil)" \
             --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
-            --eval "(load /root/operator-mode/test/operator-setup-tests.el\")))" 
+            --eval "(load \"/root/operator-mode/test/operator-setup-tests.el\")" 
 
 
 workflows:
