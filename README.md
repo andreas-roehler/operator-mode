@@ -1,6 +1,6 @@
 # operator mode
 
-[![CircleCI operator-mode](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode.svg?style=svg)](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode)
+[![CircleCI operator-mode](https://circleci.com/gh/andreas-roehler/operator-mode.svg?style=svg)](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode)
 
 Auto-add spaces around operators if appropriate.
 
@@ -12,11 +12,21 @@ according to language might result in
 
     a = 10 * 5 + 2
 
-Currently the following languages are supported:
+Should work out of the box for most languages.
+Currently the following languages have the own config:
 
-Emacs Lisp,
-Haskell,
+Agda
+Clojure
+Coq
+Emacs Lisp
+Haskell
+Idris
+Java
 Python
+Scala
+Shell
+Sql
+Text
 
 Bug-reports are welcome.
 
