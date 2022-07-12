@@ -50,10 +50,21 @@ echo "\$TEST1: $TEST1"
 
 EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
 
-if [ -s $EU27Q ]; then
-    EMACS=$EU27Q
-elif [ -s emacs24 ]; then
-    EMACS=emacs24
+if [ $1 == e25 ]; then
+    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+elif
+    [ $1 == e26 ];then
+    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+elif
+    [ $1 == e27 ];then
+    #  export EMACS="$HOME/emacs-20220306/src/emacs -Q"
+    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+elif
+    [ $1 == e28 ];then
+    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+elif
+    [ $1 == e29 ];then
+    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 else
     EMACS=emacs
 fi
