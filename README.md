@@ -1,6 +1,6 @@
 # operator mode
 
-[![CircleCI](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode.svg?branch=master)](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode)
+[![CircleCI operator-mode](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode.svg?style=svg)](https://app.circleci.com/pipelines/gh/andreas-roehler/operator-mode)
 
 Auto-add spaces around operators if appropriate.
 
