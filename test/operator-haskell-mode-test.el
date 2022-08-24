@@ -26,6 +26,7 @@
 
 (require 'ert-x)
 (require 'operator-mode)
+(require 'operator-setup-tests)
 
 (straight-use-package 'haskell-mode nil nil)
 (require 'haskell)
@@ -84,7 +85,7 @@
     operator-mode-debug
     (operator-do)
     (should-not (eq (char-before) 32))
-    (should (looking-back "( >" (line-beginning-position)))))
+    (should (looking-back "(>" (line-beginning-position)))))
 
 (ert-deftest operator-haskell-test-Vg8syM ()
   (operator-test
@@ -130,7 +131,7 @@
     'haskell-mode
     operator-mode-debug
     (operator-do)
-    (should (eq (char-before 8) ?$))
+    (should (eq (char-before (1- (point))) ?$))
     (should (eq (char-before) 32))
     ))
 
@@ -162,8 +163,10 @@
    'haskell-mode
    operator-mode-debug
    (operator-do)
-   (should (looking-back "(september <" (line-beginning-position)))
-   (should (char-equal (char-before) ?<))))
+   ;; (should (looking-back "(september <" (line-beginning-position)))
+   (should (char-equal (char-before) ?<))
+   (should (char-equal (char-before (1- (point))) 32))
+   ))
 
 (ert-deftest operator-haskell-test-AzSYl6 ()
   (operator-test
@@ -233,7 +236,7 @@
     (operator-do)
     (should (eq (current-column) 15))))
 
-(ert-deftest operator-haskell-in-list-test-tBhN5B ()
+(ert-deftest operator-haskell-in-bracket-list-test-tBhN5B ()
   (operator-test
       "[x, y | x<"
     'haskell-mode
@@ -337,14 +340,14 @@
 
 (ert-deftest operator-haskell-comma-in-record-test-IAAa4J ()
   (operator-test
-      "data Record = MRecord {
-  name :: String,}"
+      "data Record = MRecord
+  { name :: String
+  ,}"
     'haskell-mode
     operator-mode-debug
     (backward-char)
     (operator-do)
-    (should (looking-back "String," (line-beginning-position)))
-    (should-not (eq (char-before) ?\s))
+    (should (eq (char-before) 32))
 ))
 
 (ert-deftest operator-haskell-colon-in-record-test-IAAa4J ()
@@ -355,7 +358,7 @@
     operator-mode-debug
     (backward-char 2)
     (operator-do)
-    (should (looking-back " ::" (line-beginning-position)))))
+    (should (looking-back " :: " (line-beginning-position)))))
 
 (ert-deftest operator-haskell-colon-in-list-test-IAAa4J ()
   (operator-test
@@ -369,27 +372,27 @@
 
 (ert-deftest operator-haskell-semicolon-test-IAAa4J ()
   (operator-test
-      "https://www\.haskell\.org/onlinereport/haskell2010/haskellch2\.html#x7-210002\.7
-Figure 2\.1: A sample program
+      "https://www.haskell.org/onlinereport/haskell2010/haskellch2.html#x7-210002.7
+Figure 2.1: A sample program
 
-module AStack( Stack, push, pop, top, size ) where
+module AStack( Stack, push, pop, top, size) where
 {data Stack a = Empty
              | MkStack a (Stack a)
 
-\;push :: a -> Stack a -> Stack a
-\;push x s = MkStack x s
+;push :: a -> Stack a -> Stack a
+;push x s = MkStack x s
 
-\;size :: Stack a -> Int
-\;size s = length (stkToLst s)  where
-           {stkToLst  Empty         = \[]
-           \;stkToLst (MkStack x s)  = x:xs where {xs = stkToLst s
+;size :: Stack a -> Int
+;size s = length (stkToLst s) where
+           {stkToLst Empty = []
+           ;stkToLst (MkStack x s) = x:xs where {xs = stkToLst s
 
-}}\;pop :: Stack a -> (a, Stack a)
-\;pop (MkStack x s)
+}};pop :: Stack a -> (a, Stack a)
+;pop (MkStack x s)
   = (x, case s of {r -> i r where {i x = x}}) -- (pop Empty) is an error
 
-\;top :: Stack a -> a
-\;top (MkStack x s) = x                        -- (top Empty) is an error
+;top :: Stack a -> a
+;top (MkStack x s) = x -- (top Empty) is an error
 }
 "
     'haskell-mode
@@ -398,7 +401,9 @@ module AStack( Stack, push, pop, top, size ) where
     (search-backward ";top")
     (forward-char 1)
     (operator-do)
-    (should (eq (char-before) ?\;))))
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?\;))
+    ))
 
 (ert-deftest operator-haskell-semicolon-test-fxnPvk ()
   (operator-test
@@ -490,8 +495,61 @@ module AStack( Stack, push, pop, top, size ) where
       (goto-char (point-max))
       (search-backward "O")
       (operator-do)
-      (should (looking-back "deriving (Eq, " (line-beginning-position)))))
+      (should (eq (char-before) 32))
+      (should (eq (char-before (1- (point))) ?,))
+      ))
 
+(ert-deftest operator-haskell-underscore-test-iTVzcO ()
+    (operator-test
+	"mylast (_:xs) = mylast xs"
+      'haskell-mode
+      operator-mode-debug
+      (goto-char (point-max))
+      (search-backward ":")
+      (operator-do)
+      (should (looking-back "mylast (_" (line-beginning-position)))))
+
+(ert-deftest operator-haskell-backtick-test-iTVzcO ()
+    (operator-test
+	"N = a `div`"
+      'haskell-mode
+      operator-mode-debug
+      (goto-char (point-max))
+      (skip-chars-backward " \t\r\n\f")
+      (operator-do)
+      (should (eq (char-before) 32))
+      (should (looking-back "`div` " (line-beginning-position)))))
+
+(ert-deftest operator-haskell-semicolon-test-iTVzcO ()
+    (operator-test
+        "let foo :: Double -> Double;foo x = let { s = sin x;c = cos x } in 2 * s * c"
+      'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward ";")
+    (forward-char 1)
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?\;))
+    (search-backward ";" nil nil 2)
+    (forward-char 1)
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?\;))))
+
+(ert-deftest operator-haskell-pipe-test-b28znx ()
+  (operator-test
+      "primes                     = filterPrime [2..]
+  where filterPrime (p:xs) =
+          p : filterPrime [x|"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f") 
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?|))
+    (should (eq (char-before (- (point) 2)) 32))))
 
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here

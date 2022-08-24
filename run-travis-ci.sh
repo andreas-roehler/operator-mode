@@ -18,37 +18,6 @@
 
 # Code:
 
-if [ $1 == e28 ]; then
-    export EMACS=$(echo $(alias e28) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck/\1,g')
-elif
-    [ $1 == e29 ];then
-    export EMACS=$(echo $(alias e29) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck/\1,g')
-fi
-
-echo "before shift \$EMACS: $EMACS"
-shift
-
-echo "\$*: $*"
-PDIR=$PWD
-echo "\$PWD: $PWD"
-# WERKSTATT set in .bashrc, thus unset remotly
-WERKSTATT=${WERKSTATT:=1}
-echo "\$WERKSTATT: $WERKSTATT"
-
-TESTDIR=$PDIR/test/
-#  export TESTDIR
-echo "\$TESTDIR: $TESTDIR"
-
-FILE1=operator-mode.el
-FILE2=${TESTDIR}operator-setup-tests.el
-FILE3=$HOME/arbeit/emacs-lisp/haskell/haskell-mode/haskell-mode.el
-TEST1=${TESTDIR}operator-python-mode-test.el
-TEST2=${TESTDIR}operator-haskell-mode-test.el
-TEST3=${TESTDIR}operator-elisp-mode-test.el
-TEST4=${TESTDIR}operator-other-test.el
-echo "\$TEST1: $TEST1"
-
-EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
 
 if [ $1 == e25 ]; then
     export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
@@ -69,6 +38,39 @@ else
     EMACS=emacs
 fi
 
+# if [ $1 == e28 ]; then
+#     export EMACS=$(echo $(alias e28) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck\1,g')
+# elif
+#     [ $1 == e29 ];then
+#     export EMACS=$(echo $(alias e29) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck/\1,g')
+# fi
+
+echo "before shift \$EMACS: $EMACS"
+shift
+
+echo "\$*: $*"
+PDIR=$PWD
+echo "\$PWD: $PWD"
+# WERKSTATT set in .bashrc, thus unset remotly
+WERKSTATT=${WERKSTATT:=1}
+echo "\$WERKSTATT: $WERKSTATT"
+
+TESTDIR=$PDIR/test/
+#  export TESTDIR
+echo "\$TESTDIR: $TESTDIR"
+
+FILE1=operator-mode.el
+FILE2=${TESTDIR}operator-setup-tests.el
+FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
+FILE4=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
+TEST1=${TESTDIR}operator-python-mode-test.el
+TEST2=${TESTDIR}operator-haskell-mode-test.el
+TEST3=${TESTDIR}operator-elisp-mode-test.el
+TEST4=${TESTDIR}operator-other-test.el
+echo "\$TEST1: $TEST1"
+
+#  EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
+
 echo "\$EMACS: $EMACS"
 
 h1 () {
@@ -78,9 +80,10 @@ h1 () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
 -load $FILE1 \
 -load $FILE2 \
+-load $FILE3 \
 \
 -load $TEST1 \
 -f ert-run-tests-batch-and-exit
@@ -89,8 +92,11 @@ h1 () {
 h2 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
 -load $FILE1 \
 -load $FILE2 \
+-load $FILE4 \
+-load $FILE3 \
 \
 -load $TEST2 \
 -f ert-run-tests-batch-and-exit
@@ -103,9 +109,10 @@ h3 () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
 -load $FILE1 \
 -load $FILE2 \
+-load $FILE3 \
 --eval "(require 'haskell-mode)" \
 \
 -load $TEST3 \
@@ -119,9 +126,10 @@ h4 () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
 -load $FILE1 \
 -load $FILE2 \
+-load $FILE3 \
 --eval "(require 'haskell-mode)" \
 \
 -load $TEST4 \
@@ -135,9 +143,10 @@ hier () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell/haskell-mode\")" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
 -load $FILE1 \
 -load $FILE2 \
+-load $FILE3 \
 --eval "(require 'haskell-mode)" \
 \
 -load $TEST1 \
@@ -166,12 +175,12 @@ entfernt () {
 # cp -u $HOME/arbeit/emacs-lisp/python-modes/components-python-mode/test/py-setup-ert-tests.el $PWD
 
 if [ $WERKSTATT -eq 0 ]; then
-    while getopts 123456789abcdefghijklmpqrstuvx option
+    while getopts 123456789abcdefghijklmnopqrstuvwxyz option
     do
         case $option in
 	    1) echo "h1: Lade \$TEST1: \"$TEST1\"";h1;;
 	    2) echo "h2: Lade \$TEST2: \"$TEST2\"";h2;;
-	    #  3) echo "h3: Lade \$TEST3: \"$TEST3\"";h3;;
+	    3) echo "h3: Lade \$TEST3: \"$TEST3\"";h3;;
 	    #  4) echo "h4: Lade \$TEST4: \"$TEST4\"";h4;;
 	    #  5) echo "h5: Lade \$TEST5: \"$TEST5\"";h5;;
 	    #  6) echo "h6: Lade \$TEST6: \"$TEST6\"";h6;;
@@ -189,9 +198,10 @@ if [ $WERKSTATT -eq 0 ]; then
 	    #  i) ;;
 	    #  j) echo "h19: Lade \$TEST19: \"$TEST19\"";h19;;
 	    #  k) echo "h20: Lade \$TEST20: \"$TEST20\"";h20;;
-	    l) echo "hier: Lade Testumgebung ‘hier’";hier;;
+	    #  l) echo "hier: Lade Testumgebung ‘hier’";hier;;
 	    #  m) echo "h20: Lade \$TEST20: \"$TEST20\"";h20;;
-
+	    n) echo "hier: Lade Testumgebung ‘hier’";hier;;
+            
 	esac
 	#  shift
 	echo "\$*: $*"
