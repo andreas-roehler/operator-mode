@@ -67,6 +67,7 @@ TEST1=${TESTDIR}operator-python-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
 TEST3=${TESTDIR}operator-elisp-mode-test.el
 TEST4=${TESTDIR}operator-other-test.el
+TEST5=${TESTDIR}operator-org-mode-test.el
 echo "\$TEST1: $TEST1"
 
 #  EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
@@ -136,6 +137,23 @@ h4 () {
 -f ert-run-tests-batch-and-exit
 }
 
+h5 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(setq python-indent-offset 4)" \
+--eval "(setq python-indent-guess-indent-offset nil)" \
+--eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
+-load $FILE1 \
+-load $FILE2 \
+-load $FILE3 \
+--eval "(require 'haskell-mode)" \
+\
+-load $TEST5 \
+-f ert-run-tests-batch-and-exit
+}
+
 hier () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
@@ -153,6 +171,7 @@ hier () {
 -load $TEST2 \
 -load $TEST3 \
 -load $TEST4 \
+-load $TEST5 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -168,6 +187,7 @@ entfernt () {
 -load $TEST1 \
 -load $TEST3 \
 -load $TEST4 \
+-load $TEST5 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -181,8 +201,8 @@ if [ $WERKSTATT -eq 0 ]; then
 	    1) echo "h1: Lade \$TEST1: \"$TEST1\"";h1;;
 	    2) echo "h2: Lade \$TEST2: \"$TEST2\"";h2;;
 	    3) echo "h3: Lade \$TEST3: \"$TEST3\"";h3;;
-	    #  4) echo "h4: Lade \$TEST4: \"$TEST4\"";h4;;
-	    #  5) echo "h5: Lade \$TEST5: \"$TEST5\"";h5;;
+	    4) echo "h4: Lade \$TEST4: \"$TEST4\"";h4;;
+	    5) echo "h5: Lade \$TEST5: \"$TEST5\"";h5;;
 	    #  6) echo "h6: Lade \$TEST6: \"$TEST6\"";h6;;
 	    #  7) echo "h7: Lade \$TEST7: \"$TEST7\"";h7;;
 	    #  8) echo "h8: Lade \$TEST8: \"$TEST8\"";h8;;

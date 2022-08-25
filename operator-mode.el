@@ -1393,8 +1393,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--org-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'org-notsecond)
-	((nth 1 pps)
-	 'org-in-list-p)
+	;; ((nth 1 pps)
+	;;  'org-in-list-p)
 	;; ((looking-back "[[:alpha:]äöüß.-]")
 	;;  'org-in-word)
 	((nth 3 pps)
