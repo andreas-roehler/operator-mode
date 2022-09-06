@@ -63,6 +63,7 @@ FILE1=operator-mode.el
 FILE2=${TESTDIR}operator-setup-tests.el
 FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
 FILE4=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
+
 TEST1=${TESTDIR}operator-python-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
 TEST3=${TESTDIR}operator-elisp-mode-test.el
@@ -169,7 +170,6 @@ hier () {
 \
 -load $TEST1 \
 -load $TEST2 \
--load $TEST3 \
 -load $TEST4 \
 -load $TEST5 \
 -f ert-run-tests-batch-and-exit
