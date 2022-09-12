@@ -689,7 +689,7 @@ Haskell: (>=>) :: Monad"
 			       ;; haskell-interactive-prompt
 			       (line-beginning-position))))
 	 'haskell-haskell-interactive-prompt)
-	((member char (list ?\; ?,))
+	((member char (list ?\; ?, ?/))
 	 'separator)
 	((looking-back "<\\*" (line-beginning-position))
 	 'haskell-<)
@@ -783,8 +783,8 @@ Haskell: (>=>) :: Monad"
         ;;  'semicolon-braced-list-start-char)
         ;; ;; data Contact =  Contact { name :: "asdf" }
         ;; (cond ;; (
-        ;;  ;; 	(char-equal ?, char)
-        ;;  ;; 	'haskell-list-separator)
+        ((member char (list ?/))
+	 'separator)
         ((and list-start-char (char-equal ?\[ list-start-char)
               ;; evens n = map f [1..n]
               (member char (list ?, ?.))
@@ -1216,7 +1216,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'shell-notfirst)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1275,7 +1275,7 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'shell-notsecond)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?*))
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/))
 		'shell-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
