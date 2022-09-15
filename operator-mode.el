@@ -1166,7 +1166,10 @@ Haskell: (>=>) :: Monad"
 	 'scala-notsecond)
 	;; EMACS=emacs
 	;; :help
-	((and (not (eq ?{ list-start-char))(member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?*)))
+	((and
+          ;; (not (eq ?{ list-start-char))
+          (not (nth 1 pps)) 
+          (member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?*)))
 	 'scala-punkt)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
@@ -1192,7 +1195,7 @@ Haskell: (>=>) :: Monad"
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala->)
 	((and (nth 1 pps)
-              (not (member char (list ?,)))
+              (not (member char (list ?, ?:)))
 	      (or
 	       (member char (list ?@))
 	       (eq (1- (current-column)) (current-indentation))

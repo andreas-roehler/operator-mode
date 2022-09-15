@@ -207,6 +207,7 @@ entfernt () {
 -load $TEST3 \
 -load $TEST4 \
 -load $TEST5 \
+-load $TEST6 \
 -f ert-run-tests-batch-and-exit
 }
 
