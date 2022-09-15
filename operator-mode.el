@@ -1197,7 +1197,7 @@ Haskell: (>=>) :: Monad"
 	((and (nth 1 pps)
               (not (member char (list ?, ?:)))
 	      (or
-	       (member char (list ?@))
+	       (member char (list ?@ ?.))
 	       (eq (1- (current-column)) (current-indentation))
 	       (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 'scala-in-list-p)

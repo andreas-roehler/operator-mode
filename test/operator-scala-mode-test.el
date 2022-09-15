@@ -113,10 +113,33 @@
     operator-mode-debug
     (goto-char (point-max))
     (search-backward ":")
-    (forward-char 1) 
+    (forward-char 1)
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 2)) ?t))))
+
+(ert-deftest operator-scala-test-AodEpd ()
+  (operator-test
+      ;; "if (list.isEmpty)"
+      "if (list."
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    ;; (search-backward "i")
+    (operator-do)
+    (should (char-equal (char-before) ?.))
+    (should (char-equal (char-after) ?i))))
+
+(ert-deftest operator-scala-test-9mRanL ()
+  (operator-test
+    " { case list."
+    'scala-mode
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) ?.))
+    (should (char-equal (char-after) ?t))))
+
+
 
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
