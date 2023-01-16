@@ -31,7 +31,7 @@
 (ert-deftest operator-python-test-JSKBng ()
   (operator-test
       "a*"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
@@ -42,7 +42,7 @@
       ;; "{a:1}"
       ;; "{a: 1}"
       "{a:"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "{a: " (line-beginning-position)))))
@@ -50,7 +50,7 @@
 (ert-deftest operator-python-test-qk54K8 ()
   (operator-test
       "a = itertools.starmap(lambda x,y:"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "a = itertools.starmap(lambda x,y: " (line-beginning-position)))))
@@ -58,7 +58,7 @@
 (ert-deftest operator-python-test-b7WSVI ()
   (operator-test
       "def f(x, y):"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "def f(x, y):" (line-beginning-position)))))
@@ -66,7 +66,7 @@
 (ert-deftest operator-python-test-wMe1nG ()
   (operator-test
       "def f(x"
-    'python
+    'python-mode
     operator-mode-debug
     (insert ",")
     (operator-do)
@@ -75,7 +75,7 @@
 (ert-deftest operator-python-test-IWe5uE ()
   (operator-test
       "def f(x): return 2*"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?*))))
@@ -83,7 +83,7 @@
 (ert-deftest operator-python-test-sFlZBF ()
   (operator-test
       "map(x.__add__,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "map(x.__add__, " (line-beginning-position)))))
@@ -92,7 +92,7 @@
   (operator-test
       "def foo(x):
     if x >="
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "if x >= " (line-beginning-position)))))
@@ -101,7 +101,7 @@
   (operator-test
       "def foo(x):
     if x>"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "if x > " (line-beginning-position)))))
@@ -110,7 +110,7 @@
   (operator-test
       ;; a[2:-1]
       "a[2:-"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     ;; (should (looking-back "a\[-2:-"))
@@ -121,7 +121,7 @@
   (operator-test
       ;; def munge() -> AnyStr:
       "def munge()-"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "def munge() -" (line-beginning-position)))))
@@ -130,7 +130,7 @@
   (operator-test
       ;; def munge() -> AnyStr:
       "def munge() ->"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "def munge() -> " (line-beginning-position)))))
@@ -138,7 +138,7 @@
 (ert-deftest operator-python-test-3jUN8a ()
   (operator-test
       "foo = long_function_name(var_one,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "foo = long_function_name(var_one, " (line-beginning-position)))))
@@ -147,7 +147,7 @@
   (operator-test
       "my_list = [
     1,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -156,7 +156,7 @@
   (operator-test
       "result = some_function_that_takes_arguments(
     'a',"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -164,7 +164,7 @@
 (ert-deftest operator-python-test-a7WdXi ()
   (operator-test
       "with open('/path/to/some/file/you/want/to/read') as file_1,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (point) 61))
@@ -173,7 +173,7 @@
 (ert-deftest operator-python-test-bKwOMr ()
   (operator-test
       "open('/path/to/some/file', 'w') as file_2:"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should-not (char-equal (char-before (- (point) 2)) 32))
@@ -183,7 +183,7 @@
   (operator-test
    ;; "return self.first_name, self.last_name"
       "return self.first_name,"
-      'python
+      'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -192,7 +192,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x =="
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -201,7 +201,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4:"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -210,7 +210,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print(x,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -219,7 +219,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y);"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should-not (eq (char-before (- (point) 2)) 32))
@@ -229,7 +229,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y); x,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -238,7 +238,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y); x, y ="
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -247,7 +247,7 @@
   (operator-test
       ;; if x == 4: print (x, y); x, y = y, x
       "if x == 4: print (x, y); x, y = y,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -256,7 +256,7 @@
   (operator-test
    ;; def __getattribute__(*args):
       "def __getattribute__(*"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?*))))
@@ -265,7 +265,7 @@
   (operator-test
       ;; if sys.version_info < (3, 5, 2):
       "if sys."
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (point) 8))
@@ -275,7 +275,7 @@
   (operator-test
       ;; if sys.version_info < (3, 5, 2):
       "if sys.version_info<"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "if sys.version_info < " (line-beginning-position)))))
@@ -284,7 +284,7 @@
   (operator-test
       ;; if sys.version_info < (3, 5, 2):
       "if sys.version_info < (3,"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -293,7 +293,7 @@
   (operator-test
       ;; 2 + ~3
       "2 + ~"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?~))))
@@ -302,7 +302,7 @@
   (operator-test
       ;; 2 ** 4
       "2 **"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -312,7 +312,7 @@
    ;; print('%(language)s has %(number)03d quote types.' %
    ;;     {'language': "Python", "number": 2})
       "print('%"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?%))))
@@ -322,7 +322,7 @@
    ;; print('%(language)s has %(number)03d quote types.' %
    ;;     {'language': "Python", "number": 2})
       "print('%(language)s has %(number)03d quote types.'%"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "print('%(language)s has %(number)03d quote types.' % " (line-beginning-position)))))
@@ -333,7 +333,7 @@
    ;;     {'language': "Python", "number": 2})
       "print('%(language)s has %(number)03d quote types.' %
        {'language':"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should-not (char-equal (char-before (- (point) 2)) 32))
@@ -345,7 +345,7 @@
    ;;     {'language': "Python", "number": 2})
       "print('%(language)s has %(number)03d quote types.' %
        {'language': \"Python\","
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) 32))))
@@ -354,7 +354,7 @@
   (operator-test
       ;; echo(**kargs)
       "echo(**"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (eq (char-before) ?*))))
@@ -363,7 +363,7 @@
   (operator-test
       ;; for i in c:
       "for i in c:"
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     (should (looking-back "for i in c: " (line-beginning-position)))))
@@ -371,7 +371,7 @@
 (ert-deftest operator-python-test-wPqRz3 ()
   (operator-test
       "# foo="
-    'python
+    'python-mode
     operator-mode-debug
     (operator-do)
     ;; don't take action inside comments by default
@@ -380,7 +380,7 @@
 (ert-deftest operator-python-test-6aAoLt ()
   (operator-test
       "# foo="
-    'python
+    'python-mode
     operator-mode-debug
     (let ((operator-mode-in-comments-p t))
       (operator-do)

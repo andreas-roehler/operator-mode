@@ -26,10 +26,16 @@
 
 ;;; Code:
 
-(defcustom operator-mode-in-comments-p nil
+(defcustom operator-mode-in-comment-p nil
   "If operator-mode should expand inside comments.
 
 Default is nil."
+  )
+
+(defcustom operator-mode-in-string-p t
+  "If operator-mode should expand inside a string.
+
+Default is t."
   )
 
 (defvar operator-mode-debug t
@@ -1223,8 +1229,11 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
+        ((nth 3 pps)
+         'in-string)
 	;; EMACS=emacs
-	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* ?/)))
+        ;; s.indexOf.('o')
+	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1256,12 +1265,12 @@ Haskell: (>=>) :: Monad"
 		'scala-listing)
 	       ((nth 3 pps)
 		'scala-and-nth-1-pps-nth-3-pps)
-	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
-	       ;; 	'scala-in-list-p)
+
+               ;; ("he"+"llo")
 	       ((and (nth 1 pps)
-		     (or (eq (1- (current-column)) (current-indentation))
-			 (eq (- (point) 2)(nth 1 pps))))
-		'scala-in-list-p)
+		     ;; (or (eq (1- (current-column)) (current-indentation))
+			 ;; (eq (- (point) 2)(nth 1 pps))))
+		'scala-in-list-p))
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
@@ -1287,9 +1296,16 @@ Haskell: (>=>) :: Monad"
 	;; :help
 	((and
           ;; (not (eq ?{ list-start-char))
-          (not (nth 1 pps)) 
-          (member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?* ?/)))
+          (not (nth 1 pps))
+           ;; s.indexOf.('o')
+          (member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?* 40 41 ?/)))
 	 'scala-punkt)
+        ;; method invocation
+        ;; val sumMore = (1).+(2)
+        ((and
+          (not (nth 1 pps))
+          (member (char-before (1- (point))) (list ?.)))
+	 'method-invocation)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1300,8 +1316,8 @@ Haskell: (>=>) :: Monad"
 	      (save-excursion (backward-char)
 			      (looking-back (concat shell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
 	 'scala-shell-interactive-prompt)
-	((nth 3 pps)
-	 'scala-in-string)
+	;; ((nth 3 pps)
+	;;  'scala-in-string)
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
@@ -1316,7 +1332,7 @@ Haskell: (>=>) :: Monad"
 	((and (nth 1 pps)
               (not (member char (list ?, ?:)))
 	      (or
-	       (member char (list ?@ ?.))
+	       (member char (list ?@ ?. ?\)))
 	       (eq (1- (current-column)) (current-indentation))
 	       (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 'scala-in-list-p)
@@ -1844,7 +1860,8 @@ Haskell: (>=>) :: Monad"
   (and  (member (char-before) operator-known-operators)
 	(or
 	 ;; must not check if allowed anyway
-	 operator-mode-in-comments-p
+	 operator-mode-in-comment-p
+         operator-mode-in-string-p
          ;; p : filterPrime [x|
 	 ;; (and (member major-mode (list 'haskell-mode 'haskell-interactive-mode))(eq (char-before) ?|))
          (not (nth 8 (parse-partial-sexp (point-min) (point)))))
