@@ -1233,7 +1233,8 @@ Haskell: (>=>) :: Monad"
          'in-string)
 	;; EMACS=emacs
         ;; s.indexOf.('o')
-	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* ?/ 40 41)))
+        ;; <?>
+	((and (not (eq ?{ list-start-char))(member char (list ?? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1298,7 +1299,8 @@ Haskell: (>=>) :: Monad"
           ;; (not (eq ?{ list-start-char))
           (not (nth 1 pps))
            ;; s.indexOf.('o')
-          (member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?* 40 41 ?/)))
+          ;; <?>
+          (member char (list ?? ?. ?- ?$ ?~ ?_ ?^ ?& ?* 40 41 ?/)))
 	 'scala-punkt)
         ;; method invocation
         ;; val sumMore = (1).+(2)
@@ -1770,10 +1772,6 @@ Haskell: (>=>) :: Monad"
       (just-one-space)))
   (when fix-whitespace (delete-horizontal-space)))
 
-(defvar operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/)
-  "Chars used in combined assigments like +=")
-;; (setq operator-mode-combined-assigment-chars (list ?- ?+ ?\\ ?% ?* ?/))
-
 (defun operator--do-intern (char orig)
   (let* ((min (cond ((member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))
 		     (or (cdr comint-last-prompt) (line-beginning-position)))
@@ -1788,14 +1786,20 @@ Haskell: (>=>) :: Monad"
 	  (cond ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
 		 'email-adress)
                 ;; join
-		((and (char-equal ?= char) (member (char-before (1- (point))) operator-mode-combined-assigment-chars))
-		 'operator-mode-combined-assigment)
-		((and
+		((and (member char (list ?= ?:)) (member (char-before (1- (point))) operator-known-operators))
+                 'operator-mode-combined-assigment)
+                ;; join
+                ((and (eq 32 (char-before (1- (point))))(member (char-before (- (point) 2)) operator-known-operators))
+                 (save-excursion
+                   (goto-char (- (point) 2))
+                   (delete-char 1))
+                 'operator-mode-combined-assigment)
+	        ((and
                   (member char (list ?`))
                   (or
                    (not (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2)))
                    (eq (char-before (1- (point))) 32)))
-		 'generic-on-symbols)))
+	         'generic-on-symbols)))
          (notsecond
           (cond
            ((and
@@ -1806,8 +1810,7 @@ Haskell: (>=>) :: Monad"
              )
             'generic-on-symbols)
            ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
-            'email-adress)
-           )))
+            'email-adress))))
     ;; generic settings above
     (pcase major-mode
       (`agda2-mode
