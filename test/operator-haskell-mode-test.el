@@ -28,8 +28,8 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-;; (straight-use-package 'haskell-mode nil nil)
-;; (require 'haskell)
+(straight-use-package 'haskell-mode nil nil)
+(require 'haskell)
 
 (ert-deftest operator-haskell-test-WG0LXr ()
   (operator-test
