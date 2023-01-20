@@ -132,14 +132,21 @@
 
 (ert-deftest operator-scala-test-9mRanL ()
   (operator-test
-    " { case list."
+      " { case list."
     'scala-mode
     operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?.))
     (should (char-equal (char-after) ?t))))
 
-
+(ert-deftest operator-scala-test-lnfWry ()
+  (operator-test
+      "if (!args.isEmpty)"
+    'scala-mode
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 41))
+    (should (char-equal (char-before (1- (point))) ?y))))
 
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here

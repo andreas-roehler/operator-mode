@@ -1111,7 +1111,8 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'scala-notfirst)
 	;; EMACS=emacs
-	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?*)))
+        ;; myVar_=
+	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1181,8 +1182,8 @@ Haskell: (>=>) :: Monad"
 	 'rm-attention)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	((member char (list ?\[  ?\())
-	 'scala-list-delimter)
+	((member char (list ?\[  ?\( 41))
+	 'scala-list-delimiter)
 	((and (eq 'shell-interactive-mode major-mode)
 	      (save-excursion (backward-char)
 			      (looking-back (concat shell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
@@ -1233,8 +1234,9 @@ Haskell: (>=>) :: Monad"
          'in-string)
 	;; EMACS=emacs
         ;; s.indexOf.('o')
-        ;; <?>
-	((and (not (eq ?{ list-start-char))(member char (list ?? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* ?/ 40 41)))
+        ;; <?>,
+        ;; 2 * r
+	((and (not (eq ?{ list-start-char))(member char (list ?? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1300,7 +1302,9 @@ Haskell: (>=>) :: Monad"
           (not (nth 1 pps))
            ;; s.indexOf.('o')
           ;; <?>
-          (member char (list ?? ?. ?- ?$ ?~ ?_ ?^ ?& ?* 40 41 ?/)))
+          ;; x <- y
+          ;; 2 * r
+          (member char (list ?? ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/)))
 	 'scala-punkt)
         ;; method invocation
         ;; val sumMore = (1).+(2)
