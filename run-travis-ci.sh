@@ -34,6 +34,9 @@ elif
 elif
     [ $1 == e29 ];then
     export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+elif
+    [ $1 == e30 ];then
+    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 else
     EMACS=emacs
 fi
@@ -173,6 +176,12 @@ h6 () {
 -f ert-run-tests-batch-and-exit
 }
 
+#  --eval "(require 'haskell-mode)" \
+#  --eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
+#  -load $FILE3 \
+# haskell
+#  -load $TEST2 \
+
 hier () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
@@ -180,14 +189,10 @@ hier () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
 -load $FILE1 \
 -load $FILE2 \
--load $FILE3 \
---eval "(require 'haskell-mode)" \
 \
 -load $TEST1 \
--load $TEST2 \
 -load $TEST4 \
 -load $TEST5 \
 -load $TEST6 \
