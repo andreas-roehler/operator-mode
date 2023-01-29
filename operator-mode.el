@@ -1195,7 +1195,9 @@ Haskell: (>=>) :: Monad"
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'scala-comment-start)
-	((looking-back "import +[^ ]+." (line-beginning-position))
+        ;; import org.scalatest.{BeforeAndAfterAll, 
+	((and (looking-back "import +[^ ]+." (line-beginning-position))
+              (not (member char (list ?,))))
 	 'scala-import)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala->)
@@ -1204,7 +1206,7 @@ Haskell: (>=>) :: Monad"
 	      (or
 	       (member char (list ?@ ?.))
 	       (eq (1- (current-column)) (current-indentation))
-               ;; } catch { 
+               ;; } catch {
 	       (and (not (member char (list ?{ ))) (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point)))))))
 	 'scala-in-list-p)
 	(list-start-char
