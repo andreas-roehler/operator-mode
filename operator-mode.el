@@ -1195,7 +1195,7 @@ Haskell: (>=>) :: Monad"
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'scala-comment-start)
-        ;; import org.scalatest.{BeforeAndAfterAll, 
+        ;; import org.scalatest.{BeforeAndAfterAll,
 	((and (looking-back "import +[^ ]+." (line-beginning-position))
               (not (member char (list ?,))))
 	 'scala-import)
@@ -1365,7 +1365,8 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'shell-notfirst)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/))
+        ;; git commit -s -a -m "sdf,
+	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?,))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1436,8 +1437,9 @@ Haskell: (>=>) :: Monad"
 	      (save-excursion (backward-char)
 			      (looking-back (concat shell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
 	 'shell-shell-interactive-prompt)
-	((nth 3 pps)
-	 'shell-in-string)
+        ;; git commit -s -a -m "sdf,
+	;; ((nth 3 pps)
+	;;  'shell-in-string)
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
