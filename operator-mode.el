@@ -1112,7 +1112,7 @@ Haskell: (>=>) :: Monad"
 	 'scala-notfirst)
 	;; EMACS=emacs
         ;; myVar_=
-	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?* 41)))
+	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?$ ?~ ?_  ?^ ?& ?* 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1125,8 +1125,6 @@ Haskell: (>=>) :: Monad"
 			       ;; (looking-back shell-interactive-prompt (line-beginning-position))
                                )))
 	 'scala-shell-interactive-prompt)
-	((member char (list ?. ?- ?:))
-	 'scala-punkt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -1144,11 +1142,11 @@ Haskell: (>=>) :: Monad"
 		'scala-listing)
 	       ((nth 3 pps)
 		'scala-and-nth-1-pps-nth-3-pps)
-	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
-	       ;; 	'scala-in-list-p)
+               ;; .settings(name := "muster")
 	       ((and (nth 1 pps)
 		     (or (eq (1- (current-column)) (current-indentation))
-			 (eq (- (point) 2)(nth 1 pps))))
+			 (eq (- (point) 2)(nth 1 pps))
+                         (looking-back "^[ \t]*def[ \t]+.*" (line-beginning-position))))
 		'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))

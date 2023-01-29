@@ -148,5 +148,21 @@
     (should (char-equal (char-before) 41))
     (should (char-equal (char-before (1- (point))) ?y))))
 
+(ert-deftest operator-scala-test-YkkZEa ()
+  (operator-test
+      "lazy val root = (project in file(\".\"))
+  .settings(name:
+"
+    'scala-mode
+    (goto-char (point-max))
+    (search-backward ":")
+    (forward-char 1) 
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) 32))
+))
+
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
