@@ -1146,7 +1146,9 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
 		     (or (eq (1- (current-column)) (current-indentation))
 			 (eq (- (point) 2)(nth 1 pps))
-                         (looking-back "^[ \t]*def[ \t]+.*" (line-beginning-position))))
+                         ;; def main(args: Array[String]): Unit =
+                         (and (not (eq list-start-char ?{)) (looking-back "^[ \t]*def[ \t]+.*" (line-beginning-position)))
+                         ))
 		'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
@@ -1796,6 +1798,7 @@ Haskell: (>=>) :: Monad"
 		((and (member char (list ?= ?:)) (member (char-before (1- (point))) operator-known-operators))
                  'operator-mode-combined-assigment)
                 ;; join
+                ;;  def main(args: Array[String]):
                 ((and (eq 32 (char-before (1- (point))))(member (char-before (- (point) 2)) operator-known-operators))
                  (save-excursion
                    (goto-char (- (point) 2))

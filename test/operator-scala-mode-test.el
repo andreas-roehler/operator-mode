@@ -178,6 +178,26 @@
     (should (char-equal (char-before (- (point) 2)) ?l))
 ))
 
+(ert-deftest operator-scala-test-0FgiaA ()
+  (operator-test
+      "object HelloWorld {
+  def main(args: Array[String]): Unit =
+}
+"
+    'scala-mode
+    (goto-char (point-max))
+    (search-backward "=")
+    (forward-char 1)
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    (should (char-equal (char-before (- (point) 3)) ?t))
+    ))
+
+
+
 
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
