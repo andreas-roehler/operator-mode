@@ -1657,7 +1657,10 @@ Haskell: (>=>) :: Monad"
 	((char-equal ?, char)
 	 'org-list-separator)
 	((member char (list ?$ ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
-	 (unless (and (eq char ?-) (looking-back " .-" (line-beginning-position) ))
+	 (unless
+             (or
+              (looking-back "^\\* *." (line-beginning-position))
+              (and (eq char ?-) (looking-back " .-" (line-beginning-position))))
 	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]")
 	 'org-in-word)
@@ -1707,7 +1710,8 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
+		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position))))
+                ((and (eq major-mode 'org-mode) (looking-back "^\\* *." (line-beginning-position)))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 
@@ -1796,14 +1800,14 @@ Haskell: (>=>) :: Monad"
 		 'email-adress)
                 ;; join
 		((and (member char (list ?= ?:)) (member (char-before (1- (point))) operator-known-operators))
-                 'operator-mode-combined-assigment)
+                 'operator-mode-combined-assigment-1)
                 ;; join
                 ;;  def main(args: Array[String]):
-                ((and (eq 32 (char-before (1- (point))))(member (char-before (- (point) 2)) operator-known-operators))
+                ((unless (and (eq major-mode 'org-mode) (looking-back "^\\* .*" (line-beginning-position)))(and (eq 32 (char-before (1- (point))))(member (char-before (- (point) 2)) operator-known-operators)))
                  (save-excursion
                    (goto-char (- (point) 2))
                    (delete-char 1))
-                 'operator-mode-combined-assigment)
+                 'operator-mode-combined-assigment-2)
 	        ((and
                   (member char (list ?`))
                   (or

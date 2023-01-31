@@ -49,5 +49,17 @@
     (should (eq (char-before (1- (point))) ?*))
     ))
 
+(ert-deftest operator-org-mode-test-ofyLzj ()
+  (operator-test
+      "*?"
+    'org-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ??))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
+
 (provide 'operator-org-mode-test)
 ;;; operator-org-mode-test.el ends here
