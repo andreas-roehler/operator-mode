@@ -149,8 +149,13 @@
     (should (char-equal (char-before (1- (point))) ?y))))
 
 (ert-deftest operator-scala-test-YkkZEa ()
+  "ThisBuild / version := \"0.1.0-SNAPSHOT\"
+ThisBuild / scalaVersion := \"2.13.10\"
+lazy val root = (project in file(\".\"))
+  .settings(name := \"\"\"muster4\"\"\")
+"
   (operator-test
-      "lazy val root = (project in file(\".\"))
+"lazy val root = (project in file(\".\"))
   .settings(name:
 "
     'scala-mode
@@ -161,7 +166,6 @@
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?:))
-    (should (char-equal (char-before (- (point) 2)) 32))
 ))
 
 (ert-deftest operator-scala-test-716twd ()
@@ -196,6 +200,47 @@
     (should (char-equal (char-before (- (point) 3)) ?t))
     ))
 
+(ert-deftest operator-scala-test-DWfHzU ()
+  (operator-test
+      "try {
+  val f = new FileReader(\"input.txt\")
+  // Use and close file
+} catch {
+  case ex: FileNotFoundException => // Handle missing file
+  case ex: IOException => // Handle other I/O error
+}
+"
+    'scala-mode
+    (goto-char (point-max))
+    (search-backward ":")
+    (forward-char 1)
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?x))
+    ))
+
+(ert-deftest operator-scala-test-J3TTm1 ()
+  (operator-test
+      "val firstArg = if (args.length > 0) args(0) else \"\"
+firstArg match {
+  case \"salt\" => println(\"pepper\")
+  case \"chips\" => println(\"salsa\")
+  case \"eggs\" => println(\"bacon\")
+  case _ =
+}
+"
+    'scala-mode
+    (goto-char (point-max))
+    (search-backward "=")
+    (forward-char 1) 
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
 
 
 

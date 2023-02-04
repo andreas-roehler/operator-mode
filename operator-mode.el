@@ -1112,7 +1112,10 @@ Haskell: (>=>) :: Monad"
 	 'scala-notfirst)
 	;; EMACS=emacs
         ;; myVar_=
-	((and (not (eq ?{ list-start-char))(member char (list ?. ?- ?$ ?~ ?_  ?^ ?& ?* 41)))
+	((and
+          ;; (not (eq ?{ list-start-char))
+          ;; case ex: IOException => // Handle other I/O error
+          (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& ?* 41 ?:)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1226,7 +1229,12 @@ Haskell: (>=>) :: Monad"
   "Haskell"
   (let* ((notfirst (operator--scala-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
+	 (nojoin (cond ((member char (list ?& ?| ?> ?<))
+                        nil)
+                       ;; case _ => println("huh?")
+                       ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
+                        t)
+                       (t t))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--scala-shell-notfirst (char pps list-start-char notfirst)
@@ -1799,11 +1807,29 @@ Haskell: (>=>) :: Monad"
 	  (cond ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
 		 'email-adress)
                 ;; join
-		((and (member char (list ?= ?:)) (member (char-before (1- (point))) operator-known-operators))
-                 'operator-mode-combined-assigment-1)
+		;; ((and (member char (list ?= ?:))
+                ;;       (or
+                ;;        (not (eq major-mode 'scala-mode))
+                ;;        ;; (or (member (char-before (1- (point))) operator-known-operators)
+                ;;        ;;     (and (member (char-before (+ (point) 2)) operator-known-operators)
+                ;;        ;;          (eq (char-before (1- (point))) 32)))
+                ;;        )
+                ;;       ;; case _ => println("huh?")
+                ;;       )
+                ;;  'operator-mode-combined-assigment-1)
                 ;; join
                 ;;  def main(args: Array[String]):
-                ((unless (and (eq major-mode 'org-mode) (looking-back "^\\* .*" (line-beginning-position)))(and (eq 32 (char-before (1- (point))))(member (char-before (- (point) 2)) operator-known-operators)))
+                ((unless
+                     (or
+                      (and (eq major-mode 'org-mode) (looking-back "^\\* .*" (line-beginning-position)))
+                      ;; firstArg match {
+                      ;;   case "eggs" => println("bacon")
+                      ;;   case _ =
+                      (and (eq major-mode 'scala-mode)
+                           (and (member (char-before (+ (point) 2)) operator-known-operators)
+                                (eq (char-before (1- (point))) 32))))
+                   (and (eq 32 (char-before (1- (point))))
+                        (member (char-before (- (point) 2)) operator-known-operators)))
                  (save-excursion
                    (goto-char (- (point) 2))
                    (delete-char 1))
@@ -1855,8 +1881,8 @@ Haskell: (>=>) :: Monad"
        (operator--do-scala-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        ;; (if (ignore-errors (shell-command ":sh env"))
-	   ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
-         (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
+       ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+       (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode
