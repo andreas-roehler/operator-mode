@@ -1376,8 +1376,10 @@ Haskell: (>=>) :: Monad"
 	 'shell-notfirst)
 	;; EMACS=emacs
         ;; git commit -s -a -m "sdf,
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?,))
+	((member char (list ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?,))
 		'shell-punkt)
+        ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
+         'shell-punkt-not-at-prompt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
@@ -1389,8 +1391,6 @@ Haskell: (>=>) :: Monad"
 			       ;; (looking-back shell-interactive-prompt (line-beginning-position))
 			       )))
 	 'shell-shell-interactive-prompt)
-	((member char (list ?. ?- ?:))
-	 'shell-punkt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -1418,8 +1418,10 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((unless 
+             (save-excursion (backward-char) (looking-back  comint-prompt-regexp (point-min)))
+           (or (member (char-before (1- (point))) operator-known-operators)
+	       (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators))))
 	 'shell-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'shell-<)
