@@ -1418,7 +1418,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
-	((unless 
+	((unless
              (save-excursion (backward-char) (looking-back  comint-prompt-regexp (point-min)))
            (or (member (char-before (1- (point))) operator-known-operators)
 	       (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators))))
@@ -1437,8 +1437,10 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'shell-notsecond)
 	;; EMACS=emacs
-	((member char (list ?. ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/))
+	((member char (list ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/))
 		'shell-punkt)
+        ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
+         'shell-punkt-not-at-prompt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1824,6 +1826,7 @@ Haskell: (>=>) :: Monad"
                 ((unless
                      (or
                       (and (eq major-mode 'org-mode) (looking-back "^\\* .*" (line-beginning-position)))
+                      (and (eq major-mode 'shell-mode)(save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
                       ;; firstArg match {
                       ;;   case "eggs" => println("bacon")
                       ;;   case _ =
