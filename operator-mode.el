@@ -1672,7 +1672,7 @@ Haskell: (>=>) :: Monad"
 	 (unless
              (or
               (looking-back "^\\* *." (line-beginning-position))
-              (and (eq char ?-) (looking-back " .-" (line-beginning-position))))
+              (and (eq char ?-) (looking-back " \\.-" (line-beginning-position))))
 	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]")
 	 'org-in-word)
