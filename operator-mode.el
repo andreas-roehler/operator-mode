@@ -724,6 +724,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-interactive-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
+        ((nth 3 pps)
+         'in-string-p)
 	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
 	 'haskell-font-lock-keyword)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -779,10 +781,12 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-interactive-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
+        ((nth 3 pps)
+         'in-string-p)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
         ;; λ> :l foo.hs
-        ((and (eq char ?.)(looking-back ":[[:alpha:]][^:]*" (line-beginning-position)))
+        ((and (eq char ?.) (looking-back ":[[:alpha:]][^:]*" (line-beginning-position)))
 	 'loading)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimter)
@@ -793,7 +797,7 @@ Haskell: (>=>) :: Monad"
 			       ;; haskell-interactive-prompt
 			       (line-beginning-position))))
 	 'haskell-haskell-interactive-prompt)
-	((and (nth 3 pps)(not (eq (char-before) ?|)))
+	((and (nth 3 pps) (not (eq (char-before) ?|)))
 	 'haskell-in-string)
 	;; index-p
 	((and
@@ -1826,7 +1830,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--text-notfirst (char start pps list-start-char notfirst)
   (cond (notfirst
 	 'text-notfirst)
-	((member char (list ?\; ?\( ?, ?. ?: ?\? ?! ?@ ?- 47))
+	((member char (list ?\; ?\( ?, ?. ?: ?\? ?! ?@ ?- ?_ 47))
 	 'text-punct-class)
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
@@ -1838,6 +1842,8 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--text-notsecond (char start pps list-start-char notsecond)
   (cond (notsecond)
+        ((member char (list ?\; 40 ?@ ?- ?_ 47))
+	 'text-punct-class)
 	((looking-back "[[:alnum:]][-/öäüßÄÖÜ]")
 	 'text-in-word)
 	((member char (list ?@))
@@ -1909,28 +1915,33 @@ Haskell: (>=>) :: Monad"
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))
 	 (notfirst
-	  (cond ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
-		 'email-adress)
-                ((and (member char (list ?>)) (looking-back (concat "[[:alnum:]]" (char-to-string char)) (line-beginning-position)))
-                 ;;  ghci>
-		 'prompt)
-                ((and
-                  (member char (list ?`))
-                  (or
-                   (not (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2)))
-                   (eq (char-before (1- (point))) 32)))
-	         'generic-on-symbols)))
+	  (cond
+           ((nth 3 pps)
+            'operator--do-intern-in-string-p)
+           ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
+	    'operator--do-intern-email-adress)
+           ((and (member char (list ?>)) (looking-back (concat "[[:alnum:]]" (char-to-string char)) (line-beginning-position)))
+            ;;  ghci>
+	    'operator--do-intern-prompt)
+           ((and
+             (member char (list ?`))
+             (or
+              (not (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2)))
+              (eq (char-before (1- (point))) 32)))
+	    'operator--do-intern-generic-on-symbols)))
          (notsecond
           (cond
+        ((nth 3 pps)
+         'operator--do-intern-in-string-p)
            ((and
              (member char (list ?`))
              ;; odd numbers of backticks before last one
              (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2))
              ;; (eq (char-before (1- (point))) 32)
              )
-            'generic-on-symbols)
+            'operator--do-intern-generic-on-symbols)
            ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
-            'email-adress))))
+            'operator--do-intern-email-adress))))
     ;; generic settings above
     (pcase major-mode
       (`agda2-mode
