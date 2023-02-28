@@ -387,5 +387,21 @@
       ;; take action inside comments if operator-mode-in-comments-p is t
       (should (looking-back "foo = " (line-beginning-position))))))
 
+(ert-deftest operator-python-test-xY2SZz ()
+  (operator-test
+      "a = 2^"
+    'python-mode
+    operator-mode-debug
+    (let ((operator-mode-in-comments-p t))
+      (operator-do)
+      ;; take action inside comments if operator-mode-in-comments-p is t
+      (should (eq (char-before) ?^))
+      (should (eq (char-before (1- (point))) ?2))
+)))
+
+
+
+
+
 (provide 'operator-python-mode-test)
 ;;; operator-python-mode-test.el ends here

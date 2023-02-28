@@ -397,8 +397,11 @@ Haskell: (>=>) :: Monad"
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
     (cond (notfirst
 	   notfirst)
+          ((member char (list ?? ?^))
+           'python-punct)
 	  ;; echo(**kargs)
-	  ((and (member char (list ?* ?=)) in-list-p)
+          ;; a = int(input('A? '))
+	  ((and (member char (list ?* ?= ?? ?^)) in-list-p)
 	   'python-*-in-list-p)
 	  ;; print('%(language)s has %(number)03d quote types.' %
 	  ;;     {'language': "Python", "number": 2})
@@ -431,8 +434,11 @@ Haskell: (>=>) :: Monad"
 	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
     (cond (notsecond
 	   notsecond)
+          ;;  a^2
+          ((member char (list ?^))
+           'python-punct)
 	  ;; echo(**kargs)
-	  ((and (member char (list ?* ?=)) in-list-p)
+	  ((and (member char (list ?* ?= ?^)) in-list-p)
 	   'python-*-in-list-p)
 	  ((and (char-equal ?- char) in-list-p)
 	   'python---in-list-p)
@@ -1620,6 +1626,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'emacs-lisp-notfirst)
+        ((member char (list ?- ?^ ??))
+         'emacs-lisp-punct)
 	(list-start-char
 	 (cond
 	  ((member char (list ?\( ?\) ?\]))
@@ -1638,11 +1646,13 @@ Haskell: (>=>) :: Monad"
 	 'emacs-lisp-join-known-operators)
 	((looking-back "^;" (line-beginning-position))
 	 'emacs-lisp-comment-start)
-	((looking-back "lambda +\\_<[^ ]+\\_>" (line-beginning-position)))))
+	))
 
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
+        ((member char (list ?- ?~ ?^))
+         'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
 
@@ -1901,23 +1911,10 @@ Haskell: (>=>) :: Monad"
 	 (notfirst
 	  (cond ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
 		 'email-adress)
-                ;; ((unless
-                ;;      (or
-                ;;       (and (eq major-mode 'org-mode) (looking-back "^\\* .*" (line-beginning-position)))
-                ;;       (and (eq major-mode 'shell-mode) (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back comint-prompt-regexp (point-min))))
-                ;;       ;; firstArg match {
-                ;;       ;;   case "eggs" => println("bacon")
-                ;;       ;;   case _ =
-                ;;       (and (eq major-mode 'scala-mode)
-                ;;            (and (member (char-before (+ (point) 2)) operator-known-operators)
-                ;;                 (eq (char-before (1- (point))) 32))))
-                ;;    (and (eq 32 (char-before (1- (point))))
-                ;;         (member (char-before (- (point) 2)) operator-known-operators)))
-                ;;  (save-excursion
-                ;;    (goto-char (- (point) 2))
-                ;;    (delete-char 1))
-                ;;  'operator-mode-combined-assigment-2)
-	        ((and
+                ((and (member char (list ?>)) (looking-back (concat "[[:alnum:]]" (char-to-string char)) (line-beginning-position)))
+                 ;;  ghci>
+		 'prompt)
+                ((and
                   (member char (list ?`))
                   (or
                    (not (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2)))
