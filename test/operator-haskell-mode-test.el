@@ -1,6 +1,6 @@
 ;;; operator-haskell-mode-test.el --- haskell-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2022  Andreas Röhler
+;; Copyright (C) 2019-2023  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
@@ -28,7 +28,7 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-(straight-use-package 'haskell-mode nil nil)
+;; (straight-use-package 'haskell-mode nil nil)
 (require 'haskell)
 
 (ert-deftest operator-haskell-test-WG0LXr ()

@@ -1418,12 +1418,131 @@ Haskell: (>=>) :: Monad"
 	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
-(defun operator--shell-notfirst (char pps list-start-char notfirst)
+
+(defun operator--sh-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'shell-notfirst)
 	;; EMACS=emacs
         ;; git commit -s -a -m "sdf,
-	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?,))
+        ;;  > ..
+	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+		'shell-punkt)
+        ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
+         'shell-punkt-not-at-prompt)
+	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'rm-attention)
+	((and (or (eq 'shell-interactive-mode major-mode)(eq 'shell-mode major-mode))
+	      (save-excursion (backward-char 1)
+			      (or
+			       (looking-back shell-prompt-pattern (line-beginning-position))
+			       ;; (looking-back shell-interactive-prompt (line-beginning-position))
+			       )))
+	 'shell-sh-interactive-prompt)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 ;; (unless (eq list-start-char ?{)
+	 (cond ((char-equal ?, char)
+		'shell-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?. char))
+		'shell-construct-for-export)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'shell-operator--in-list-continue)
+	       ((char-equal ?* char)
+		'shell-char-equal-\*-in-list-p)
+	       ((member char (list ?\( ?\) ?\]))
+		'shell-listing)
+	       ((nth 3 pps)
+		'shell-and-nth-1-pps-nth-3-pps)
+	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
+	       ;; 	'shell-in-list-p)
+	       ((and (nth 1 pps)
+		     (or (eq (1- (current-column)) (current-indentation))
+			 (eq (- (point) 2)(nth 1 pps))))
+		'shell-in-list-p)
+	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+		'pattern-match-on-list)
+	       ))
+	;; ((member char (list ?\; ?,)))
+	((unless
+             (save-excursion (backward-char) (looking-back  comint-prompt-regexp (point-min)))
+           (or (member (char-before (1- (point))) operator-known-operators)
+	       (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators))))
+	 'shell-join-known-operators)
+	((looking-back "<\\*" (line-beginning-position))
+	 'shell-<)
+	((looking-back "^-" (line-beginning-position))
+	 'shell-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'shell-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+
+(defun operator--sh-notsecond (char pps list-start-char notsecond)
+  (cond (notsecond
+	 'shell-notsecond)
+	;; EMACS=emacs
+	((member char (list ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?. ??))
+		'shell-punkt)
+        ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
+         'shell-punkt-not-at-prompt)
+	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'rm-attention)
+	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	 'shell-list-delimter)
+	((and (eq 'shell-interactive-mode major-mode)
+	      (save-excursion (backward-char)
+			      (looking-back (concat shell-interactive-prompt " *:[a-z]+ *") (line-beginning-position))))
+	 'shell-sh-interactive-prompt)
+        ;; git commit -s -a -m "sdf,
+	;; ((nth 3 pps)
+	;;  'shell-in-string)
+	;; index-p
+	((and
+	  ;; "even <$> (2,2)"
+	  (not (char-equal char ?,))
+	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'shell-comment-start)
+	((looking-back "import +[^ ]+." (line-beginning-position))
+	 'shell-import)
+	((looking-back "<\\*" (line-beginning-position))
+	 'shell->)
+	((and (nth 1 pps)
+	      (or
+	       (member char (list ?@))
+	       (eq (1- (current-column)) (current-indentation))
+		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	 'shell-in-list-p)
+	(list-start-char
+	 ;; data Contact =  Contact { name :: "asdf" }
+	 (cond ((char-equal ?, char)
+		'shell-list-separator)
+	       ((and (char-equal ?\[ list-start-char)
+		     (char-equal ?, char))
+		'shell-construct-for-export)
+	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+		'pattern-match-on-list)))))
+
+(defun operator--do-sh-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Shell-mode"
+  (let* ((notfirst (operator--sh-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--sh-notsecond char pps list-start-char notsecond))
+	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
+    (operator--final char orig notfirst notsecond nojoin)))
+
+(defun operator--shell-notfirst (char pps list-start-char notfirst)
+  (cond (notfirst
+	 'shell-notfirst)
+        ;; git commit -s -a -m "sdf,
+        ;;  > ..
+	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
          'shell-punkt-not-at-prompt)
@@ -1483,8 +1602,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	;; EMACS=emacs
-	((member char (list ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/))
+	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?. ??))
 		'shell-punkt)
         ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
          'shell-punkt-not-at-prompt)
@@ -1972,13 +2090,20 @@ Haskell: (>=>) :: Monad"
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`scala-mode
        (operator--do-scala-mode char orig pps list-start-char notfirst notsecond))
+      (`sh-mode
+       ;; (if (ignore-errors (shell-command ":sh env"))
+       ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+       ;; all this is not working:
+       ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
+           ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+         (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        ;; (if (ignore-errors (shell-command ":sh env"))
        ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
        ;; all this is not working:
-       (if (ignore-errors (shell-command ":sh \"echo $0\""))
-           (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-         (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)))
+       ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
+           ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+         (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode
