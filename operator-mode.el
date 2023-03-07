@@ -1603,12 +1603,13 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'shell-notsecond)
 	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?. ??))
-		'shell-punkt)
-        ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
-         'shell-punkt-not-at-prompt)
-	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	 'shell-punkt)
+        ;; scala> echo("asdf",)
+        ;; ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
+        ;;  'shell-punkt-not-at-prompt)
+	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
-	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'shell-list-delimter)
@@ -1631,20 +1632,23 @@ Haskell: (>=>) :: Monad"
 	((looking-back "<\\*" (line-beginning-position))
 	 'shell->)
 	((and (nth 1 pps)
+              (not (member char (list ?,)))
 	      (or
 	       (member char (list ?@))
 	       (eq (1- (current-column)) (current-indentation))
-		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+	       (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 'shell-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
-		'shell-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
-		'shell-construct-for-export)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-		'pattern-match-on-list)))))
+	 (cond
+          ;; scala> echo("asdf", )
+          ;; ((char-equal ?, char)
+	  ;;  'shell-list-separator)
+	  ((and (char-equal ?\[ list-start-char)
+		(char-equal ?, char))
+	   'shell-construct-for-export)
+	  ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	   'pattern-match-on-list)))))
 
 (defun operator--do-shell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Shell-mode"
@@ -1748,7 +1752,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'emacs-lisp-notfirst)
-        ((member char (list ?- ?^ ??))
+        ((member char (list ?, ?- ?^ ??))
          'emacs-lisp-punct)
 	(list-start-char
 	 (cond
@@ -1773,7 +1777,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
-        ((member char (list ?- ?~ ?^))
+        ((member char (list ?, ?- ?~ ?^))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
