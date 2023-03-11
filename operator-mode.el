@@ -2137,6 +2137,7 @@ Haskell: (>=>) :: Monad"
          (not (nth 8 (parse-partial-sexp (point-min) (point)))))
 	(operator--do-intern (char-before) (copy-marker (point)))))
 
+;;;###autoload
 (define-minor-mode operator-mode
   "Toggle automatic insertion of spaces around operators if appropriate.
 
