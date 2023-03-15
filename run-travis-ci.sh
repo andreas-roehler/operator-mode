@@ -266,7 +266,7 @@ else
     entfernt
 fi
 
-# if [ $ORT -eq 0 ]; then
+# if [ $WERKSTATT -eq 0 ]; then
 #     hier
 #     echo "Lade testumgebung \"$HOSTNAME\""
 # else

@@ -28,7 +28,11 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-;; (straight-use-package 'haskell-mode nil nil)
+(unless
+    ;;  check for remote environment
+    (string= "0" (getenv "WERKSTATT"))
+  (straight-use-package 'haskell-mode))
+
 (require 'haskell)
 
 (ert-deftest operator-haskell-test-WG0LXr ()
@@ -545,7 +549,7 @@ module AStack( Stack, push, pop, top, size) where
     'haskell-mode
     operator-mode-debug
     (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f") 
+    (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should (eq (char-before) 32))
     (should (eq (char-before (1- (point))) ?|))
