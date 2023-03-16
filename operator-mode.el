@@ -471,35 +471,33 @@ Haskell: (>=>) :: Monad"
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--java-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
-  (let* ((in-list-p (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{)))))
-	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
-    (cond (notfirst
-	   notfirst)
-	  ;; echo(**kargs)
-	  ((and (member char (list ?* ?=)) in-list-p)
-	   'java-*-in-list-p)
-	  ;; print('%(language)s has %(number)03d quote types.' %
-	  ;;     {'language': "Python", "number": 2})
-	  ;; don'java-t space ‘%’
-	  ;; ((and (nth 1 pps) (nth 3 pps)
-	  ;; 	'java-string-in-list))
-	  ;; with open('/path/to/some/file') as file_1,
-	  ((member char (list ?\; ?, 40 41 ?@))
-	   'java-list-op)
-	  ((member char (list ?.))
-	   'java-dot)
-	  ;; def f(x, y):
-	  ;; if len(sys.argv) == 1:
-	  ((operator--closing-colon char)
-	   'java-operator--closing-colon)
-	  (index-p
-	   'java-index-p)
-	  ((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
-	       ;; for i in c :
-	       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
-	       (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
-	       (looking-back "return +[^ ]+" (line-beginning-position)))
-	   'java-after-symbol))))
+  (cond (notfirst
+	 notfirst)
+	(;; echo(**kargs)
+         (and (member char (list ?=))(nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{))))
+         in-list-p)
+	;; print('%(language)s has %(number)03d quote types.' %
+	;;     {'language': "Python", "number": 2})
+	;; don'java-t space ‘%’
+	;; ((and (nth 1 pps) (nth 3 pps)
+	;; 	'java-string-in-list))
+	;; with open('/path/to/some/file') as file_1,
+	((member char (list ?\; ?, 40 41 ?@))
+	 'java-list-op)
+	((member char (list ?.))
+	 'java-dot)
+	;; def f(x, y):
+	;; if len(sys.argv) == 1:
+	((operator--closing-colon char)
+	 'java-operator--closing-colon)
+	((and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))
+	 'java-index-p)
+	((or (looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position))
+	     ;; for i in c :
+	     (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
+	     (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
+	     (looking-back "return +[^ ]+" (line-beginning-position)))
+	 'java-after-symbol)))
 
 (defun operator--java-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
   (let* ((in-list-p (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{)))))
@@ -1157,7 +1155,7 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
-        
+
 	;; EMACS=emacs
         ;; myVar_=
 	((and
@@ -2007,7 +2005,8 @@ Haskell: (>=>) :: Monad"
      (not (member (char-before (- (point) 1)) (list ?∅ ?_)))
      (or (member (char-before (- (point) 2)) operator-known-operators)
 	 (member (char-before (- (point) 1)) operator-known-operators))
-     (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
+     ;; (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
+     (not (ignore-errors (eq (char-syntax (char-before (- (point) 1))) 41)))
      (save-excursion (backward-char)
 		     (and (eq (char-before) 32)(delete-char -1))
 		     t))))
