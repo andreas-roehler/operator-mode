@@ -514,7 +514,8 @@ Haskell: (>=>) :: Monad"
 	 'java-string-in-list)
 	;; (char-equal char ?~)
 	;; with open('/path/to/some/file') as file_1,
-	((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
+        ;; for(int i=0;
+	((member char (list ?\( ?\) ?~ ?\[ ?\] ?@))
 	 'java-list-op)
 	((member char (list ?.))
 	 'java-dot)
@@ -527,6 +528,7 @@ Haskell: (>=>) :: Monad"
 	      (not (char-equal char ?,))
 	      (looking-back "return +[^ ]+.*" (line-beginning-position))))
 	 'java-after-symbol)))
+
 (defun operator--do-java-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
