@@ -500,35 +500,33 @@ Haskell: (>=>) :: Monad"
 	 'java-after-symbol)))
 
 (defun operator--java-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
-  (let* ((in-list-p (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{)))))
-	 (index-p (when in-list-p (save-excursion (goto-char (nth 1 pps)) (and (eq (char-after) ?\[) (not (eq (char-before) 32)))))))
-    (cond (notsecond
-	   notsecond)
-	  ;; echo(**kargs)
-	  ((and (member char (list ?* ?=)) in-list-p)
-	   'java-*-in-list-p)
-	  ((and (char-equal ?- char) in-list-p)
-	   'java---in-list-p)
-	  ;; print('%(language)s has %(number)03d quote types.' %
-	  ;;     {'language': "Python", "number": 2})
-	  ;; don't space ‘%’
-	  ((and (nth 1 pps) (nth 3 pps))
-	   'java-string-in-list)
-	  ;; (char-equal char ?~)
-	  ;; with open('/path/to/some/file') as file_1,
-	  ((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
-	   'java-list-op)
-	  ((member char (list ?.))
-	   'java-dot)
-	  ((member char (list ?:))
-	   'java-colon)
-	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
-	       (and
-		;; return self.first_name, self.last_name
-		(not (char-equal char ?,))
-		(looking-back "return +[^ ]+.*" (line-beginning-position))))
-	   'java-after-symbol))))
-
+  (cond (notsecond
+	 notsecond)
+	;; echo(**kargs)
+	((and (nth 1 pps) (member char (list ?* ?=)))
+	 'java-*-in-list-p)
+	((and (nth 1 pps) (char-equal ?- char))
+	 'java---in-list-p)
+	;; print('%(language)s has %(number)03d quote types.' %
+	;;     {'language': "Python", "number": 2})
+	;; don't space ‘%’
+	((and (nth 1 pps) (nth 3 pps))
+	 'java-string-in-list)
+	;; (char-equal char ?~)
+	;; with open('/path/to/some/file') as file_1,
+	((member char (list ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
+	 'java-list-op)
+	((member char (list ?.))
+	 'java-dot)
+        ;; for(int foo: bar) {
+	;; ((member char (list ?:))
+	;;  'java-colon)
+	((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
+	     (and
+	      ;; return self.first_name, self.last_name
+	      (not (char-equal char ?,))
+	      (looking-back "return +[^ ]+.*" (line-beginning-position))))
+	 'java-after-symbol)))
 (defun operator--do-java-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
@@ -1752,7 +1750,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'emacs-lisp-notfirst)
-        ((member char (list ?, ?- ?^ ??))
+        ((member char (list ?' ?, ?- ?^ ??))
          'emacs-lisp-punct)
 	(list-start-char
 	 (cond
@@ -1777,7 +1775,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
-        ((member char (list ?, ?- ?~ ?^))
+        ;; (should (char-equal (char-before (- (point) 2)) ?
+        ((member char (list ?, ?- ?~ ?^ ??))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
