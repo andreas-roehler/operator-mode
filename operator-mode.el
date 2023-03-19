@@ -498,7 +498,8 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 notsecond)
 	;; echo(**kargs)
-	((and (nth 1 pps) (member char (list ?* ?=)))
+        ;; while((line = br.readline()) != )
+	((and (nth 1 pps) (member char (list ?*)))
 	 'java-*-in-list-p)
 	((and (nth 1 pps) (char-equal ?- char))
 	 'java---in-list-p)
