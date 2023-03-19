@@ -473,15 +473,10 @@ Haskell: (>=>) :: Monad"
 (defun operator--java-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
   (cond (notfirst
 	 notfirst)
-	(;; echo(**kargs)
-         (and (member char (list ?=))(nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{))))
-         in-list-p)
-	;; print('%(language)s has %(number)03d quote types.' %
-	;;     {'language': "Python", "number": 2})
-	;; don'java-t space ‘%’
-	;; ((and (nth 1 pps) (nth 3 pps)
-	;; 	'java-string-in-list))
-	;; with open('/path/to/some/file') as file_1,
+	;; (;; echo(**kargs)
+        ;;  ;; while((line = foo
+        ;;  (and (member char (list ?=))(nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{))))
+        ;;  'in-list-p)
 	((member char (list ?\; ?, 40 41 ?@))
 	 'java-list-op)
 	((member char (list ?.))
