@@ -501,8 +501,8 @@ Haskell: (>=>) :: Monad"
         ;; while((line = br.readline()) != )
 	((and (nth 1 pps) (member char (list ?*)))
 	 'java-*-in-list-p)
-	((and (nth 1 pps) (char-equal ?- char))
-	 'java---in-list-p)
+	;; ((and (nth 1 pps) (char-equal ?- char))
+	;;  'java---in-list-p)
 	;; print('%(language)s has %(number)03d quote types.' %
 	;;     {'language': "Python", "number": 2})
 	;; don't space ‘%’
