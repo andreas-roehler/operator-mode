@@ -499,8 +499,8 @@ Haskell: (>=>) :: Monad"
 	 notsecond)
 	;; echo(**kargs)
         ;; while((line = br.readline()) != )
-	((and (nth 1 pps) (member char (list ?*)))
-	 'java-*-in-list-p)
+	;; ((and (nth 1 pps) (member char (list ?*)))
+	;;  'java-*-in-list-p)
 	;; ((and (nth 1 pps) (char-equal ?- char))
 	;;  'java---in-list-p)
 	;; print('%(language)s has %(number)03d quote types.' %
@@ -725,7 +725,7 @@ Haskell: (>=>) :: Monad"
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
         ;; λ> :l foo.hs
-        ((and (eq char ?.)(looking-back ":[[:alpha:]][^:]*" (line-beginning-position)))
+        ((and (eq char ?.)(looking-back ":[[:print:]][^:]*" (line-beginning-position)))
 	 'loading)
 	((and (eq 'haskell-interactive-mode major-mode)
 	      (save-excursion (backward-char 1)
@@ -780,7 +780,7 @@ Haskell: (>=>) :: Monad"
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
         ;; λ> :l foo.hs
-        ((and (eq char ?.) (looking-back ":[[:alpha:]][^:]*" (line-beginning-position)))
+        ((and (eq char ?.) (looking-back ":[[:print:]][^:]*" (line-beginning-position)))
 	 'loading)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimter)
@@ -1538,7 +1538,7 @@ Haskell: (>=>) :: Monad"
         ;; git commit -s -a -m "sdf,
         ;;  > ..
         ;; scala> "abc".length()
-	((member char (list 41 ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+	((member char (list 41 ?\; ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
          'shell-punkt-not-at-prompt)
@@ -1554,8 +1554,6 @@ Haskell: (>=>) :: Monad"
 			       )))
 	 'shell-shell-interactive-prompt)
 	(list-start-char
-	 ;; data Contact =  Contact { name :: "asdf" }
-	 ;; (unless (eq list-start-char ?{)
 	 (cond ((char-equal ?, char)
 		'shell-list-separator)
 	       ((and (char-equal ?\[ list-start-char)
@@ -1598,7 +1596,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?. ??))
+	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?. ??))
 	 'shell-punkt)
         ;; scala> echo("asdf",)
         ;; ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
@@ -1635,11 +1633,7 @@ Haskell: (>=>) :: Monad"
 	       (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
 	 'shell-in-list-p)
 	(list-start-char
-	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond
-          ;; scala> echo("asdf", )
-          ;; ((char-equal ?, char)
-	  ;;  'shell-list-separator)
 	  ((and (char-equal ?\[ list-start-char)
 		(char-equal ?, char))
 	   'shell-construct-for-export)
