@@ -473,6 +473,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--java-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
   (cond (notfirst
 	 notfirst)
+        ;; for(i = 0; i < 100000; i)
+        ((and (eq (char-before (1- (point))) ?i) (eq char ?+)(nth 1 pps))
+         'in-loop)
 	;; (;; echo(**kargs)
         ;;  ;; while((line = foo
         ;;  (and (member char (list ?=))(nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (not (eq (char-after) ?{))))
@@ -1996,15 +1999,16 @@ Haskell: (>=>) :: Monad"
      (not (member (char-before (- (point) 1)) (list ?∅ ?_)))
      (or (member (char-before (- (point) 2)) operator-known-operators)
 	 (member (char-before (- (point) 1)) operator-known-operators))
-     ;; (not (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41)))
-     (not (ignore-errors (eq (char-syntax (char-before (- (point) 1))) 41)))
+     (not (or
+           (ignore-errors (eq (char-syntax (char-before (- (point) 1))) 41))
+           ;; if (Character.isLetter(i)) {
+           (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41))
+           ))
      (save-excursion (backward-char)
 		     (and (eq (char-before) 32)(delete-char -1))
 		     t))))
 
 (defun operator--final (char orig &optional notfirst notsecond nojoin fix-whitespace)
-  ;; (when (member char operator-known-operators)
-
   (cond (notfirst
 	 (unless nojoin (operator--join-operators-maybe char)))
 	((not notfirst)
