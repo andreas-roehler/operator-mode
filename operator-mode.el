@@ -2023,12 +2023,12 @@ Haskell: (>=>) :: Monad"
   (when fix-whitespace (delete-horizontal-space)))
 
 (defun operator--do-intern (char orig)
-  (let* ((min (cond ((member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))
-		     (or (cdr comint-last-prompt) (line-beginning-position)))
-		    ((eq major-mode 'haskell-interactive-mode)
-		     haskell-interactive-mode-prompt-start)
-		    (t (point-min))))
-	 (pps (parse-partial-sexp min (point)))
+  (let* ((start (cond ((member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))
+		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
+		      ((eq major-mode 'haskell-interactive-mode)
+		       haskell-interactive-mode-prompt-start)
+		      (t (point-min))))
+	 (pps (parse-partial-sexp start (point)))
 	 (list-start-char
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))
@@ -2049,8 +2049,8 @@ Haskell: (>=>) :: Monad"
 	    'operator--do-intern-generic-on-symbols)))
          (notsecond
           (cond
-        ((nth 3 pps)
-         'operator--do-intern-in-string-p)
+           ((nth 3 pps)
+            'operator--do-intern-in-string-p)
            ((and
              (member char (list ?`))
              ;; odd numbers of backticks before last one
@@ -2095,15 +2095,15 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
        ;; all this is not working:
        ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
-           ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-         (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
+       ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+       (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        ;; (if (ignore-errors (shell-command ":sh env"))
        ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
        ;; all this is not working:
        ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
-           ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-         (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
+       ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+       (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode
