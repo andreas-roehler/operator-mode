@@ -118,7 +118,6 @@ h3 () {
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 -load $FILE1 \
 -load $FILE2 \
--load $FILE3 \
 \
 -load $TEST3 \
 -f ert-run-tests-batch-and-exit

@@ -1770,23 +1770,17 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
-        ;; (should (char-equal (char-before (- (point) 2)) ?
+        ;; (should (eq (char-before) ?\;
+        ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (1- (point)))))
+         'emacs-lisp-semicolon)
         ((member char (list ?, ?- ?~ ?^ ??))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
-
 	((nth 3 pps)
 	 'emacs-lisp-in-string)
-
 	((looking-back "^;" (line-beginning-position))
-	 'emacs-lisp-comment-start)
-
-	;; ((and (nth 1 pps)
-	;;       (or (eq (1- (current-column)) (current-indentation))
-	;; 	  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
-	;;  'emacs-lisp-in-list-p)
-	))
+	 'emacs-lisp-comment-start)))
 
 (defun operator--do-emacs-lisp-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
