@@ -500,20 +500,10 @@ Haskell: (>=>) :: Monad"
 (defun operator--java-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
   (cond (notsecond
 	 notsecond)
-	;; echo(**kargs)
-        ;; while((line = br.readline()) != )
-	;; ((and (nth 1 pps) (member char (list ?*)))
-	;;  'java-*-in-list-p)
-	;; ((and (nth 1 pps) (char-equal ?- char))
-	;;  'java---in-list-p)
-	;; print('%(language)s has %(number)03d quote types.' %
-	;;     {'language': "Python", "number": 2})
-	;; don't space ‘%’
+        ((and (member char (list ?%))(or (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (eq (char-after) 40) (looking-back "format" (line-beginning-position)))) (nth 3 pps)))
+         ''java-in-format-string)
 	((and (nth 1 pps) (nth 3 pps))
 	 'java-string-in-list)
-	;; (char-equal char ?~)
-	;; with open('/path/to/some/file') as file_1,
-        ;; for(int i=0;
 	((member char (list ?\( ?\) ?~ ?\[ ?\] ?@))
 	 'java-list-op)
 	((member char (list ?.))
@@ -532,7 +522,8 @@ Haskell: (>=>) :: Monad"
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((notfirst (operator--java-notfirst char start pps list-start-char notfirst notsecond nojoin))
-	 (notsecond (operator--java-notsecond char start pps list-start-char notfirst notsecond nojoin)))
+	 (notsecond (operator--java-notsecond char start pps list-start-char notfirst notsecond nojoin))
+         (nojoin (or (and (nth 1 pps) (save-excursion (goto-char (nth 1 pps)) (eq (char-after) 40) (looking-back "format" (line-beginning-position)))) (nth 3 pps))))
     (operator--final char start notfirst notsecond nojoin)))
 
 (defun operator--sql-notfirst (char start pps list-start-char &optional notfirst notsecond nojoin)
@@ -1770,6 +1761,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
+        ;; ((and (looking-back syntactic-close-for-re (line-beginning-position)) (not (eq (char-before) ?\;)) (not (string-match "\\+\\+" (buffer-substring-no-properties (line-beginning-position) (point)))))
+        ;;      ";")
         ;; (should (eq (char-before) ?\;
         ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (1- (point)))))
          'emacs-lisp-semicolon)

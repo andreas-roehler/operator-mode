@@ -127,9 +127,18 @@
     (should (char-equal (char-before (- (point) 2)) 32))
 ))
 
-
-
-
+(ert-deftest operator-java-test-PAcSxW ()
+  (operator-test
+      "System.out.format(\"Foo: %"
+    'java-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?%))
+    (should (char-equal (char-before (- (point) 1)) 32))
+    (should (char-equal (char-before (- (point) 2)) ?:))
+))
 
 
 (provide 'operator-java-mode-test)
