@@ -515,7 +515,7 @@ Haskell: (>=>) :: Monad"
 	     (and
 	      ;; return self.first_name, self.last_name
 	      (not (char-equal char ?,))
-	      (looking-back "return +[^ ]+.*" (line-beginning-position))))
+	      (and (not (nth 1 pps))(looking-back "return +[^ ]+.*" (line-beginning-position)))))
 	 'java-after-symbol)))
 
 (defun operator--do-java-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
@@ -1761,6 +1761,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
+        ((eq (char-before (1- (point))) ??)
+          'emacs-lisp-after-question-mark)
         ;; ((and (looking-back syntactic-close-for-re (line-beginning-position)) (not (eq (char-before) ?\;)) (not (string-match "\\+\\+" (buffer-substring-no-properties (line-beginning-position) (point)))))
         ;;      ";")
         ;; (should (eq (char-before) ?\;
