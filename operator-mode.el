@@ -2012,7 +2012,7 @@ Haskell: (>=>) :: Monad"
   (when fix-whitespace (delete-horizontal-space)))
 
 (defun operator--do-intern (char orig)
-  (let* ((start (cond ((member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))
+  (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
 		       haskell-interactive-mode-prompt-start)
@@ -2118,6 +2118,8 @@ Haskell: (>=>) :: Monad"
          ;; p : filterPrime [x|
 	 ;; (and (member major-mode (list 'haskell-mode 'haskell-interactive-mode))(eq (char-before) ?|))
          (not (nth 8 (parse-partial-sexp (point-min) (point)))))
+        ;; grep 'asf\|
+        (not (and (eq (char-before (1- (point))) 92) (not (eq (char-before (- (point) 2)) ?\)))))
 	(operator--do-intern (char-before) (copy-marker (point)))))
 
 ;;;###autoload

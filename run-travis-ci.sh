@@ -74,6 +74,7 @@ TEST4=${TESTDIR}operator-other-test.el
 TEST5=${TESTDIR}operator-org-mode-test.el
 TEST6=${TESTDIR}operator-scala-mode-test.el
 TEST7=${TESTDIR}operator-java-mode-test.el
+TEST8=${TESTDIR}operator-shell-mode-test.el
 echo "\$TEST1: $TEST1"
 
 #  EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
@@ -184,11 +185,18 @@ h7 () {
 -f ert-run-tests-batch-and-exit
 }
 
-#  --eval "(require 'haskell-mode)" \
-#  --eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode\")" \
-#  -load $FILE3 \
-# haskell
-#  -load $TEST2 \
+h8 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+-load $FILE1 \
+-load $FILE2 \
+-load $FILE3 \
+\
+-load $TEST8 \
+-f ert-run-tests-batch-and-exit
+}
+
 
 hier () {
     $EMACS -Q --batch \
@@ -211,6 +219,7 @@ hier () {
 -load $TEST5 \
 -load $TEST6 \
 -load $TEST7 \
+-load $TEST8 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -231,9 +240,6 @@ entfernt () {
 -f ert-run-tests-batch-and-exit
 }
 
-# echo "cp -u $HOME/arbeit/emacs-lisp/python-modes/components-python-mode/test/py-setup-ert-tests.el $PWD"
-# cp -u $HOME/arbeit/emacs-lisp/python-modes/components-python-mode/test/py-setup-ert-tests.el $PWD
-
 if [ $WERKSTATT -eq 0 ]; then
     while getopts 123456789abcdefghijklmnopqrstuvwxyz option
     do
@@ -244,8 +250,8 @@ if [ $WERKSTATT -eq 0 ]; then
 	    4) echo "h4: Lade \$TEST4: \"$TEST4\"";h4;;
 	    5) echo "h5: Lade \$TEST5: \"$TEST5\"";h5;;
 	    6) echo "h6: Lade \$TEST6: \"$TEST6\"";h6;;
-	    #  7) echo "h7: Lade \$TEST7: \"$TEST7\"";h7;;
-	    #  8) echo "h8: Lade \$TEST8: \"$TEST8\"";h8;;
+	    7) echo "h7: Lade \$TEST7: \"$TEST7\"";h7;;
+	    8) echo "h8: Lade \$TEST8: \"$TEST8\"";h8;;
 	    #  9) echo "h9: Lade \$TEST9: \"$TEST9\"";h9;;
 	    #  a) echo "h10: Lade \$TEST10: \"$TEST10\"";h10;;
 	    #  b) echo "h11: Lade \$TEST11: \"$TEST11\"";h11;;
