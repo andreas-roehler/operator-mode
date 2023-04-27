@@ -1883,7 +1883,7 @@ Haskell: (>=>) :: Monad"
 	((looking-back "[[:alpha:]äöüß.]")
 	 'org-in-word)
 	((char-equal ?* char)
-	 'org-char-equal-\*-in-list-p)
+	 'org-char-equal-*)
 	((member char (list ?\( ?\) ?\] 47))
 	 'org-listing)
 	((nth 3 pps)
@@ -1929,7 +1929,8 @@ Haskell: (>=>) :: Monad"
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position))))
-                ((and (eq major-mode 'org-mode) (looking-back "^\\* *." (line-beginning-position)))))))
+                ;; ((and (eq major-mode 'org-mode) (looking-back "^\\* *." (line-beginning-position))))
+                )))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--text-notfirst (char start pps list-start-char notfirst)
@@ -1988,7 +1989,8 @@ Haskell: (>=>) :: Monad"
      (not (member (char-before (- (point) 1)) (list ?∅ ?_)))
      (or
       ;; ~$ lspci -k|
-      ;; (and (not (member (char-before (- (point) 1)) operator-known-operators))(member (char-before (- (point) 2)) operator-known-operators))
+      ;; org-mode: * *
+      (and (eq (char-before (1- (point))) 32)(member (char-before (- (point) 2)) operator-known-operators))
       (member (char-before (- (point) 1)) operator-known-operators))
      (not (or
            (ignore-errors (eq (char-syntax (char-before (- (point) 1))) 41))
