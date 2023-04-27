@@ -1986,13 +1986,14 @@ Haskell: (>=>) :: Monad"
      ;; ∅ ->
      ;; _+_ = ;; agda
      (not (member (char-before (- (point) 1)) (list ?∅ ?_)))
-     (or (member (char-before (- (point) 2)) operator-known-operators)
-	 (member (char-before (- (point) 1)) operator-known-operators))
+     (or
+      ;; ~$ lspci -k|
+      ;; (and (not (member (char-before (- (point) 1)) operator-known-operators))(member (char-before (- (point) 2)) operator-known-operators))
+      (member (char-before (- (point) 1)) operator-known-operators))
      (not (or
            (ignore-errors (eq (char-syntax (char-before (- (point) 1))) 41))
            ;; if (Character.isLetter(i)) {
-           (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41))
-           ))
+           (ignore-errors (eq (char-syntax (char-before (- (point) 2))) 41))))
      (save-excursion (backward-char)
 		     (and (eq (char-before) 32)(delete-char -1))
 		     t))))
