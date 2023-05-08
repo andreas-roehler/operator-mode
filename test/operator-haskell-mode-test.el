@@ -555,5 +555,19 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (1- (point))) ?|))
     (should (eq (char-before (- (point) 2)) 32))))
 
+(ert-deftest operator-haskell-test-yU8shG ()
+  (operator-test
+      "preplicate x a = a ++ preplicate (x-"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) ?-))
+    (should (eq (char-before (1- (point))) ?x))
+    (should (eq (char-before (- (point) 2)) 40))))
+
+
+
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
