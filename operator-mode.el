@@ -1742,7 +1742,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'emacs-lisp-notfirst)
-        ((member char (list ?' ?, ?- ?^ ??))
+        ;; (let*
+        ((member char (list ?* ?' ?, ?- ?^ ??))
          'emacs-lisp-punct)
 	(list-start-char
 	 (cond
