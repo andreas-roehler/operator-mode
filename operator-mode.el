@@ -575,11 +575,10 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((member char (list ?-))
+        ((and (nth 1 pps) (member char (list ?-)))
          ;; if n < 0 then -1
          ;; (x-
          'haskell-punct)
-
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
          'haskell-number-following-alpha)
@@ -635,7 +634,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
-        ((member char (list ?-))
+        ((and (nth 1 pps) (member char (list ?-)))
          ;; if n < 0 then -1
          ;; (x-
          'haskell-punct)

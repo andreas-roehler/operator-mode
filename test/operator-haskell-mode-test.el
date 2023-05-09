@@ -567,6 +567,19 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (1- (point))) ?x))
     (should (eq (char-before (- (point) 2)) 40))))
 
+(ert-deftest operator-haskell-test-SmctAo ()
+  (operator-test
+      "foo :: [a]-"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) ?-))
+    (should (eq (char-before (1- (point))) 32))
+    (should (eq (char-before (- (point) 2)) ?\]))))
+
+
 
 
 (provide 'operator-haskell-mode-test)
