@@ -634,7 +634,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
-        ((and (nth 1 pps) (member char (list ?-)))
+        ;; (x:_
+        ((and (nth 1 pps) (member char (list ?- ?_)))
          ;; if n < 0 then -1
          ;; (x-
          'haskell-punct)
