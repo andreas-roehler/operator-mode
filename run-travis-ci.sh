@@ -41,13 +41,6 @@ else
     EMACS=emacs
 fi
 
-# if [ $1 == e28 ]; then
-#     export EMACS=$(echo $(alias e28) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck\1,g')
-# elif
-#     [ $1 == e29 ];then
-#     export EMACS=$(echo $(alias e29) | sed 's,alias [^~]*.\([^ ]*\).*,/home/speck/\1,g')
-# fi
-
 echo "before shift \$EMACS: $EMACS"
 shift
 

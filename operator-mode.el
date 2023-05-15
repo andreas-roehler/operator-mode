@@ -819,7 +819,7 @@ Haskell: (>=>) :: Monad"
             ;; mylast (_:xs) = mylast xs
             ;; (<$>)
             ;; pure (.
-            (member char (list ?< ?> ?= ?_ ?- ?$ ?.)))
+            (member char (list ?+ ?< ?> ?= ?_ ?- ?$ ?.)))
            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
                 ;; "(september <|> oktober)"
                 (member char (list ?< ?|))
