@@ -70,5 +70,18 @@
     (should (eq (char-before (1- (point))) ?*))
     ))
 
+(ert-deftest operator-elisp-mode-test-4fbp9U ()
+  (operator-test
+      "(defun foo("
+    'emacs-lisp-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 40))
+    (should (eq (char-before (1- (point))) 32))
+    ))
+
+
 (provide 'operator-elisp-mode-test)
 ;;; operator-elisp-mode-test.el ends here
