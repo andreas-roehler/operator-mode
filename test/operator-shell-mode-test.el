@@ -50,7 +50,18 @@
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
-;; "lspci -k"
+(ert-deftest operator-shell-test-wezizY ()
+  (operator-test
+      "alias foo="
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?=))
+    (should (char-equal (char-before (1- (point))) ?o))
+    (should (char-equal (char-before (- (point) 2)) ?o))
+    ))
 
 (provide 'operator-shell-mode-test)
 ;;; operator-shell-mode-test.el ends here

@@ -1420,7 +1420,8 @@ Haskell: (>=>) :: Monad"
 	;; EMACS=emacs
         ;; git commit -s -a -m "sdf,
         ;;  > ..
-	((member char (list ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+        ;; alias foo= 
+	((member char (list ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
          'shell-punkt-not-at-prompt)
