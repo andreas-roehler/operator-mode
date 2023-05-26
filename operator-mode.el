@@ -1420,7 +1420,7 @@ Haskell: (>=>) :: Monad"
 	;; EMACS=emacs
         ;; git commit -s -a -m "sdf,
         ;;  > ..
-        ;; alias foo= 
+        ;; alias foo=
 	((member char (list ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
@@ -1790,8 +1790,10 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--emacs-lisp-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--emacs-lisp-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
+	  (cond ((member char (list ?, ?\[ ?\] ?\) ??))
+                 'nojoin-emacs-lisp1)
+		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))
+                 'nojoin-emacs-lisp1))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--agda-notfirst (char pps list-start-char notfirst)
