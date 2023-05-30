@@ -1540,7 +1540,7 @@ Haskell: (>=>) :: Monad"
         ;; git commit -s -a -m "sdf,
         ;;  > ..
         ;; scala> "abc".length()
-	((member char (list 41 ?\; ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+	((member char (list 41 ?\; ?@ ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
          'shell-punkt-not-at-prompt)
@@ -1598,7 +1598,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?. ??))
+	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ?. ??))
 	 'shell-punkt)
         ;; scala> echo("asdf",)
         ;; ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))

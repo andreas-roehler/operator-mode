@@ -25,48 +25,10 @@
 ;;; Code:
 (require 'operator-setup-tests)
 
-(ert-deftest operator-shell-test-yRrfqN ()
-  (operator-test
-      "grep asf\\|"
-    'sh-mode
-    operator-mode-debug
-    (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f")
-    (operator-do)
-    (should (char-equal (char-before) ?\"))
-    (should (char-equal (char-before (- (point) 1)) 92))
-    ))
-
-(ert-deftest operator-shell-test-u5zIat ()
-  (operator-test
-      "lspci -k|"
-    'sh-mode
-    operator-mode-debug
-    (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f")
-    (operator-do)
-    (should (char-equal (char-before) 32))
-    (should (char-equal (char-before (1- (point))) ?|))
-    (should (char-equal (char-before (- (point) 2)) 32))
-    ))
-
-(ert-deftest operator-shell-test-wezizY ()
-  (operator-test
-      "alias foo="
-    'sh-mode
-    operator-mode-debug
-    (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f")
-    (operator-do)
-    (should (char-equal (char-before) ?=))
-    (should (char-equal (char-before (1- (point))) ?o))
-    (should (char-equal (char-before (- (point) 2)) ?o))
-    ))
-
-(ert-deftest operator-shell-test-lHpEJP ()
+(ert-deftest operator-shell-mode-test-C6eGR7 ()
   (operator-test
       "ssh root@"
-    'sh-mode
+    'shell-mode
     operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
@@ -75,7 +37,6 @@
     (should (char-equal (char-before (1- (point))) ?t))
     (should (char-equal (char-before (- (point) 2)) ?o))
     ))
-
 
 (provide 'operator-shell-mode-test)
 ;;; operator-shell-mode-test.el ends here

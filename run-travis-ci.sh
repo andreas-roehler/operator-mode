@@ -59,6 +59,7 @@ FILE1=operator-mode.el
 FILE2=${TESTDIR}operator-setup-tests.el
 FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
 FILE4=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
+FILE5=$HOME/emacs-29.0.91/lisp/shell.el
 
 TEST1=${TESTDIR}operator-python-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
@@ -68,6 +69,7 @@ TEST5=${TESTDIR}operator-org-mode-test.el
 TEST6=${TESTDIR}operator-scala-mode-test.el
 TEST7=${TESTDIR}operator-java-mode-test.el
 TEST8=${TESTDIR}operator-shell-mode-test.el
+TEST9=${TESTDIR}operator-sh-mode-test.el
 echo "\$TEST1: $TEST1"
 
 #  EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
@@ -190,6 +192,18 @@ h8 () {
 -f ert-run-tests-batch-and-exit
 }
 
+h9 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+-load $FILE1 \
+-load $FILE2 \
+-load $FILE3 \
+\
+-load $TEST9 \
+-f ert-run-tests-batch-and-exit
+}
+
 
 hier () {
     $EMACS -Q --batch \
@@ -204,6 +218,7 @@ hier () {
 -load $FILE2 \
 -load $FILE3 \
 -load $FILE4 \
+-load $FILE5 \
 \
 -load $TEST1 \
 -load $TEST2 \
@@ -213,6 +228,7 @@ hier () {
 -load $TEST6 \
 -load $TEST7 \
 -load $TEST8 \
+-load $TEST9 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -245,7 +261,7 @@ if [ $WERKSTATT -eq 0 ]; then
 	    6) echo "h6: Lade \$TEST6: \"$TEST6\"";h6;;
 	    7) echo "h7: Lade \$TEST7: \"$TEST7\"";h7;;
 	    8) echo "h8: Lade \$TEST8: \"$TEST8\"";h8;;
-	    #  9) echo "h9: Lade \$TEST9: \"$TEST9\"";h9;;
+	    9) echo "h9: Lade \$TEST9: \"$TEST9\"";h9;;
 	    #  a) echo "h10: Lade \$TEST10: \"$TEST10\"";h10;;
 	    #  b) echo "h11: Lade \$TEST11: \"$TEST11\"";h11;;
 	    #  c) echo "h12: Lade \$TEST12: \"$TEST12\"";h12;;
