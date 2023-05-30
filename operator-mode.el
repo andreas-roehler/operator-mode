@@ -1421,7 +1421,8 @@ Haskell: (>=>) :: Monad"
         ;; git commit -s -a -m "sdf,
         ;;  > ..
         ;; alias foo=
-	((member char (list ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+        ;; "ssh root@"
+	((member char (list ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
          'shell-punkt-not-at-prompt)
@@ -1482,7 +1483,7 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'shell-notsecond)
 	;; EMACS=emacs
-	((member char (list ?- ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?. ??))
+	((member char (list ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?. ??))
 		'shell-punkt)
         ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-prompt-regexp (point-min))))
          'shell-punkt-not-at-prompt)

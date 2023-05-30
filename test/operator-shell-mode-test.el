@@ -63,5 +63,19 @@
     (should (char-equal (char-before (- (point) 2)) ?o))
     ))
 
+(ert-deftest operator-shell-test-lHpEJP ()
+  (operator-test
+      "ssh root@"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?@))
+    (should (char-equal (char-before (1- (point))) ?t))
+    (should (char-equal (char-before (- (point) 2)) ?o))
+    ))
+
+
 (provide 'operator-shell-mode-test)
 ;;; operator-shell-mode-test.el ends here
