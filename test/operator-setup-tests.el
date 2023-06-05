@@ -27,6 +27,7 @@
 (require 'ert-x)
 ;; (require 'python)
 (require 'operator-mode)
+(require 'shell)
 
 (defvar bootstrap-version)
 (let ((bootstrap-file

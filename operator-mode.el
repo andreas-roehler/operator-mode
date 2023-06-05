@@ -584,7 +584,7 @@ Haskell: (>=>) :: Monad"
          'haskell-number-following-alpha)
 	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
 	 'haskell-font-lock-keyword)
-	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((and (eq 'haskell-interactive-mode major-mode)
 	      (save-excursion (backward-char 1)
@@ -628,8 +628,9 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 3 pps)(not (eq (char-before) ?|)))
 		'haskell-and-nth-1-pps-nth-3-pps)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-		'pattern-match-on-list)
-	       ))))
+		'pattern-match-on-list)))
+        ((nth 4 pps)
+         'haskell-in-comment)))
 
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond

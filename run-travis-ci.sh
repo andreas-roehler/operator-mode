@@ -59,7 +59,7 @@ FILE1=operator-mode.el
 FILE2=${TESTDIR}operator-setup-tests.el
 FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
 FILE4=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
-FILE5=$HOME/emacs-29.0.91/lisp/shell.el
+#  FILE5=$HOME/emacs-29.0.91/lisp/shell.el
 
 TEST1=${TESTDIR}operator-python-mode-test.el
 TEST2=${TESTDIR}operator-haskell-mode-test.el
@@ -218,7 +218,6 @@ hier () {
 -load $FILE2 \
 -load $FILE3 \
 -load $FILE4 \
--load $FILE5 \
 \
 -load $TEST1 \
 -load $TEST2 \
