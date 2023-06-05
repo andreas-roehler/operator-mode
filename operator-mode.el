@@ -1758,8 +1758,11 @@ Haskell: (>=>) :: Monad"
 	  ;; 	'emacs-lisp-in-list-p)
 	  ((and (nth 1 pps)
 		(or (eq (1- (current-column)) (current-indentation))
-		    (eq (- (point) 2)(nth 1 pps))))
+		    (eq (- (point) 2)(nth 1 pps)))
+                        )
 	   'emacs-lisp-in-list-p)))
+        ((member char (list ?\)))
+         'emacs-lisp-closen-paren)
 	;; ((member char (list ?\; ?,)))
 	((or (member (char-before (1- (point))) operator-known-operators)
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
@@ -2154,11 +2157,12 @@ With prefix-key ‘C-q’ inserts character literally."
   :lighter " _~_ "
 
   ;; body
-  (if operator-mode
+  (if (and operator-mode (not (when (ignore-errors (file-exists-p (buffer-file-name))) (string= (file-name-nondirectory (buffer-file-name)) "operator-mode.el"))))
       (progn ;; (operator-setup)
 	     (add-hook 'post-self-insert-hook
                        ;; #'operator-post-self-insert-function nil t)
 		       #'operator-do nil t))
+    (setq operator-mode nil)
     (remove-hook 'post-self-insert-hook
 		 ;; #'operator-post-self-insert-function t)))
 		 #'operator-do t)))
