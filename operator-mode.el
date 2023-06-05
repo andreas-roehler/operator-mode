@@ -1943,8 +1943,9 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position))))
-                ;; ((and (eq major-mode 'org-mode) (looking-back "^\\* *." (line-beginning-position))))
+		;; ((save-excursion (backward-char) (looking-back ") +" (line-beginning-position))))
+                ((looking-back "^\\* *." (line-beginning-position))
+                 'org-at-heading)
                 )))
     (operator--final char orig notfirst notsecond nojoin)))
 
