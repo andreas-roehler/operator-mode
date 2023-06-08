@@ -1423,7 +1423,7 @@ Haskell: (>=>) :: Monad"
         ;;  > ..
         ;; alias foo=
         ;; "ssh root@"
-	((member char (list ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+	((member char (list ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ?? ?\;))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-prompt-regexp (point-min)))))
          'shell-punkt-not-at-prompt)

@@ -76,5 +76,17 @@
     (should (char-equal (char-before (- (point) 2)) ?o))
     ))
 
+(ert-deftest operator-sh-mode-test-3vMQfq ()
+  (operator-test
+      "foo;"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?\;))
+    (should (char-equal (char-before (1- (point))) ?o))
+    ))
+
 (provide 'operator-sh-mode-test)
 ;;; operator-sh-mode-test.el ends here
