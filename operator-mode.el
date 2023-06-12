@@ -1296,18 +1296,12 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
-	((and (or (eq 'shell-interactive-mode major-mode) (eq 'shell-mode major-mode))
-	      (save-excursion (backward-char 1)
-			      (or
-			       (looking-back shell-prompt-pattern (line-beginning-position))
-			       ;; (looking-back shell-interactive-prompt (line-beginning-position))
-                               )))
+	((looking-back "^scala>" (pos-bol))
 	 'scala-shell-interactive-prompt)
 	((member char (list ?. ?- ?:))
 	 'scala-punkt)
 	(list-start-char
-	 ;; data Contact =  Contact { name :: "asdf" }
-	 ;; (unless (eq list-start-char ?{)
+	 ;; data Contact =  Contact { name :: "asdf" }	 ;; (unless (eq list-start-char ?{)
 	 (cond ((char-equal ?, char)
 		'scala-list-separator)
 	       ((and (char-equal ?\[ list-start-char)
@@ -1331,7 +1325,9 @@ Haskell: (>=>) :: Monad"
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
+	((or
+         ;; (1 to 3).map { x => (1 to 3) }          
+         (and (not (member char (list ?})))  (member (char-before (1- (point))) operator-known-operators))
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'scala-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
@@ -1408,7 +1404,7 @@ Haskell: (>=>) :: Monad"
 	   'pattern-match-on-list)))))
 
 (defun operator--do-scala-shell-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  ""
   (let* ((notfirst (operator--scala-shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-shell-notsecond char pps list-start-char notsecond))
 	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
@@ -2106,12 +2102,12 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
-       ;; (if (ignore-errors (shell-command ":sh env"))
-       ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
-       ;; all this is not working:
-       ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
-       ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-       (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
+       (if (looking-back "^.*scala>.*" (pos-bol))
+           (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+         ;; all this is not working:
+         ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
+         ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+         (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode
