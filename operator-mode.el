@@ -426,7 +426,10 @@ Haskell: (>=>) :: Monad"
 	       ;; for i in c :
 	       (looking-back "\\_<for\\_>+ +\\_<[^ ]+\\_> +in +\\_<[^ ]+:" (line-beginning-position))
 	       (looking-back "\\_<as\\_>+ +\\_<[^ ]+:" (line-beginning-position))
-	       (looking-back "return +[^ ]+" (line-beginning-position)))
+               (and
+                ;; allow division
+                (member char (list ?. ?_))
+                (looking-back "return +[^ ]+.*" (line-beginning-position))))
 	   'python-after-symbol))))
 
 (defun operator--python-notsecond (char start pps list-start-char &optional notfirst notsecond nojoin)
@@ -460,7 +463,11 @@ Haskell: (>=>) :: Monad"
 	       (and
 		;; return self.first_name, self.last_name
 		(not (char-equal char ?,))
-		(looking-back "return +[^ ]+.*" (line-beginning-position))))
+		(and
+                 ;; allow division
+                 (member char (list ?. ?_))
+                 (looking-back "return +[^ ]+.*" (line-beginning-position)))w
+                ))
 	   'python-after-symbol))))
 
 (defun operator--do-python-mode (char start pps list-start-char &optional notfirst notsecond nojoin)
@@ -1326,7 +1333,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
 	((or
-         ;; (1 to 3).map { x => (1 to 3) }          
+         ;; (1 to 3).map { x => (1 to 3) }
          (and (not (member char (list ?})))  (member (char-before (1- (point))) operator-known-operators))
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'scala-join-known-operators)
