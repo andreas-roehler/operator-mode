@@ -689,7 +689,8 @@ Haskell: (>=>) :: Monad"
             (member char (list ?< ?> ?= ?_ ?- ?$ ?.)))
            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
                 ;; "(september <|> oktober)"
-                (member char (list ?< ?|))
+                ;; "(x<="
+                (member char (list ?< ?| ?=))
                 list-start-char (char-equal 40 list-start-char))))
 	 ;; (not (looking-back "-." (line-beginning-position)))
 	 'haskell-in-list-p)

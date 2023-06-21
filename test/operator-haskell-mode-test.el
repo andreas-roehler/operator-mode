@@ -603,6 +603,18 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (1- (point))) ??))
     ))
 
+(ert-deftest operator-haskell-test-6ZeR28 ()
+  (operator-test
+      "(x<="
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) ?=))
+    (should (eq (char-before (1- (point))) ?<))
+    ))
+
 
 
 
