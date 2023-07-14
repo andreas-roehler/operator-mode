@@ -586,6 +586,8 @@ Haskell: (>=>) :: Monad"
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
+         'haskell-punct-in-list)
+        ((member char (list ?_))
          'haskell-punct)
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
@@ -637,7 +639,7 @@ Haskell: (>=>) :: Monad"
 		'haskell-and-nth-1-pps-nth-3-pps)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
-        ((nth 4 pps)
+         ((nth 4 pps)
          'haskell-in-comment)))
 
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
@@ -648,6 +650,8 @@ Haskell: (>=>) :: Monad"
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
+         'haskell-punct-in-list)
+        ((member char (list ?_))
          'haskell-punct)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -671,7 +675,7 @@ Haskell: (>=>) :: Monad"
 	 'haskell-comment-start)
 	((looking-back "import +[^ ]+." (line-beginning-position))
 	 'haskell-import)
-	((looking-back "<\\*" (line-beginning-position))
+	((looking-back "<." (line-beginning-position))
 	 'haskell->)
         ;; ((and (nth 1 pps) (not (and (eq (char-before (1- (point))) 40) (eq char ?$))))
         ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
@@ -709,7 +713,9 @@ Haskell: (>=>) :: Monad"
               )
          'haskell-in-bracketed)
         ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-         'pattern-match-on-list)))
+         'pattern-match-on-list)
+        ((nth 4 pps)
+         'haskell-in-comment)))
 
 (defun operator--do-haskell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
