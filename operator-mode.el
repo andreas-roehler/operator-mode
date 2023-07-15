@@ -582,7 +582,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((and (nth 1 pps) (member char (list ?- ?:)))
+        ((and (nth 1 pps) (member char (list ?- ?: ?& ?|)))
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
@@ -646,7 +646,7 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'haskell-notsecond)
         ;; (x:_
-        ((and (nth 1 pps) (member char (list ?- ?_ ?:)))
+        ((and (nth 1 pps) (member char (list ?- ?_ ?: ?& ?|)))
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
@@ -779,8 +779,9 @@ Haskell: (>=>) :: Monad"
 	       ((member char (list ?\( ?\) ?\] ?_))
 		'haskell-listing)
 	       ((and (nth 1 pps)
-                     ;; (member char (list ?$))
-                     (eq (nth 1 pps) (- (point) 2)))
+                     (or 
+                     (member char (list ?$ ?& ?|))
+                     (eq (nth 1 pps) (- (point) 2))))
 		;; "pure ($ y) <*> u"
 		'in-list)
 	       ((and (nth 3 pps)(not (eq (char-before) ?|)))
@@ -828,15 +829,16 @@ Haskell: (>=>) :: Monad"
 	  (nth 1 pps)
           (or
            (and
-            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
-            ;; "pure ($ y) <*> u"
-            (not (and (eq (char-before (1- (point))) 40) (eq char ?$)))
             ;; (<=
             ;; (==)
             ;; mylast (_:xs) = mylast xs
             ;; (<$>)
             ;; pure (.
-            (member char (list ?+ ?< ?> ?= ?_ ?- ?$ ?.)))
+            ;; foldr (&&)
+            (member char (list ?+ ?< ?> ?= ?_ ?- ?$ ?. ?& ?|))
+            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
+            ;; "pure ($ y) <*> u"
+            (not (and (eq (char-before (1- (point))) 40) (eq char ?$))))
            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
                 ;; "(september <|> oktober)"
                 (member char (list ?< ?|))
@@ -1810,7 +1812,8 @@ Haskell: (>=>) :: Monad"
 	  (cond ((member char (list ?, ?\[ ?\] ?\) ??))
                  'nojoin-emacs-lisp1)
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))
-                 'nojoin-emacs-lisp1))))
+                 'nojoin-emacs-lisp1)
+                ((nth 3 pps) 'no-join-in-string))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--agda-notfirst (char pps list-start-char notfirst)
