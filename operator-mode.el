@@ -582,7 +582,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((and (nth 1 pps) (member char (list ?- ?: ?& ?|)))
+        ((and (nth 1 pps) (member char (list ?- ?:)))
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
@@ -646,7 +646,7 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'haskell-notsecond)
         ;; (x:_
-        ((and (nth 1 pps) (member char (list ?- ?_ ?: ?& ?|)))
+        ((and (nth 1 pps) (member char (list ?- ?_ ?:)))
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
@@ -657,13 +657,14 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimter)
-	((and (eq 'haskell-interactive-mode major-mode)
-	      (save-excursion (backward-char)
-			      (looking-back
-			       (concat haskell-interactive-prompt "*")
-			       ;; haskell-interactive-prompt
-			       (line-beginning-position))))
-	 'haskell-haskell-interactive-prompt)
+        ;; haskell-interactive-mode is separatly dealt with
+	;; ((and (eq 'haskell-interactive-mode major-mode)
+	;;       (save-excursion (backward-char)
+	;; 		      (looking-back
+	;; 		       (concat haskell-interactive-prompt "*")
+	;; 		       ;; haskell-interactive-prompt
+	;; 		       (line-beginning-position))))
+	;;  'haskell-haskell-interactive-prompt)
 	((and (nth 3 pps)(not (eq (char-before) ?|)))
 	 'haskell-in-string)
 	;; index-p
@@ -779,9 +780,8 @@ Haskell: (>=>) :: Monad"
 	       ((member char (list ?\( ?\) ?\] ?_))
 		'haskell-listing)
 	       ((and (nth 1 pps)
-                     (or 
-                     (member char (list ?$ ?& ?|))
-                     (eq (nth 1 pps) (- (point) 2))))
+                     ;; (member char (list ?$))
+                     (eq (nth 1 pps) (- (point) 2)))
 		;; "pure ($ y) <*> u"
 		'in-list)
 	       ((and (nth 3 pps)(not (eq (char-before) ?|)))
@@ -802,13 +802,13 @@ Haskell: (>=>) :: Monad"
 	 'loading)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimter)
-	((and (eq 'haskell-interactive-mode major-mode)
-	      (save-excursion (backward-char)
-			      (looking-back
-			       (concat haskell-interactive-prompt "*")
-			       ;; haskell-interactive-prompt
-			       (line-beginning-position))))
-	 'haskell-haskell-interactive-prompt)
+	;; ((and (eq 'haskell-interactive-mode major-mode)
+	;;       (save-excursion (backward-char)
+	;; 		      (looking-back
+	;; 		       (concat haskell-interactive-prompt "*")
+	;; 		       ;; haskell-interactive-prompt
+	;; 		       (line-beginning-position))))
+	;;  'haskell-haskell-interactive-prompt)
 	((and (nth 3 pps) (not (eq (char-before) ?|)))
 	 'haskell-in-string)
 	;; index-p
@@ -829,16 +829,15 @@ Haskell: (>=>) :: Monad"
 	  (nth 1 pps)
           (or
            (and
+            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
+            ;; "pure ($ y) <*> u"
+            (not (and (eq (char-before (1- (point))) 40) (eq char ?$)))
             ;; (<=
             ;; (==)
             ;; mylast (_:xs) = mylast xs
             ;; (<$>)
             ;; pure (.
-            ;; foldr (&&)
-            (member char (list ?+ ?< ?> ?= ?_ ?- ?$ ?. ?& ?|))
-            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
-            ;; "pure ($ y) <*> u"
-            (not (and (eq (char-before (1- (point))) 40) (eq char ?$))))
+            (member char (list ?+ ?< ?> ?= ?_ ?- ?$ ?.)))
            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
                 ;; "(september <|> oktober)"
                 (member char (list ?< ?|))
@@ -853,7 +852,7 @@ Haskell: (>=>) :: Monad"
 	 'separator)
         ((and list-start-char (char-equal ?\[ list-start-char)
               ;; evens n = map f [1..n]
-              (member char (list ?, ?.))
+              (member char (list ?.))
 	      ;; (char-equal ?, char)
               )
          'haskell-in-bracketed)
@@ -2049,7 +2048,7 @@ Haskell: (>=>) :: Monad"
   (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
-		       haskell-interactive-mode-prompt-start)
+		       (min haskell-interactive-mode-prompt-start (line-beginning-position)))
 		      (t (point-min))))
 	 (pps (parse-partial-sexp start (point)))
 	 (list-start-char
