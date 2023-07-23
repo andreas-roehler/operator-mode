@@ -582,7 +582,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((and (nth 1 pps) (member char (list ?- ?:)))
+        ((and (nth 1 pps) (member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)))
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
