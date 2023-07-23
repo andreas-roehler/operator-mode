@@ -596,13 +596,13 @@ Haskell: (>=>) :: Monad"
 	 'haskell-font-lock-keyword)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	((and (eq 'haskell-interactive-mode major-mode)
-	      (save-excursion (backward-char 1)
-			      (looking-back
-			       (concat haskell-interactive-prompt "*")
-			       ;; haskell-interactive-prompt
-			       (line-beginning-position))))
-	 'haskell-haskell-interactive-prompt)
+	;; ((and (eq 'haskell-interactive-mode major-mode)
+	;;       (save-excursion (backward-char 1)
+	;; 		      (looking-back
+	;; 		       (concat haskell-interactive-prompt "*")
+	;; 		       ;; haskell-interactive-prompt
+	;; 		       (line-beginning-position))))
+	;;  'haskell-haskell-interactive-prompt)
 	((member char (list ?\; ?,))
 	 'separator)
 	((looking-back "<\\*" (line-beginning-position))
@@ -617,36 +617,41 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
-		'haskell-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
-		'haskell-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
-		'haskell-operator--in-list-continue)
-	       ;; let x = 5 in x * x
-	       ;; ((char-equal ?* char)
-	       ;; 	'haskell-char-equal-\*-in-list-p)
-	       ((member char (list ?\( ?\) ?\] ?_))
-		'haskell-listing)
-	       ((and (nth 1 pps)
-                     ;; (member char (list ?$))
-                     (eq (nth 1 pps) (- (point) 2)))
-		;; "pure ($ y) <*> u"
-		'in-list)
-	       ((and (nth 3 pps)(not (eq (char-before) ?|)))
-		'haskell-and-nth-1-pps-nth-3-pps)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-		'pattern-match-on-list)))
-         ((nth 4 pps)
+	 (cond
+          ;; already as 'separator
+          ;; ((char-equal ?, char)
+	  ;;  'haskell-list-separator)
+	  ((and (char-equal ?\[ list-start-char)
+		(char-equal ?. char))
+	   'haskell-construct-for-export)
+	  ((and (char-equal ?\[ list-start-char)
+		(char-equal ?, char))
+	   'haskell-operator--in-list-continue)
+	  ;; let x = 5 in x * x
+	  ;; ((char-equal ?* char)
+	  ;; 	'haskell-char-equal-\*-in-list-p)
+	  ((member char (list ?\( ?\) ?\] ?_))
+	   'haskell-listing)
+	  ((and (nth 1 pps)
+                ;; (member char (list ?$))
+                (eq (nth 1 pps) (- (point) 2)))
+	   ;; "pure ($ y) <*> u"
+	   'in-list)
+	  ((and (nth 3 pps)(not (eq (char-before) ?|)))
+	   'haskell-and-nth-1-pps-nth-3-pps)
+	  ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	   'pattern-match-on-list)))
+        ((nth 4 pps)
          'haskell-in-comment)))
 
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
         ;; (x:_
-        ((and (nth 1 pps) (member char (list ?- ?_ ?:)))
+        ((and (nth 1 pps)
+              ;; (member char (list ?- ?_ ?: ))
+              (member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
+              ))
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
@@ -684,6 +689,9 @@ Haskell: (>=>) :: Monad"
 	((and
 	  (nth 1 pps)
           (or
+           ;; (+)
+           (eq (nth 1 pps) (- (point) 2))
+	   ;; "pure ($ y) <*> u"
            (and
             (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
             ;; "pure ($ y) <*> u"
