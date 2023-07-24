@@ -1767,7 +1767,8 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'emacs-lisp-notfirst)
         ;; (let*
-        ((member char (list ?* ?' ?, ?- ?^ ?? ?= ?_ ?: ?\" ?! ?.))
+        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
+                 )
          'emacs-lisp-punct)
 	(list-start-char
 	 (cond
@@ -1802,7 +1803,7 @@ Haskell: (>=>) :: Monad"
         ;; (should (eq (char-before) ?\;
         ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (1- (point)))))
          'emacs-lisp-semicolon)
-        ((member char (list ?, ?- ?~ ?^ ?? ?= ?_))
+        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
