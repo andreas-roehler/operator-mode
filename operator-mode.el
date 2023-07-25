@@ -596,13 +596,6 @@ Haskell: (>=>) :: Monad"
 	 'haskell-font-lock-keyword)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	;; ((and (eq 'haskell-interactive-mode major-mode)
-	;;       (save-excursion (backward-char 1)
-	;; 		      (looking-back
-	;; 		       (concat haskell-interactive-prompt "*")
-	;; 		       ;; haskell-interactive-prompt
-	;; 		       (line-beginning-position))))
-	;;  'haskell-haskell-interactive-prompt)
 	((member char (list ?\; ?,))
 	 'separator)
 	((looking-back "<\\*" (line-beginning-position))
@@ -662,15 +655,7 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimter)
-        ;; haskell-interactive-mode is separatly dealt with
-	;; ((and (eq 'haskell-interactive-mode major-mode)
-	;;       (save-excursion (backward-char)
-	;; 		      (looking-back
-	;; 		       (concat haskell-interactive-prompt "*")
-	;; 		       ;; haskell-interactive-prompt
-	;; 		       (line-beginning-position))))
-	;;  'haskell-haskell-interactive-prompt)
-	((and (nth 3 pps)(not (eq (char-before) ?|)))
+        ((and (nth 3 pps)(not (eq (char-before) ?|)))
 	 'haskell-in-string)
 	;; index-p
 	((and
@@ -748,17 +733,17 @@ Haskell: (>=>) :: Monad"
          'in-string-p)
 	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
 	 'haskell-font-lock-keyword)
-	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
         ;; λ> :l foo.hs
-        ((and (eq char ?.)(looking-back ":[[:print:]][^:]*" (line-beginning-position)))
+        ((and (eq char ?.) (looking-back ":[[:print:]][^:]*" (line-beginning-position)))
 	 'loading)
-	((and (eq 'haskell-interactive-mode major-mode)
-	      (save-excursion (backward-char 1)
-			      (looking-back
-			       (concat haskell-interactive-prompt "*")
-			       ;; haskell-interactive-prompt
-			       (line-beginning-position))))
+	((save-excursion
+           (backward-char 1)
+	   (looking-back
+	    (concat haskell-interactive-prompt "*")
+	    ;; haskell-interactive-prompt
+	    (line-beginning-position)))
 	 'haskell-haskell-interactive-prompt)
 	((member char (list ?\; ?, ?/))
 	 'separator)
@@ -795,12 +780,13 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 3 pps)(not (eq (char-before) ?|)))
 		'haskell-and-nth-1-pps-nth-3-pps)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-		'pattern-match-on-list)
-	       ))))
+		'pattern-match-on-list)))))
 
 (defun operator--haskell-interactive-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
+        ((member char (list ?-))
+         'haskell-interactive-option)
         ((nth 3 pps)
          'in-string-p)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -810,13 +796,13 @@ Haskell: (>=>) :: Monad"
 	 'loading)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimter)
-	;; ((and (eq 'haskell-interactive-mode major-mode)
-	;;       (save-excursion (backward-char)
-	;; 		      (looking-back
-	;; 		       (concat haskell-interactive-prompt "*")
-	;; 		       ;; haskell-interactive-prompt
-	;; 		       (line-beginning-position))))
-	;;  'haskell-haskell-interactive-prompt)
+        ((save-excursion
+           (backward-char 1)
+	   (looking-back
+	    (concat haskell-interactive-prompt "*")
+	    ;; haskell-interactive-prompt
+	    (line-beginning-position)))
+	 'haskell-haskell-interactive-prompt)
 	((and (nth 3 pps) (not (eq (char-before) ?|)))
 	 'haskell-in-string)
 	;; index-p
