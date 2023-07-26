@@ -643,7 +643,8 @@ Haskell: (>=>) :: Monad"
         ;; (x:_
         ((and (nth 1 pps)
               ;; (member char (list ?- ?_ ?: ))
-              (member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
+              ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)  
+              (member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
               ))
          ;; if n < 0 then -1
          ;; (x-

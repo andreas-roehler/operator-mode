@@ -639,6 +639,18 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (1- (point))) ?<))
     ))
 
+(ert-deftest operator-haskell-test-TYfkgG ()
+  (operator-test
+      "listeAnhaengen (x:xs) (y:ys) = foldr (\\x (y:ys) -> [x] ++"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f") 
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?+))
+    ))
+
 
 
 
