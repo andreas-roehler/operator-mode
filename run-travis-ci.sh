@@ -283,11 +283,6 @@ if [ $WERKSTATT -eq 0 ]; then
 	
     done
 
-    # hier1
-    # echo "Lade testumgebung \"HIER1\""
-    # hier2
-    # echo "Lade testumgebung \"HIER1\""
-
 else
     echo "entfernt"
     echo "\$WERKSTATT: $WERKSTATT"
@@ -295,13 +290,3 @@ else
     entfernt
 fi
 
-# if [ $WERKSTATT -eq 0 ]; then
-#     hier
-#     echo "Lade testumgebung \"$HOSTNAME\""
-# else
-#     echo "entfernt"
-#     echo "Lade testumgebung \"ENTFERNT\""
-#     entfernt
-# fi
-
-# -load $FILE3 \
