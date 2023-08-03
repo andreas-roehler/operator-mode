@@ -664,6 +664,19 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-haskell-test-2wrUq6 ()
+  (operator-test
+      "[f x | x <-"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?-))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
+
 
 
 

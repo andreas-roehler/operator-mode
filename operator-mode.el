@@ -582,12 +582,13 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((and (nth 1 pps) (member char (list ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?: ?\; ?\" ?' ?, ?. ??)))
+        ((and (nth 1 pps) (member char (list ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?+ ?= ?: ?\; ?\" ?' ?, ?. ??)))
          ;; foo p (x:xs) = and [p x |
          ;; if n < 0 then -1
          ;; (x-
          ;; foo (xs:
          ;; [p x | x <
+         ;; [f x | x <-
          'haskell-punct-in-list)
         ((member char (list ?_))
          'haskell-punct)
@@ -646,8 +647,9 @@ Haskell: (>=>) :: Monad"
         ((and (nth 1 pps)
               ;; (member char (list ?- ?_ ?: ))
               ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
-              (member char (list ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?= ?: ?\; ?\" ?' ?, ?. ??)
+              (member char (list ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_  ?= ?: ?\; ?\" ?' ?, ?. ??)
               ))
+         ;; [f x | x <-
          ;; [p x | x <
          ;; foo p (x:xs) = and [p x |
          ;; if n < 0 then -1
