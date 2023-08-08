@@ -1,4 +1,4 @@
-;;; operator-mode.el --- simple electric operator  -*- lexical-binding: t; -*-
+;; operator-mode.el --- simple electric operator  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2018-2023  Andreas Röhler
 
@@ -582,7 +582,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((and (nth 1 pps) (member char (list ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?+ ?= ?: ?\; ?\" ?' ?, ?. ??)))
+        ((and (nth 1 pps) (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?+ ?\; ?\" ?' ?, ?. ??)))
          ;; foo p (x:xs) = and [p x |
          ;; if n < 0 then -1
          ;; (x-
@@ -643,11 +643,11 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
-        ;; (x:_
+        ;; (x:_n
         ((and (nth 1 pps)
               ;; (member char (list ?- ?_ ?: ))
               ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
-              (member char (list ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_  ?= ?: ?\; ?\" ?' ?, ?. ??)
+              (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_  ?\; ?\" ?' ?, ?. ??)
               ))
          ;; [f x | x <-
          ;; [p x | x <
@@ -724,13 +724,14 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--haskell-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
-                ((and (member char (list ?:))
+                ((and (member char (list ?: ?=))
+                      ;; foo (x:xs)=
                       (looking-back (concat "^[[:alnum:] ]+" (char-to-string char)) (line-beginning-position))))
 		((and (member char (list ?=))
 		      (save-excursion (backward-char)
 				      (looking-back "_ +" (line-beginning-position)))))
 		((save-excursion (backward-char)
-				 (looking-back ") +" (line-beginning-position)))))))
+				 (looking-back ") *" (line-beginning-position)))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--haskell-interactive-notfirst (char pps list-start-char notfirst)
