@@ -1761,17 +1761,16 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'emacs-lisp-notfirst)
         ;; (let*
-        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
+        ;; '(4)
+        ((member char (list ?\( ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
                  )
          'emacs-lisp-punct)
 	(list-start-char
 	 (cond
-	  ((member char (list ?\) ?\]))
+	  ((member char (list ?\) ?\] ?}))
 	   'emacs-lisp-listing)
 	  ((nth 3 pps)
 	   'emacs-lisp-and-nth-1-pps-nth-3-pps)
-	  ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
-	  ;; 	'emacs-lisp-in-list-p)
 	  ((and (nth 1 pps)
 		(or (eq (1- (current-column)) (current-indentation))
 		    (eq (- (point) 2)(nth 1 pps)))
