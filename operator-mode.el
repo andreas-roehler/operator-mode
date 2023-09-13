@@ -1240,8 +1240,9 @@ Haskell: (>=>) :: Monad"
 	;; :help
 	((and
           ;; (not (eq ?{ list-start-char))
+          ;; foo.asdf(10, 10);
           (not (nth 1 pps))
-          (member char (list ?: ?. ?- ?$ ?~ ?_ ?^ ?& ?*)))
+          (member char (list ?: ?\; ?. ?- ?$ ?~ ?_ ?^ ?& ?*)))
 	 'scala-punkt)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
