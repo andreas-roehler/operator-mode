@@ -1174,10 +1174,10 @@ Haskell: (>=>) :: Monad"
 
 	;; EMACS=emacs
         ;; myVar_=
-	((and
+	(
           ;; (not (eq ?{ list-start-char))
           ;; case ex: IOException => // Handle other I/O error
-          (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& ?* 41 ?:)))
+          (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& ?* 41 ?: ?\;))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)

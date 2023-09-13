@@ -253,6 +253,18 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?\)))
     ))
 
+(ert-deftest operator-scala-test-aleBTE ()
+  (operator-test
+      "println(file)\;"
+    'scala-mode
+    (goto-char (point-max))
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) ?\;))
+    (should (char-equal (char-before (1- (point))) ?\)))
+    ))
+
+
 
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
