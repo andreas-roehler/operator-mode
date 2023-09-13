@@ -1373,7 +1373,8 @@ Haskell: (>=>) :: Monad"
           ;; <?>
           ;; x <- y
           ;; 2 * r
-          (member char (list ?? ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/)))
+          ;; scala> :help
+          (member char (list ?? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/)))
 	 'scala-punkt)
         ;; method invocation
         ;; val sumMore = (1).+(2)
