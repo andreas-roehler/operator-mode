@@ -457,8 +457,9 @@ Haskell: (>=>) :: Monad"
 	   'python-list-op)
 	  ((member char (list ?- ?. ?_))
 	   'python-dot)
-	  ((member char (list ?:))
-	   'python-colon)
+          ; "D = {'cognome': 'Foo', 'nome': 'Bar', 'eta': 30}"
+	  ;; ((member char (list ?:))
+	  ;;  'python-colon)
 	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 	       (and
 		;; return self.first_name, self.last_name

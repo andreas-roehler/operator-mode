@@ -412,5 +412,21 @@
     (should (eq (char-before (1- (point))) ?/))
     (should (eq (char-before (- (point) 2)) 32))))
 
+(ert-deftest operator-python-test-Iscksx ()
+  (operator-test
+      ; "D = {'cognome': 'Foo', 'nome': 'Bar', 'eta': 30}"
+      "D = {'cognome':"
+    'python-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    ;; take action inside comments if operator-mode-in-comments-p is t
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?:))
+    (should (eq (char-before (- (point) 2)) ?'))))
+
+
+
 (provide 'operator-python-mode-test)
 ;;; operator-python-mode-test.el ends here
