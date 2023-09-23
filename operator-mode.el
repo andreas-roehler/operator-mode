@@ -380,7 +380,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))))
 
 (defun operator--do-clojure-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Clojure"
   (let* ((notfirst (operator--clojure-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--clojure-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -963,7 +963,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))))
 
 (defun operator--do-idris-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Idris"
   (let* ((notfirst (operator--idris-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--idris-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1059,7 +1059,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))))
 
 (defun operator--do-idris-repl-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Idris"
   (let* ((notfirst (operator--idris-repl-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--idris-repl-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1160,7 +1160,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))))
 
 (defun operator--do-sml-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Sml"
   (let* ((notfirst (operator--sml-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--sml-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1290,7 +1290,7 @@ Haskell: (>=>) :: Monad"
 	   'pattern-match-on-list)))))
 
 (defun operator--do-scala-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Scala"
   (let* ((notfirst (operator--scala-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
 	 (nojoin (cond ((member char (list ?/ ?& ?| ?> ?<))
@@ -1317,7 +1317,7 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
-	((looking-back "^scala>" (pos-bol))
+	((looking-back "^scala>" (line-beginning-position))
 	 'scala-shell-interactive-prompt)
 	((member char (list ?. ?- ?:))
 	 'scala-punkt)
@@ -1752,7 +1752,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))))
 
 (defun operator--do-coq-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Coq"
   (let* ((notfirst (operator--coq-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--coq-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1809,7 +1809,7 @@ Haskell: (>=>) :: Monad"
 	 'emacs-lisp-comment-start)))
 
 (defun operator--do-emacs-lisp-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Emacs"
   (let* ((notfirst (operator--emacs-lisp-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--emacs-lisp-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1894,7 +1894,7 @@ Haskell: (>=>) :: Monad"
 	 'agda->)))
 
 (defun operator--do-agda-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Agda"
   (let* ((notfirst (operator--agda-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--agda-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1957,7 +1957,7 @@ Haskell: (>=>) :: Monad"
 	 'org-TBLFM)))
 
 (defun operator--do-org-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Org"
   (let* ((notfirst (operator--org-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin
@@ -1998,7 +1998,7 @@ Haskell: (>=>) :: Monad"
 	))
 
 (defun operator--do-text-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Text"
   (let* ((notfirst
 	  (operator--text-notfirst char orig pps list-start-char notfirst))
 	 (notsecond
