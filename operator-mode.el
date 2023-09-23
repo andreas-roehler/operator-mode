@@ -25,11 +25,6 @@
 
 ;;; Code:
 
-(defcustom operator-mode-in-comment-p nil
-  "If operator-mode should expand inside comments.
-
-Default is nil."
-  )
 
 (defcustom operator-mode-verbose-p nil
   " Default is nil."
@@ -2151,7 +2146,6 @@ Haskell: (>=>) :: Monad"
   (and  (member (char-before) operator-known-operators)
 	(or
 	 ;; must not check if allowed anyway
-	 operator-mode-in-comment-p
          operator-mode-in-string-p
          ;; p : filterPrime [x|
 	 ;; (and (member major-mode (list 'haskell-mode 'haskell-interactive-mode))(eq (char-before) ?|))
