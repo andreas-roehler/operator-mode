@@ -25,6 +25,12 @@
 
 ;;; Code:
 
+;; avoid: Warning reference to free variable ‘comint-last-prompt’
+(require 'comint)
+
+(when (file-readable-p (concat (getenv "HASKELL_MODE_DIR") "/haskell-mode.el"))
+    (require 'haskell-mode))
+
 (defcustom  operator-include-numbers-p nil
   "If number chars 0-9 should be considered as operators"
   :type 'boolean
@@ -1837,7 +1843,7 @@ Haskell: (>=>) :: Monad"
 	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]" (line-beginning-position))
 	 'org-in-word)
-	((char-equal ?* char)
+	((and (char-equal ?* char)(not (bolp)))
 	 'org-char-equal-*)
 	((member char (list ?\( ?\) ?\] 47))
 	 'org-listing)
@@ -1932,7 +1938,7 @@ Haskell: (>=>) :: Monad"
            ;; silence compiler warning Unused lexical argument ‘list-start-char’
            nil)
         (pps
-         ;; silence compiler warning 
+         ;; silence compiler warning
          'pps)
 	))
 
@@ -1992,7 +1998,10 @@ Haskell: (>=>) :: Monad"
   (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
-		       (min comint-last-prompt (line-beginning-position)))
+		       (if
+                           comint-last-prompt
+                           (min comint-last-prompt (line-beginning-position)))
+                       (line-beginning-position)) 
 		      (t (point-min))))
 	 (pps (parse-partial-sexp start (point)))
 	 (list-start-char
