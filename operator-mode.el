@@ -1922,7 +1922,7 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--text-notsecond (char pps list-start-char notsecond)
   (cond (notsecond)
-        ((member char (list ?\; 40 ?@ ?- ?_ 47))
+        ((member char (list ?\; 40 ?@ ?- ?_ 47 32))
 	 'text-punct-class)
 	((looking-back "[[:alnum:]][-/öäüßÄÖÜ]" (line-beginning-position))
 	 'text-in-word)

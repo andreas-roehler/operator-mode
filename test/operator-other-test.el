@@ -48,7 +48,7 @@
     operator-mode-debug
     (goto-char (point-max))
     (search-backward "=")
-    (forward-char 1) 
+    (forward-char 1)
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (looking-back "String greeting = " (line-beginning-position)))))
@@ -64,16 +64,17 @@
     (operator-do)
     (should (char-equal (char-before) 32))))
 
-;; Shell
-;; (ert-deftest operator-shell-mode-test-WG0LXr ()
-;;   (operator-test
-;;       ;; Seitenzahl
-;;       "$"
-;;     'shell-mode
-;;     operator-mode-debug
-;;     (operator-do)
-;;     (should (char-equal (char-before) ?$))))
-     
+(ert-deftest operator-textmode-test-DH41ww ()
+  (operator-test
+      "#41, "
+    'text-mode
+    operator-mode-debug
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-after) 32))
+    (should (char-equal (char-before) ?,))))
+
+
 
 (provide 'operator-other-test)
 ;;; operator-other-test.el ends here
