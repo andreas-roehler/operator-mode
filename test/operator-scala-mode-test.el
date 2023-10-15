@@ -264,6 +264,18 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?\)))
     ))
 
+(ert-deftest operator-scala-test-v4ANY8 ()
+  (operator-test
+      "b.map{ case i="
+    'scala-mode
+    (goto-char (point-max))
+    operator-mode-debug
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)

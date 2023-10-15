@@ -1256,8 +1256,8 @@ Haskell: (>=>) :: Monad"
 	       ((and (char-equal ?\[ list-start-char)
 		     (char-equal ?, char))
 		'scala-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'scala-char-equal-\*-in-list-p)
+	       ;; ((char-equal ?* char)
+	       ;;  'scala-char-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'scala-listing)
 	       ((nth 3 pps)
@@ -1265,6 +1265,9 @@ Haskell: (>=>) :: Monad"
 
                ;; ("he"+"llo")
 	       ((and (nth 1 pps)
+                     ;; b.map{ case i=
+                     ;; b.map{ case i => (i, i + 1)
+                     (not (member char (list ?= ?+)))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
 			 ;; (eq (- (point) 2)(nth 1 pps))))
 		'scala-in-list-p))
@@ -1482,7 +1485,6 @@ Haskell: (>=>) :: Monad"
 	 'shell-notfirst)
         ;; git commit -s -a -m "sdf,
         ;;  > ..
-        ;; scala> "abc".length()
 	((member char (list 41 ?\; ?@ ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
         ((and (member char (list ?.)) (save-excursion (backward-char) (not (looking-back  comint-last-prompt (point-min)))))
@@ -1543,9 +1545,6 @@ Haskell: (>=>) :: Monad"
 	 'shell-notsecond)
 	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ?. ??))
 	 'shell-punkt)
-        ;; scala> echo("asdf",)
-        ;; ((not (save-excursion (backward-char) (skip-chars-backward " \t\r\n\f") (looking-back  comint-last-prompt (point-min))))
-        ;;  comint-last-prompt)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1843,7 +1842,7 @@ Haskell: (>=>) :: Monad"
 	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]" (line-beginning-position))
 	 'org-in-word)
-	((and (char-equal ?* char)(not (bolp)))
+	((char-equal ?* char)
 	 'org-char-equal-*)
 	((member char (list ?\( ?\) ?\] 47))
 	 'org-listing)
@@ -1922,7 +1921,7 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--text-notsecond (char pps list-start-char notsecond)
   (cond (notsecond)
-        ((member char (list ?\; 40 ?@ ?- ?_ 47 32))
+        ((member char (list ?\; 40 ?@ ?- ?_ 47))
 	 'text-punct-class)
 	((looking-back "[[:alnum:]][-/öäüßÄÖÜ]" (line-beginning-position))
 	 'text-in-word)
@@ -1998,10 +1997,7 @@ Haskell: (>=>) :: Monad"
   (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
-		       (if
-                           comint-last-prompt
-                           (min comint-last-prompt (line-beginning-position)))
-                       (line-beginning-position)) 
+		       (min comint-last-prompt (line-beginning-position)))
 		      (t (point-min))))
 	 (pps (parse-partial-sexp start (point)))
 	 (list-start-char

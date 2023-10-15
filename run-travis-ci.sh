@@ -248,7 +248,7 @@ entfernt () {
 -f ert-run-tests-batch-and-exit
 }
 
-if [ $WERKSTATT -eq 0 ]; then
+if [ $WERKSTATT != 1 ]; then
     while getopts 123456789abcdefghijklmnopqrstuvwxyz option
     do
         case $option in
