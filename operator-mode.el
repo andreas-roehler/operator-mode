@@ -1267,7 +1267,7 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
                      ;; b.map{ case i=
                      ;; b.map{ case i => (i, i + 1)
-                     (not (member char (list ?= ?+)))
+                     (not (member char (list ?= ?+ ?* ?- ?< ?>)))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
 			 ;; (eq (- (point) 2)(nth 1 pps))))
 		'scala-in-list-p))
@@ -1318,9 +1318,9 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((member char (list ?\[  ?\())
 	 'scala-list-delimter)
-	((and (eq 'shell-interactive-mode major-mode)
+	((and comint-last-prompt
 	      (save-excursion (backward-char)
-			      (looking-back (concat comint-last-prompt " *:[a-z]+ *") (line-beginning-position))))
+			      (looking-back "*:[a-z]+ *" (line-beginning-position))))
 	 comint-last-prompt)
 	;; ((nth 3 pps)
 	;;  'scala-in-string)
@@ -1340,7 +1340,9 @@ Haskell: (>=>) :: Monad"
 	      (or
 	       (member char (list ?@ ?. ?\)))
 	       (eq (1- (current-column)) (current-indentation))
-	       (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+               ;; map{ case (i, j) => (i+ 
+	       ;; (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))
+               ))
 	 'scala-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
