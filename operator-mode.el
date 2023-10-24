@@ -1338,7 +1338,7 @@ Haskell: (>=>) :: Monad"
 	((and (nth 1 pps)
               (not (member char (list ?, ?:)))
 	      (or
-	       (member char (list ?@ ?. ?\)))
+	       (member char (list ?@ ?. ?\) ?_))
 	       (eq (1- (current-column)) (current-indentation))
                ;; map{ case (i, j) => (i+ 
 	       ;; (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))
@@ -2071,7 +2071,7 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
-       (if (looking-back "^.*scala>.*" (pos-bol))
+       (if (looking-back "^.*scala>.*" (line-beginning-position))
            (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
          ;; all this is not working:
          ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
