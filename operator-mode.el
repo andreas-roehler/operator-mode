@@ -1007,7 +1007,7 @@ Haskell: (>=>) :: Monad"
 	;; 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'sml-list-delimter)
-	
+
 	((nth 3 pps)
 	 'sml-in-string)
 	;; index-p
@@ -1280,7 +1280,7 @@ Haskell: (>=>) :: Monad"
 	      (or
 	       (member char (list ?@ ?. ?\) ?_))
 	       (eq (1- (current-column)) (current-indentation))
-               ;; map{ case (i, j) => (i+ 
+               ;; map{ case (i, j) => (i+
 	       ;; (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))
                ))
 	 'scala-in-list-p)
@@ -1299,7 +1299,8 @@ Haskell: (>=>) :: Monad"
   ""
   (let* ((notfirst (operator--scala-shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-shell-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
+	 (nojoin (unless (member char (list ?& ?| ?= ?> ?< ?.)) t)))
+    ;; (setq notfirst (and notfirst nojoin))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--sh-notfirst (char pps list-start-char notfirst)
@@ -1343,7 +1344,7 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
-	
+
 	((looking-back "<\\*" (line-beginning-position))
 	 'shell-<)
 	((looking-back "^-" (line-beginning-position))
@@ -1360,14 +1361,14 @@ Haskell: (>=>) :: Monad"
 	;; EMACS=emacs
 	((member char (list ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?. ??))
 		'shell-punkt)
-        
+
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'shell-list-delimter)
-	
+
         ;; git commit -s -a -m "sdf,
 	;; ((nth 3 pps)
 	;;  'shell-in-string)
@@ -1412,12 +1413,12 @@ Haskell: (>=>) :: Monad"
         ;;  > ..
 	((member char (list 41 ?\; ?@ ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
 		'shell-punkt)
-        
+
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
-	
+
 	(list-start-char
 	 (cond ((char-equal ?, char)
 		'shell-list-separator)
@@ -1442,7 +1443,7 @@ Haskell: (>=>) :: Monad"
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
-	
+
 	((looking-back "<\\*" (line-beginning-position))
 	 'shell-<)
 	((looking-back "^-" (line-beginning-position))
@@ -1456,7 +1457,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ?. ??))
+        ;; foo@foo:~$ . foo 
+	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ??))
 	 'shell-punkt)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
@@ -1464,7 +1466,7 @@ Haskell: (>=>) :: Monad"
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'shell-list-delimter)
-	
+
         ;; git commit -s -a -m "sdf,
 	;; ((nth 3 pps)
 	;;  'shell-in-string)
@@ -1504,7 +1506,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'coq-notfirst)
-	
+
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -1550,7 +1552,7 @@ Haskell: (>=>) :: Monad"
 	 'coq-notsecond)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'coq-list-delimter)
-	
+
 	((nth 3 pps)
 	 'coq-in-string)
 	;; index-p
@@ -1653,7 +1655,7 @@ Haskell: (>=>) :: Monad"
 (defun operator--agda-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'agda-notfirst)
-	
+
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -1691,7 +1693,7 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond)
 	((or (char-equal ?\[ char) (char-equal ?\( char))
 	 'agda-list-opener)
-	
+
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond ((char-equal ?, char)
@@ -1877,13 +1879,16 @@ Haskell: (>=>) :: Monad"
 		     (and (eq (char-before) 32)(delete-char -1))
 		     t))))
 
+;; (operator--join-operators-maybe char)))
 (defun operator--final (char orig &optional notfirst notsecond nojoin fix-whitespace)
   (cond (notfirst
-	 (unless nojoin (operator--join-operators-maybe char)))
-	((not notfirst)
-	 (or (unless nojoin (operator--join-operators-maybe char))
-	     (save-excursion (goto-char (1- orig))
-			     (unless (eq (char-before) ?\s)
+	 (unless nojoin
+           (save-excursion (backward-char)
+		           (when (eq (char-before) 32)(delete-char -1)))))
+        ((not notfirst)
+         (or (unless nojoin (operator--join-operators-maybe char))
+             (save-excursion (goto-char (1- orig))
+		             (unless (eq (char-before) ?\s)
 			       (just-one-space))))))
   (unless notsecond
     (if (eq (char-after) ?\s)
@@ -1967,12 +1972,15 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
-       (if (looking-back "^.*scala>.*" (line-beginning-position))
-           (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
-         ;; all this is not working:
-         ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
-         ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-         (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)))
+       (cond ((and comint-last-prompt (functionp 'pos-bol) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond))
+             ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
+
+              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond))
+             ;; all this is not working:
+             ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
+             ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+             (t (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode
