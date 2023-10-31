@@ -559,7 +559,7 @@ Haskell: (>=>) :: Monad"
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
-	 'haskell-list-delimter)
+	 'haskell-list-delimiter)
         ((and (nth 3 pps) (not (eq (char-before) ?|)))
 	 'haskell-in-string)
 	;; index-p
@@ -641,6 +641,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-interactive-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
+        ;; foo (Rect 2 3)
+        ((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	 'haskell-list-delimiter)
         ((nth 3 pps)
          'in-string-p)
 	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
@@ -711,7 +714,7 @@ Haskell: (>=>) :: Monad"
         ((and (eq char ?.) (looking-back ":[[:print:]][^:]*" (line-beginning-position)))
 	 'loading)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
-	 'haskell-list-delimter)
+	 'haskell-list-delimiter)
         ((save-excursion
            (backward-char 1)
 	   (looking-back
@@ -1457,16 +1460,20 @@ Haskell: (>=>) :: Monad"
 (defun operator--shell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'shell-notsecond)
-        ;; foo@foo:~$ . foo 
+        ;; foo@foo:~$ . foo
 	((member char (list ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ??))
 	 'shell-punkt)
+        ;; co -r1.0 foo.
+        ((and (eq char ?.) (looking-back "[^ ] *\." (line-beginning-position)))
+	 'shell-dot)
+	;; ((and (eq char ?.) (looking-back "[ \t]+[0-9] *\." (line-beginning-position)))
+	;;  'float)
+        ;; ((and (eq char ?.) (looking-back "[^ ]+[0-9] *\." (line-beginning-position)))
+	;;  'shell-option)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
-	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
-	 'float)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'shell-list-delimter)
-
         ;; git commit -s -a -m "sdf,
 	;; ((nth 3 pps)
 	;;  'shell-in-string)
@@ -1900,7 +1907,9 @@ Haskell: (>=>) :: Monad"
   (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
-		       (min comint-last-prompt (line-beginning-position)))
+		       (if comint-last-prompt
+                           (min comint-last-prompt (line-beginning-position))
+                           (point-min)))
 		      (t (point-min))))
 	 (pps (parse-partial-sexp start (point)))
 	 (list-start-char
