@@ -478,7 +478,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
-        ((and (nth 1 pps) (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?+ ?\; ?\" ?' ?, ?. ??)))
+        ((and (nth 1 pps) (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?\; ?\" ?' ?, ?. ?? 41) ))
+         ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
          ;; if n < 0 then -1
          ;; (x-
@@ -486,7 +487,7 @@ Haskell: (>=>) :: Monad"
          ;; [p x | x <
          ;; [f x | x <-
          'haskell-punct-in-list)
-        ((member char (list ?_))
+        ((member char (list ?_ 41))
          'haskell-punct)
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
@@ -544,9 +545,12 @@ Haskell: (>=>) :: Monad"
 	 'notsecond)
         ;; (x:_n
         ((and (nth 1 pps)
+              ;; (+)
+              (eq (nth 1 pps) (- (point) 2))
               ;; (member char (list ?- ?_ ?:))
               ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
-              (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_  ?\; ?\" ?' ?, ?. ??)))
+              ;; foo m n = Just (_
+              (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?*  ?\; ?\" ?' ?, ?. ??)))
          ;; [f x | x <-
          ;; [p x | x <
          ;; foo p (x:xs) = and [p x |
@@ -554,11 +558,12 @@ Haskell: (>=>) :: Monad"
          ;; (x-
          ;; foo (xs:
          'haskell-punct-in-list)
-        ((member char (list ?_))
-         'haskell-punct)
+        ;; foo m n = Just (_
+        ;; ((member char (list ?_))
+        ;;  'haskell-punct)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
+	((member char (list ?\[  ?\( ?{))
 	 'haskell-list-delimiter)
         ((and (nth 3 pps) (not (eq (char-before) ?|)))
 	 'haskell-in-string)
@@ -579,8 +584,6 @@ Haskell: (>=>) :: Monad"
 	((and
 	  (nth 1 pps)
           (or
-           ;; (+)
-           (eq (nth 1 pps) (- (point) 2))
 	   ;; "pure ($ y) <*> u"
            (and
             (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
@@ -591,7 +594,8 @@ Haskell: (>=>) :: Monad"
             ;; mylast (_:xs) = mylast xs
             ;; (<$>)
             ;; pure (.
-            (member char (list ?< ?> ?= ?_ ?- ?$ ?.)))
+            ;; foo m n = Just (_
+            (member char (list ?< ?> ?= ?- ?$ ?.)))
            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
                 ;; "(september <|> oktober)"
                 ;; "(x<="

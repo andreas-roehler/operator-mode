@@ -729,6 +729,44 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-haskell-test-OrOnpc ()
+  (operator-test
+      "foo m n = Just (_"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?_))
+    (should (eq (char-before (- (point) 2)) 40))
+    ))
+
+(ert-deftest operator-haskell-test-zejtSC ()
+  (operator-test
+      "foo m n = Just (m `div` n)"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) 41))
+    (should (eq (char-before (- (point) 2)) ?n))
+    ))
+
+(ert-deftest operator-haskell-test-WsP6WZ ()
+  (operator-test
+      ";; bar n m = baz (foo n+"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?+))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
 
 
 
