@@ -1318,7 +1318,7 @@ Haskell: (>=>) :: Monad"
         ;;  > ..
         ;; alias foo=
         ;; "ssh root@"
-	((member char (list ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ?? ?\;))
+	((member char (list ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?* ?/ ?, ?. ?? ?\;))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1366,9 +1366,9 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'shell-notsecond)
 	;; EMACS=emacs
-	((member char (list ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?& ?* ?/ ?. ??))
+        ;; echo "Foo: $i" &&
+	((member char (list ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?* ?/ ?. ??))
 		'shell-punkt)
-
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1410,7 +1410,10 @@ Haskell: (>=>) :: Monad"
   "Shell-mode"
   (let* ((notfirst (operator--sh-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--sh-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
+	 (nojoin (unless (and
+                          (member char (list ?& ?| ?= ?> ?<))
+                          (eq (char-before (- (point) 2)) ?&))
+                   t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--shell-notfirst (char pps list-start-char notfirst)
@@ -1418,9 +1421,11 @@ Haskell: (>=>) :: Monad"
 	 'shell-notfirst)
         ;; git commit -s -a -m "sdf,
         ;;  > ..
-	((member char (list 41 ?\; ?@ ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?. ??))
+	((member char (list 41 ?\; ?@ ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ??))
 		'shell-punkt)
-
+        ((and (member char (list ?.))
+              comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
+              'shell-punkt-in-text)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
@@ -1511,7 +1516,12 @@ Haskell: (>=>) :: Monad"
   "Shell-mode"
   (let* ((notfirst (operator--shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (member char (list ?& ?| ?= ?> ?<)) t)))
+	 (nojoin
+          (unless (and (member char (list
+                                ;; $> ./foo
+                                ?. ?/ ?& ?| ?= ?> ?<))
+                       comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
+            t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--coq-notfirst (char pps list-start-char notfirst)

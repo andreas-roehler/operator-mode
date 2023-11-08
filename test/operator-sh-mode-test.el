@@ -88,5 +88,43 @@
     (should (char-equal (char-before (1- (point))) ?o))
     ))
 
+(ert-deftest operator-sh-mode-test-CGL6M7 ()
+  (operator-test
+      "echo \"Foo: $i\"&"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?&))
+    ))
+
+(ert-deftest operator-sh-mode-test-1a6XP1 ()
+  (operator-test
+      "echo \"Foo: $i\" &&"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?&))
+    ))
+
+(ert-deftest operator-sh-mode-test-Ymohwg ()
+  (operator-test
+      "echo \"Foo: $i\" & &"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?&))
+    (should (char-equal (char-before (- (point) 2)) ?&))
+    ))
+
+
 (provide 'operator-sh-mode-test)
 ;;; operator-sh-mode-test.el ends here
