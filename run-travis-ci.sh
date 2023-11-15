@@ -55,21 +55,23 @@ TESTDIR=$PDIR/test/
 #  export TESTDIR
 echo "\$TESTDIR: $TESTDIR"
 
+SETUP=${TESTDIR}operator-setup-tests.el
+
 FILE1=operator-mode.el
-FILE2=${TESTDIR}operator-setup-tests.el
-FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
-FILE4=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
+FILE2=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
+FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
 #  FILE5=$HOME/emacs-29.0.91/lisp/shell.el
 
 TEST1=${TESTDIR}operator-python-mode-test.el
-TEST2=${TESTDIR}operator-haskell-mode-test.el
-TEST3=${TESTDIR}operator-elisp-mode-test.el
+TEST2=${TESTDIR}operator-elisp-mode-test.el
+TEST3=${TESTDIR}operator-sh-mode-test.el
 TEST4=${TESTDIR}operator-other-test.el
 TEST5=${TESTDIR}operator-org-mode-test.el
-TEST6=${TESTDIR}operator-scala-mode-test.el
+TEST6=${TESTDIR}operator-shell-mode-test.el
 TEST7=${TESTDIR}operator-java-mode-test.el
-TEST8=${TESTDIR}operator-shell-mode-test.el
-TEST9=${TESTDIR}operator-sh-mode-test.el
+TEST8=${TESTDIR}operator-scala-mode-test.el
+TEST9=${TESTDIR}operator-haskell-mode-test.el
+
 echo "\$TEST1: $TEST1"
 
 #  EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
@@ -84,8 +86,7 @@ h1 () {
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
+-load $SETUP \
 \
 -load $TEST1 \
 -f ert-run-tests-batch-and-exit
@@ -94,12 +95,8 @@ h1 () {
 h2 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode/\")" \
---eval "(require 'haskell-mode)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE4 \
--load $FILE3 \
+-load $SETUP \
 \
 -load $TEST2 \
 -f ert-run-tests-batch-and-exit
@@ -109,11 +106,8 @@ h3 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(setq python-indent-offset 4)" \
---eval "(setq python-indent-guess-indent-offset nil)" \
---eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 -load $FILE1 \
--load $FILE2 \
+-load $SETUP \
 \
 -load $TEST3 \
 -f ert-run-tests-batch-and-exit
@@ -123,12 +117,8 @@ h4 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(setq python-indent-offset 4)" \
---eval "(setq python-indent-guess-indent-offset nil)" \
---eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
+-load $SETUP \
 --eval "(require 'haskell-mode)" \
 \
 -load $TEST4 \
@@ -139,13 +129,8 @@ h5 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(setq python-indent-offset 4)" \
---eval "(setq python-indent-guess-indent-offset nil)" \
---eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
-
+-load $SETUP \
 \
 -load $TEST5 \
 -f ert-run-tests-batch-and-exit
@@ -155,12 +140,8 @@ h6 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(setq python-indent-offset 4)" \
---eval "(setq python-indent-guess-indent-offset nil)" \
---eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
+-load $SETUP \
 \
 -load $TEST6 \
 -f ert-run-tests-batch-and-exit
@@ -172,8 +153,7 @@ h7 () {
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
+-load $SETUP \
 --eval "(cc-require 'cc-mode)" \
 \
 -load $TEST7 \
@@ -185,8 +165,7 @@ h8 () {
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
+-load $SETUP \
 \
 -load $TEST8 \
 -f ert-run-tests-batch-and-exit
@@ -196,9 +175,12 @@ h9 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
+--eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode/\")" \
+--eval "(require 'haskell-mode)" \
 -load $FILE1 \
 -load $FILE2 \
 -load $FILE3 \
+-load $SETUP \
 \
 -load $TEST9 \
 -f ert-run-tests-batch-and-exit
@@ -215,9 +197,7 @@ hier () {
 --eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode/\")" \
 --eval "(require 'haskell-mode)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
--load $FILE4 \
+-load $SETUP \
 \
 -load $TEST1 \
 -load $TEST2 \

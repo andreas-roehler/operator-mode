@@ -68,6 +68,7 @@
     (operator-do)
     (should (eq (char-before) 32))
     (should (eq (char-before (1- (point))) ?*))
+    (should (eq (char-before (- (point) 2)) ?t))
     ))
 
 (ert-deftest operator-elisp-mode-test-4fbp9U ()
@@ -79,7 +80,7 @@
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should (eq (char-before) 40))
-    (should (eq (char-before (1- (point))) 32))
+    (should (eq (char-before (1- (point))) ?o))
     ))
 
 (ert-deftest operator-elisp-mode-test-RAo6SE ()

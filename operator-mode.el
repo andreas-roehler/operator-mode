@@ -29,7 +29,8 @@
 (require 'comint)
 
 (when (file-readable-p (concat (getenv "HASKELL_MODE_DIR") "/haskell-mode.el"))
-    (require 'haskell-mode))
+  (add-to-list 'load-path (getenv "HASKELL_MODE_DIR"))
+  (load (concat (getenv "HASKELL_MODE_DIR") "/haskell-mode.el") nil t))
 
 (defcustom  operator-include-numbers-p nil
   "If number chars 0-9 should be considered as operators"
@@ -1649,7 +1650,8 @@ Haskell: (>=>) :: Monad"
         ;; (should (eq (char-before) ?\;
         ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (1- (point)))))
          'emacs-lisp-semicolon)
-        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??))
+        ;; (let*
+        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?&  ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
@@ -1905,7 +1907,10 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 (unless nojoin
            (save-excursion (backward-char)
-		           (when (eq (char-before) 32)(delete-char -1)))))
+		           (and
+                            (eq (char-before) 32)
+                            (member (char-before (1- (point)))(list operator-known-operators))
+                            (delete-char -1)))))
         ((not notfirst)
          (or (unless nojoin (operator--join-operators-maybe char))
              (save-excursion (goto-char (1- orig))
