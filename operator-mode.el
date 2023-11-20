@@ -1909,7 +1909,7 @@ Haskell: (>=>) :: Monad"
            (save-excursion (backward-char)
 		           (and
                             (eq (char-before) 32)
-                            (member (char-before (1- (point)))(list operator-known-operators))
+                            (member (char-before (1- (point))) operator-known-operators)
                             (delete-char -1)))))
         ((not notfirst)
          (or (unless nojoin (operator--join-operators-maybe char))
