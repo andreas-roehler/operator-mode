@@ -1215,7 +1215,7 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
                      ;; b.map{ case i=
                      ;; b.map{ case i => (i, i + 1)
-                     (not (member char (list ?= ?+ ?* ?- ?< ?>)))
+                     (not (member char (list ?= ?& ?+ ?* ?- ?< ?>)))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
 			 ;; (eq (- (point) 2)(nth 1 pps))))
 		'scala-in-list-p))
