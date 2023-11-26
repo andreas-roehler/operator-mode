@@ -1309,9 +1309,13 @@ Haskell: (>=>) :: Monad"
   ""
   (let* ((notfirst (operator--scala-shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-shell-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (or
+	 (nojoin (unless
+                     (or
                           (and (eq ?{ list-start-char) (member char (list ?=)))
-                          (member char (list ?& ?| ?= ?> ?< ?.)) t))))
+                          ;; map{ case (x, y) = >
+                          (member char (list ?& ?| ?= ?< ?> ?.)))
+                   t)
+                   ))
     ;; (setq notfirst (and notfirst nojoin))
     (operator--final char orig notfirst notsecond nojoin)))
 
