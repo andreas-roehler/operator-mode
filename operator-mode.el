@@ -1061,13 +1061,14 @@ Haskell: (>=>) :: Monad"
         ;; myVar_=
 	(
           ;; (not (eq ?{ list-start-char))
-          ;; case ex: IOException => // Handle other I/O error
-          (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& ?* 41 ?: ?\;))
+          ;; case ex: IOException => // Handle other I/O (error
+         ;; val foo = bar * baz
+          (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?: ?\;))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
-	 'rm-attention)
+	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	;;  'rm-attention)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -1119,11 +1120,12 @@ Haskell: (>=>) :: Monad"
 	((and
           ;; (not (eq ?{ list-start-char))
           ;; foo.asdf(10, 10);
+          ;; val foo = bar * baz
           (not (nth 1 pps))
-          (member char (list ?: ?\; ?. ?- ?$ ?~ ?_ ?^ ?& ?*)))
+          (member char (list ?: ?\; ?. ?- ?$ ?~ ?_ ?^ ?&)))
 	 'scala-punkt)
-	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
-	 'rm-attention)
+	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
+	;;  'rm-attention)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?\[  ?\( 41))
@@ -1307,7 +1309,9 @@ Haskell: (>=>) :: Monad"
   ""
   (let* ((notfirst (operator--scala-shell-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-shell-notsecond char pps list-start-char notsecond))
-	 (nojoin (unless (member char (list ?& ?| ?= ?> ?< ?.)) t)))
+	 (nojoin (unless (or
+                          (and (eq ?{ list-start-char) (member char (list ?=)))
+                          (member char (list ?& ?| ?= ?> ?< ?.)) t))))
     ;; (setq notfirst (and notfirst nojoin))
     (operator--final char orig notfirst notsecond nojoin)))
 

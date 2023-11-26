@@ -159,10 +159,10 @@ lazy val root = (project in file(\".\"))
   .settings(name:
 "
     'scala-mode
+    operator-mode-debug
     (goto-char (point-max))
     (search-backward ":")
     (forward-char 1)
-    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?:))
@@ -172,10 +172,10 @@ lazy val root = (project in file(\".\"))
   (operator-test
       "import org.scalatest.{BeforeAndAfterAll,"
     'scala-mode
+    operator-mode-debug
     (goto-char (point-max))
     (search-backward ",")
     (forward-char 1)
-    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?,))
@@ -189,10 +189,10 @@ lazy val root = (project in file(\".\"))
 }
 "
     'scala-mode
+    operator-mode-debug
     (goto-char (point-max))
     (search-backward "=")
     (forward-char 1)
-    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?=))
@@ -211,10 +211,10 @@ lazy val root = (project in file(\".\"))
 }
 "
     'scala-mode
+    operator-mode-debug
     (goto-char (point-max))
     (search-backward ":")
     (forward-char 1)
-    operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?:))
@@ -233,9 +233,10 @@ firstArg match {
 "
     'scala-mode
     (goto-char (point-max))
+    operator-mode-debug
     (search-backward "=")
     (forward-char 1)
-    operator-mode-debug
+
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?=))
@@ -246,19 +247,18 @@ firstArg match {
   (operator-test
       "foo.asdf(10, 10);"
     'scala-mode
-    (goto-char (point-max))
     operator-mode-debug
+    (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) ?\;))
-    (should (char-equal (char-before (1- (point))) ?\)))
-    ))
+    (should (char-equal (char-before (1- (point))) ?\)))))
 
 (ert-deftest operator-scala-test-aleBTE ()
   (operator-test
       "println(file)\;"
     'scala-mode
-    (goto-char (point-max))
     operator-mode-debug
+    (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) ?\;))
     (should (char-equal (char-before (1- (point))) ?\)))
@@ -268,13 +268,28 @@ firstArg match {
   (operator-test
       "b.map{ case i="
     'scala-mode
-    (goto-char (point-max))
     operator-mode-debug
+    (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?=))
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
+
+(ert-deftest operator-scala-test-Mrj6Fc ()
+  (operator-test
+"case class Foo(bar: Int, baz: Int):
+    val foo = bar*"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?*))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
 
 
 
