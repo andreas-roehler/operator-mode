@@ -1079,8 +1079,9 @@ Haskell: (>=>) :: Monad"
 	       ((and (char-equal ?\[ list-start-char)
 		     (char-equal ?, char))
 		'scala-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'scala-char-equal-\*-in-list-p)
+               ;; val b = a.map{ case x => x._1 + 4 * x._2*
+	       ;; ((char-equal ?* char)
+	       ;;  'scala-char-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'scala-listing)
 	       ((nth 3 pps)
