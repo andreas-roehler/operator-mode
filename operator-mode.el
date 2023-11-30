@@ -1056,7 +1056,6 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
-
 	;; EMACS=emacs
         ;; myVar_=
 	(;; (not (eq ?{ list-start-char))
@@ -1173,7 +1172,8 @@ Haskell: (>=>) :: Monad"
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   ((and (member char (list ??))(eq (char-before (1- (point))) ?=))
                    t)
-                  ((member char (list ?/ ?& ?| ?> ?<))
+                  ;; val result = d + +
+                  ((member char (list ?/ ?& ?| ?> ?< ?+))
                    nil)
                   ;; case _ => println("huh?")
                   ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
@@ -2045,7 +2045,9 @@ Haskell: (>=>) :: Monad"
 	 ;; must not check if allowed anyway
          ;; p : filterPrime [x|
 	 ;; (and (member major-mode (list 'haskell-mode 'haskell-interactive-mode))(eq (char-before) ?|))
-         (not (nth 8 (parse-partial-sexp (point-min) (point)))))
+         (eq major-mode 'shell-mode)
+         (not (nth 8 (parse-partial-sexp (point-min) (point))))
+         )
         ;; grep 'asf\|
         (not (and (eq (char-before (1- (point))) 92) (not (eq (char-before (- (point) 2)) ?\)))))
 	(operator--do-intern (char-before) (copy-marker (point)))))
