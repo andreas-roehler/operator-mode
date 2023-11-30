@@ -1096,6 +1096,8 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
 	((or (and (member (char-before (1- (point))) operator-known-operators)
+                  ;; List(((a.last), false))+
+                  (not (member (char-before (1- (point))) (list ?\))))
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   (not (member char (list ??))))
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
