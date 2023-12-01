@@ -356,6 +356,23 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-GekdAP ()
+  (operator-test
+      "def foo(a: Seq[Int]): Seq[(Int, Boolean)] = {
+  ??
+}"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward "?")
+    (forward-char 1) 
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ??))
+    (should (char-equal (char-before (- (point) 2)) ??))
+    ))
+
+
 
 
 (provide 'operator-scala-mode-test)

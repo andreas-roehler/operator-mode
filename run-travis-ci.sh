@@ -55,6 +55,8 @@ TESTDIR=$PDIR/test/
 #  export TESTDIR
 echo "\$TESTDIR: $TESTDIR"
 
+IFLOCAL=${IFLOCAL:=1}
+
 SETUP=${TESTDIR}operator-setup-tests.el
 
 FILE1=operator-mode.el
@@ -228,7 +230,7 @@ entfernt () {
 -f ert-run-tests-batch-and-exit
 }
 
-if [ $WERKSTATT != 1 ]; then
+if [ $IFLOCAL != 1 ]; then
     while getopts 123456789abcdefghijklmnopqrstuvwxyz option
     do
         case $option in

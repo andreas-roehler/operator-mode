@@ -1098,9 +1098,11 @@ Haskell: (>=>) :: Monad"
 	((or (and (member (char-before (1- (point))) operator-known-operators)
                   ;; List(((a.last), false))+
                   (not (member (char-before (1- (point))) (list ?\))))
-                  ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   (not (member char (list ??))))
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
+                  ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
+                  (not (eq char ??))
+                  ))
 	 'scala-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala-<)
@@ -1175,7 +1177,8 @@ Haskell: (>=>) :: Monad"
                   ((and (member char (list ??))(eq (char-before (1- (point))) ?=))
                    t)
                   ;; val result = d + +
-                  ((member char (list ?/ ?& ?| ?> ?< ?+))
+                  ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
+                  ((member char (list ?? ?/ ?& ?| ?> ?< ?+))
                    nil)
                   ;; case _ => println("huh?")
                   ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
