@@ -365,12 +365,27 @@ firstArg match {
     operator-mode-debug
     (goto-char (point-max))
     (search-backward "?")
-    (forward-char 1) 
+    (forward-char 1)
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ??))
     (should (char-equal (char-before (- (point) 2)) ??))
     ))
+
+(ert-deftest operator-scala-test-ocYQwh ()
+  (operator-test
+      "def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] =?"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ??))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    (should (char-equal (char-before (- (point) 3)) ?=))
+    ))
+
 
 
 

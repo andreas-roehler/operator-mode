@@ -1196,7 +1196,7 @@ Haskell: (>=>) :: Monad"
         ;; s.indexOf.('o')
         ;; <?>,
         ;; 2 * r
-	((and (not (eq ?{ list-start-char))(member char (list ?? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
+	((and (not (eq ?{ list-start-char))(not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ?? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1264,7 +1264,8 @@ Haskell: (>=>) :: Monad"
           ;; x <- y
           ;; 2 * r
           ;; scala> :help
-          (member char (list ?? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/)))
+          (member char (list ?? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
+          (not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))))
 	 'scala-punkt)
         ;; method invocation
         ;; val sumMore = (1).+(2)
