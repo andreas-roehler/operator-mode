@@ -1178,7 +1178,7 @@ Haskell: (>=>) :: Monad"
                    t)
                   ;; val result = d + +
                   ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
-                  ((member char (list ?? ?/ ?& ?| ?> ?< ?+))
+                  ((member char (list ?? ?/ ?& ?| ?> ?< ?+ ?=))
                    nil)
                   ;; case _ => println("huh?")
                   ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
