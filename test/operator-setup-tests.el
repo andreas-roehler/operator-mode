@@ -1,6 +1,6 @@
 ;;; operator-setup-tests.el --- operator-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2022 Andreas Röhler
+;; Copyright (C) 2018-2023 Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience

@@ -1061,6 +1061,7 @@ Haskell: (>=>) :: Monad"
 	(;; (not (eq ?{ list-start-char))
          ;; case ex: IOException => // Handle other I/O (error
          ;; val foo = bar * baz
+         ;; val q =  (2 to n-
          (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?: ?\;))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1086,12 +1087,13 @@ Haskell: (>=>) :: Monad"
 	       ((nth 3 pps)
 		'scala-and-nth-1-pps-nth-3-pps)
                ;; .settings(name := "muster")
-	       ((and (nth 1 pps)
-		     (or (eq (1- (current-column)) (current-indentation))
-			 (eq (- (point) 2)(nth 1 pps))
-                         ;; def main(args: Array[String]): Unit =
-                         (and (not (eq list-start-char ?{)) (looking-back "^[ \t]*def[ \t]+.*" (line-beginning-position)))))
-		'scala-in-list-p)
+               ;; scala> p.map(x=>x)
+	       ;; ((and (nth 1 pps)
+	       ;;       (or (eq (1- (current-column)) (current-indentation))
+	       ;;  	 (eq (- (point) 2)(nth 1 pps))
+               ;;           ;; def main(args: Array[String]): Unit =
+               ;;           (and (not (eq list-start-char ?{)) (looking-back "^[ \t]*def[ \t]+.*" (line-beginning-position)))))
+	       ;;  'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
@@ -1150,9 +1152,10 @@ Haskell: (>=>) :: Monad"
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala->)
 	((and (nth 1 pps)
-              (not (member char (list ?, ?:)))
+              (not (member char (list ?, ?: ?=)))
 	      (or
-	       (member char (list ?@ ?.))
+               ;; val q =  (2 to n-1
+	       (member char (list ?@ ?. ?-))
 	       (eq (1- (current-column)) (current-indentation))
                ;; } catch {
 	       (and (not (member char (list ?{ ))) (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point)))))))
@@ -1178,7 +1181,9 @@ Haskell: (>=>) :: Monad"
                    t)
                   ;; val result = d + +
                   ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
-                  ((member char (list ?? ?/ ?& ?| ?> ?< ?+ ?=))
+                  ;; case _ =
+                  ((and (member char (list ?? ?/ ?& ?| ?> ?< ?+ ?=))
+                        (not (eq (char-before (- (point) 2)) ?_)))
                    nil)
                   ;; case _ => println("huh?")
                   ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
@@ -1225,8 +1230,8 @@ Haskell: (>=>) :: Monad"
 
                ;; ("he"+"llo")
 	       ((and (nth 1 pps)
-                     ;; b.map{ case i=
                      ;; b.map{ case i => (i, i + 1)
+                     ;; (0 to 10).map(n =>
                      (not (member char (list ?= ?& ?+ ?* ?- ?< ?>)))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
 			 ;; (eq (- (point) 2)(nth 1 pps))))
@@ -1946,8 +1951,8 @@ Haskell: (>=>) :: Monad"
   (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
-		       (if comint-last-prompt
-                           (min comint-last-prompt (line-beginning-position))
+		       (if (ignore-errors (cdr comint-last-prompt))
+                           (min (cdr comint-last-prompt) (line-beginning-position))
                            (point-min)))
 		      (t (point-min))))
 	 (pps (parse-partial-sexp start (point)))
@@ -2020,7 +2025,7 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
-       (cond ((and comint-last-prompt (functionp 'pos-bol) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+       (cond ((and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
               (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond))
              ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
 
