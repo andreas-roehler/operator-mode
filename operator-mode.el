@@ -1782,7 +1782,8 @@ Haskell: (>=>) :: Monad"
 	 'org-in-list-p)
 	((char-equal ?, char)
 	 'org-list-separator)
-	((member char (list ?$ ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
+        ;; _sys_membarrier
+	((member char (list ?_ ?$ ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
 	 (unless
              (or
               (looking-back "^\\* *." (line-beginning-position))
@@ -1821,7 +1822,8 @@ Haskell: (>=>) :: Monad"
 	 'org-in-string)
 	((member char (list ?\[ ?\] ?\( ?\) ?\/))
 	 'org-listing)
-	((member char (list ?$ ?@ ?- ?: ?.))
+        ;; _sys_membarrier 
+	((member char (list ?_ ?$ ?@ ?- ?: ?.))
 	 'org-punct-class)
 	;; index-p
 	((and
