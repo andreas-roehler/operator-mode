@@ -1270,7 +1270,9 @@ Haskell: (>=>) :: Monad"
           ;; 2 * r
           ;; scala> :help
           (member char (list ?? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
-          (not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))))
+          ;; 6.7
+          ;; (not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
+          )
 	 'scala-punkt)
         ;; method invocation
         ;; val sumMore = (1).+(2)
@@ -1822,7 +1824,7 @@ Haskell: (>=>) :: Monad"
 	 'org-in-string)
 	((member char (list ?\[ ?\] ?\( ?\) ?\/))
 	 'org-listing)
-        ;; _sys_membarrier 
+        ;; _sys_membarrier
 	((member char (list ?_ ?$ ?@ ?- ?: ?.))
 	 'org-punct-class)
 	;; index-p
