@@ -1,6 +1,6 @@
 ;;; operator-scala-mode-test.el --- scala-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2023  Andreas Röhler
+;; Copyright (C) 2019-2024  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience

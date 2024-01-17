@@ -1,6 +1,6 @@
 ;; operator-mode.el --- simple electric operator  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2018-2023  Andreas Röhler
+;; Copyright (C) 2018-2024  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@online.de>
 ;; Keywords: convenience
