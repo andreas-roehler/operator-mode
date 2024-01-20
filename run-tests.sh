@@ -26,7 +26,6 @@ elif
     export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e27 ];then
-    #  export EMACS="$HOME/emacs-20220306/src/emacs -Q"
     export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e28 ];then
@@ -47,32 +46,33 @@ shift
 echo "\$*: $*"
 PDIR=$PWD
 echo "\$PWD: $PWD"
+
 # WERKSTATT set in .bashrc, thus unset remotly
 WERKSTATT=${WERKSTATT:=1}
 echo "\$WERKSTATT: $WERKSTATT"
 
-TESTDIR=$PDIR/test/
-#  export TESTDIR
+TESTDIR=$PDIR/test
+export TESTDIR
 echo "\$TESTDIR: $TESTDIR"
+
+echo "\$SCALAMODE: $SCALAMODE"
+
 
 IFLOCAL=${IFLOCAL:=1}
 
-SETUP=${TESTDIR}operator-setup-tests.el
+SETUP=${TESTDIR}/operator-setup-tests.el
 
 FILE1=operator-mode.el
-FILE2=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
-FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
-#  FILE5=$HOME/emacs-29.0.91/lisp/shell.el
 
-TEST1=${TESTDIR}operator-python-mode-test.el
-TEST2=${TESTDIR}operator-elisp-mode-test.el
-TEST3=${TESTDIR}operator-sh-mode-test.el
-TEST4=${TESTDIR}operator-other-test.el
-TEST5=${TESTDIR}operator-org-mode-test.el
-TEST6=${TESTDIR}operator-shell-mode-test.el
-TEST7=${TESTDIR}operator-java-mode-test.el
-TEST8=${TESTDIR}operator-scala-mode-test.el
-TEST9=${TESTDIR}operator-haskell-mode-test.el
+TEST1=${TESTDIR}/operator-python-mode-test.el
+TEST2=${TESTDIR}/operator-elisp-mode-test.el
+TEST3=${TESTDIR}/operator-sh-mode-test.el
+TEST4=${TESTDIR}/operator-other-test.el
+TEST5=${TESTDIR}/operator-org-mode-test.el
+TEST6=${TESTDIR}/operator-shell-mode-test.el
+TEST7=${TESTDIR}/operator-java-mode-test.el
+TEST8=${TESTDIR}/operator-scala-mode-test.el
+TEST9=${TESTDIR}/operator-haskell-mode-test.el
 
 echo "\$TEST1: $TEST1"
 
@@ -166,6 +166,9 @@ h8 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(add-to-list 'load-path (getenv \"SCALAMODE\"))" \
+--eval "(require 'scala-mode)" \
 -load $FILE1 \
 -load $SETUP \
 \
@@ -177,11 +180,9 @@ h9 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode/\")" \
+--eval "(add-to-list 'load-path (getenv \"HASKELLMODE\"))" \
 --eval "(require 'haskell-mode)" \
 -load $FILE1 \
--load $FILE2 \
--load $FILE3 \
 -load $SETUP \
 \
 -load $TEST9 \
@@ -196,9 +197,13 @@ hier () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
---eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode/\")" \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(add-to-list 'load-path (getenv \"SCALAMODE\"))" \
+--eval "(require 'scala-mode)" \
+--eval "(add-to-list 'load-path (getenv \"HASKELLMODE\"))" \
 --eval "(require 'haskell-mode)" \
--load $FILE1 \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
 -load $SETUP \
 \
 -load $TEST1 \
