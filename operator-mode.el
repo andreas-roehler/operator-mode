@@ -1177,7 +1177,7 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
 	 (nojoin (cond
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
-                  ((and (member char (list ??))(eq (char-before (1- (point))) ?=))
+                  ((and (member char (list ??))(save-excursion (forward-char -1)(skip-chars-backward " \t\r\n\f")  (eq (char-before (point)) ?=)))
                    t)
                   ;; val result = d + +
                   ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
@@ -1201,7 +1201,8 @@ Haskell: (>=>) :: Monad"
         ;; s.indexOf.('o')
         ;; <?>,
         ;; 2 * r
-	((and (not (eq ?{ list-start-char))(not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ?? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
+        ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
+	((and (not (eq ?{ list-start-char))(not (member (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1209,8 +1210,6 @@ Haskell: (>=>) :: Monad"
 	 'rm-attention)
 	((looking-back "^scala>" (line-beginning-position))
 	 'comint-last-prompt)
-	((member char (list ?. ?- ?:))
-	 'scala-punkt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }	 ;; (unless (eq list-start-char ?{)
 	 (cond ((char-equal ?, char)
@@ -1234,16 +1233,25 @@ Haskell: (>=>) :: Monad"
                      ;; (0 to 10).map(n =>
                      (not (member char (list ?= ?& ?+ ?* ?- ?< ?>)))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
-			 ;; (eq (- (point) 2)(nth 1 pps))))
-		'scala-in-list-p))
+		     ;; (eq (- (point) 2)(nth 1 pps))))
+                     'scala-in-list-p))
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
-	((or
-         ;; (1 to 3).map { x => (1 to 3) }
-         (and (not (member char (list ?})))  (member (char-before (1- (point))) operator-known-operators))
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (and (member (char-before (1- (point))) operator-known-operators)
+                  ;; List(((a.last), false))+
+                  (not (member (char-before (1- (point))) (list ?\))))
+                  (not (member char (list ??))))
+	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
+                  ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
+                  (not (eq char ??))))
 	 'scala-join-known-operators)
+        ;; ((member char (list ?\; ?,)))
+	;; ((or
+        ;;  ;; (1 to 3).map { x => (1 to 3) }
+        ;;  (and (not (member char (list ?})))  (member (char-before (1- (point))) operator-known-operators))
+	;;      (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	;;  'scala-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala-<)
 	((looking-back "^-" (line-beginning-position))
@@ -1269,7 +1277,8 @@ Haskell: (>=>) :: Monad"
           ;; x <- y
           ;; 2 * r
           ;; scala> :help
-          (member char (list ?? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
+          ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
+          (member char (list ? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
           ;; 6.7
           ;; (not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
           )
@@ -1329,12 +1338,14 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--scala-shell-notsecond char pps list-start-char notsecond))
 	 (nojoin (unless
                      (or
-                          (and (eq ?{ list-start-char) (member char (list ?=)))
-                          ;; map{ case (x, y) = >
-                          ;; scala> evens + +
-                          (member char (list ?+ ?- ?& ?| ?= ?< ?> ?.)))
+                      ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
+                      ;; (and (member char (list ??))(save-excursion (forward-char -1)(skip-chars-backward " \t\r\n\f")  (eq (char-before (point)) ?=)))
+                      (and (eq ?{ list-start-char) (member char (list ?=)))
+                      ;; map{ case (x, y) = >
+                      ;; scala> evens + +
+                      (member char (list ?+ ?- ?& ?| ?= ?< ?> ?.)))
                    t)
-                   ))
+                 ))
     ;; (setq notfirst (and notfirst nojoin))
     (operator--final char orig notfirst notsecond nojoin)))
 
@@ -2030,14 +2041,18 @@ Haskell: (>=>) :: Monad"
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        (cond ((and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond))
+              (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+              ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+              )
              ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
-
-              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond))
+              (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+              ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+              )
              ;; all this is not working:
              ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
              ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-             (t (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))))
+             (t (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)))
+       )
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode

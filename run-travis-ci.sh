@@ -62,7 +62,6 @@ SETUP=${TESTDIR}operator-setup-tests.el
 FILE1=operator-mode.el
 FILE2=$HOME/arbeit/emacs-lisp/haskell-mode/haskell.el
 FILE3=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
-# FILE4=$HOME/arbeit/emacs-lisp/haskell-mode/haskell-customize.el
 #  FILE5=$HOME/emacs-29.0.91/lisp/shell.el
 
 TEST1=${TESTDIR}operator-python-mode-test.el
@@ -167,8 +166,6 @@ h8 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/emacs-scala-mode\"))" \
---eval "(require 'scala-mode)" \
 -load $FILE1 \
 -load $SETUP \
 \
@@ -201,8 +198,6 @@ hier () {
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 --eval "(add-to-list 'load-path \"$HOME/arbeit/emacs-lisp/haskell-mode/\")" \
 --eval "(require 'haskell-mode)" \
---eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/emacs-scala-mode\"))" \
---eval "(require 'scala-mode)" \
 -load $FILE1 \
 -load $SETUP \
 \
