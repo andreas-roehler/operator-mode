@@ -83,22 +83,25 @@ echo "\$EMACS: $EMACS"
 h1 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
+--eval "(require 'operator-python-mode-test)" \
 --eval "(setq operator-mode-debug nil)" \
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
--load $FILE1 \
--load $SETUP \
-\
--load $TEST1 \
 -f ert-run-tests-batch-and-exit
 }
 
 h2 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST2 \
 -f ert-run-tests-batch-and-exit
@@ -108,8 +111,10 @@ h3 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST3 \
 -f ert-run-tests-batch-and-exit
@@ -119,8 +124,10 @@ h4 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 --eval "(require 'haskell-mode)" \
 \
 -load $TEST4 \
@@ -131,8 +138,10 @@ h5 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST5 \
 -f ert-run-tests-batch-and-exit
@@ -142,8 +151,10 @@ h6 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST6 \
 -f ert-run-tests-batch-and-exit
@@ -154,8 +165,10 @@ h7 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 --eval "(cc-require 'cc-mode)" \
 \
 -load $TEST7 \
@@ -169,8 +182,10 @@ h8 () {
 --eval "(add-to-list 'load-path (getenv \"PWD\"))" \
 --eval "(add-to-list 'load-path (getenv \"SCALAMODE\"))" \
 --eval "(require 'scala-mode)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST8 \
 -f ert-run-tests-batch-and-exit
@@ -182,29 +197,31 @@ h9 () {
 --eval "(setq operator-mode-debug nil)" \
 --eval "(add-to-list 'load-path (getenv \"HASKELLMODE\"))" \
 --eval "(require 'haskell-mode)" \
--load $FILE1 \
--load $SETUP \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST9 \
 -f ert-run-tests-batch-and-exit
 }
 
-
 hier () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
---eval "(setq operator-mode-debug nil)" \
---eval "(setq python-indent-offset 4)" \
---eval "(setq python-indent-guess-indent-offset nil)" \
---eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 --eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 --eval "(add-to-list 'load-path (getenv \"SCALAMODE\"))" \
 --eval "(require 'scala-mode)" \
 --eval "(add-to-list 'load-path (getenv \"HASKELLMODE\"))" \
 --eval "(require 'haskell-mode)" \
 --eval "(add-to-list 'load-path (getenv \"PWD\"))" \
---eval "(require 'operator-mode)" \
--load $SETUP \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(setq python-indent-offset 4)" \
+--eval "(setq python-indent-guess-indent-offset nil)" \
+--eval "(setq python-indent-guess-indent-offset-verbose nil)" \
 \
 -load $TEST1 \
 -load $TEST2 \
@@ -225,7 +242,10 @@ entfernt () {
 --eval "(setq python-indent-offset 4)" \
 --eval "(setq python-indent-guess-indent-offset nil)" \
 --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
--load $FILE1 \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
 \
 -load $TEST1 \
 -load $TEST3 \
