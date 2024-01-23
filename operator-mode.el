@@ -1101,10 +1101,9 @@ Haskell: (>=>) :: Monad"
                   ;; List(((a.last), false))+
                   (not (member (char-before (1- (point))) (list ?\))))
                   (not (member char (list ??))))
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
+	     (and (eq (char-before (1- (point))) 32) (member (char-before (- (point) 2)) operator-known-operators) (not (eq (car-safe (syntax-after (- (point) 3))) 5))
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
-                  (not (eq char ??))
-                  ))
+                  (not (eq char ??))))
 	 'scala-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala-<)
