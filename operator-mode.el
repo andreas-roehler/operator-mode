@@ -1062,7 +1062,8 @@ Haskell: (>=>) :: Monad"
          ;; case ex: IOException => // Handle other I/O (error
          ;; val foo = bar * baz
          ;; val q =  (2 to n-
-         (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?: ?\;))
+         ;; "assert(result == expected) //"
+         (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?: ?\;))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
