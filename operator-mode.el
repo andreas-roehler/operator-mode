@@ -1557,8 +1557,9 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
 	 (nojoin
           (unless (and (member char (list
-                                ;; $> ./foo
-                                ?. ?/ ?& ?| ?= ?> ?<))
+                                     ;; $> ./foo
+                                     ;; . .alias
+                                ?/ ?& ?| ?= ?> ?<))
                        comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
             t)))
     (operator--final char orig notfirst notsecond nojoin)))
