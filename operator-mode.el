@@ -1062,8 +1062,11 @@ Haskell: (>=>) :: Monad"
          ;; case ex: IOException => // Handle other I/O (error
          ;; val foo = bar * baz
          ;; val q =  (2 to n-
-         (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?: ?\;))
+         (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
 	 'scala-punkt)
+        ((and (member char (list ?:))
+              (member (char-before (1- (point))) operator-known-operators))
+         'scala-double-colon)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
