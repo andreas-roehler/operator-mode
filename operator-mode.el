@@ -1127,8 +1127,11 @@ Haskell: (>=>) :: Monad"
           ;; foo.asdf(10, 10);
           ;; val foo = bar * baz
           (not (nth 1 pps))
-          (member char (list ?: ?\; ?. ?- ?$ ?~ ?_ ?^ ?&)))
+          (member char (list  ?\; ?. ?- ?$ ?~ ?_ ?^ ?&)))
 	 'scala-punkt)
+        ((and (member char (list ?:))
+              (not (member (char-before (1- (point))) operator-known-operators)))
+         'scala-double-colon)
 	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	;;  'rm-attention)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1558,7 +1561,7 @@ Haskell: (>=>) :: Monad"
           (unless (and (member char (list
                                      ;; $> ./foo
                                      ;; . .alias
-                                ?/ ?& ?| ?= ?> ?<))
+                                ?. ?/ ?& ?| ?= ?> ?<))
                        comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
             t)))
     (operator--final char orig notfirst notsecond nojoin)))

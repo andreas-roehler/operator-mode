@@ -232,8 +232,8 @@ firstArg match {
 }
 "
     'scala-mode
-    (goto-char (point-max))
     operator-mode-debug
+    (goto-char (point-max))
     (search-backward "=")
     (forward-char 1)
 
@@ -438,6 +438,46 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?=))
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
+
+(ert-deftest operator-scala-test-N9FXhY ()
+  (operator-test
+      "def foo(a: Seq[Int]):"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?\)))
+    ))
+
+(ert-deftest operator-scala-test-RaJJWJ ()
+  (operator-test
+      "done s ::"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?:))
+    ))
+
+(ert-deftest operator-scala-test-jYdv57 ()
+  (operator-test
+      "done s:"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)
