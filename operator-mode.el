@@ -1056,13 +1056,18 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
+        ((and (nth 3 pps)
+             (member char (list ?/ ?. ?_)))
+         'scala-in-string)
+        ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position) ))
+         'scala-comment)
 	;; EMACS=emacs
         ;; myVar_=
 	(;; (not (eq ?{ list-start-char))
          ;; case ex: IOException => // Handle other I/O (error
          ;; val foo = bar * baz
          ;; val q =  (2 to n-
-         (member char (list ?/ ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
+         (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ((and (member char (list ?:))
               (member (char-before (1- (point))) operator-known-operators))
@@ -1182,13 +1187,17 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
 	 (nojoin (cond
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
-                  ((and (member char (list ??))(save-excursion (forward-char -1)(skip-chars-backward " \t\r\n\f")  (eq (char-before (point)) ?=)))
+                  ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
                    t)
                   ;; val result = d + +
                   ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
                   ;; case _ =
-                  ((and (member char (list ?? ?/ ?& ?| ?> ?< ?+ ?=))
+                  ;; (-15, false, 10) /
+                  ((and (member char (list ?? ?& ?| ?> ?< ?+ ?=))
                         (not (eq (char-before (- (point) 2)) ?_)))
+                   nil)
+                  ((and (member char (list ?/ ?? ?& ?| ?> ?< ?+ ?=))
+                        (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
                    nil)
                   ;; case _ => println("huh?")
                   ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
@@ -1348,7 +1357,7 @@ Haskell: (>=>) :: Monad"
                       (and (eq ?{ list-start-char) (member char (list ?=)))
                       ;; map{ case (x, y) = >
                       ;; scala> evens + +
-                      (member char (list ?+ ?- ?& ?| ?= ?< ?> ?.)))
+                      (member char (list ?/ ?+ ?- ?& ?| ?= ?< ?> ?.)))
                    t)
                  ))
     ;; (setq notfirst (and notfirst nojoin))

@@ -491,6 +491,33 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-yKqL97 ()
+  (operator-test
+      "(-15, false, 10) /"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?/))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-scala-test-AvtVSh ()
+  (operator-test
+      "(-15, false, 10) //"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?/))
+    (should (char-equal (char-before (- (point) 2)) ?/))
+    ))
+
+
 
 
 (provide 'operator-scala-mode-test)
