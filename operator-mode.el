@@ -1371,7 +1371,8 @@ Haskell: (>=>) :: Monad"
         ;;  > ..
         ;; alias foo=
         ;; "ssh root@"
-	((member char (list ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?* ?/ ?, ?. ?? ?\;))
+        ;; FOO={
+	((member char (list ?{ ?= ?@ ?- ?: ?$ ?~ ?_ ?^ ?* ?/ ?, ?. ?? ?\;))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1574,7 +1575,7 @@ Haskell: (>=>) :: Monad"
                                      ;; $> ./foo
                                      ;; . .alias
                                 ?. ?/ ?& ?| ?= ?> ?<))
-                       comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
+                       comint-last-prompt (< 2 (- (point) (cdr comint-last-prompt))))
             t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
@@ -1725,6 +1726,9 @@ Haskell: (>=>) :: Monad"
                  'nojoin-emacs-lisp1)
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))
                  'nojoin-emacs-lisp1)
+                ((member char (list ?\( ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
+                 )
+                 'lisp-no-join-punct)
                 ((nth 3 pps) 'no-join-in-string))))
     (operator--final char orig notfirst notsecond nojoin)))
 
