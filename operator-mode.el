@@ -1067,7 +1067,7 @@ Haskell: (>=>) :: Monad"
          ;; case ex: IOException => // Handle other I/O (error
          ;; val foo = bar * baz
          ;; val q =  (2 to n-
-         (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
+         (member char (list ?: ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ((and (member char (list ?:))
               (member (char-before (1- (point))) operator-known-operators))
@@ -1137,11 +1137,10 @@ Haskell: (>=>) :: Monad"
           (not (nth 1 pps))
           (member char (list  ?\; ?. ?- ?$ ?~ ?_ ?^ ?&)))
 	 'scala-punkt)
-        ((and (member char (list ?:))
-              (not (member (char-before (1- (point))) operator-known-operators)))
-         'scala-double-colon)
-	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
-	;;  'rm-attention)
+        ;; val expected:
+        ;; ((and (member char (list ?:))
+        ;;       (not (member (char-before (1- (point))) operator-known-operators)))
+        ;;  'scala-double-colon)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?\[  ?\( 41))
