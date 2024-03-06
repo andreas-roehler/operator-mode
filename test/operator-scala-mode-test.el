@@ -527,8 +527,7 @@ firstArg match {
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (1- (point))) ?:))
-    (should (char-equal (char-before (- (point) 2)) ?d))
-    ))
+    (should (char-equal (char-before (- (point) 2)) ?d))))
 
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
