@@ -1134,9 +1134,10 @@ Haskell: (>=>) :: Monad"
           ;; (not (eq ?{ list-start-char))
           ;; foo.asdf(10, 10);
           ;; val foo = bar * baz
-          ;; :load
+          ;; :(load
+          ;; (x: (A, A))._1
           (not (nth 1 pps))
-          (member char (list  ?: ?\; ?. ?- ?$ ?~ ?_ ?^ ?&)))
+          (member char (list  ?: ?\; ?. ?- ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
         ;; val expected:
         ;; ((and (member char (list ?:))
