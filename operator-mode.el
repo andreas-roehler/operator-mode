@@ -1061,13 +1061,17 @@ Haskell: (>=>) :: Monad"
          'scala-in-string)
         ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position) ))
          'scala-comment)
+        ((and (eq char ?:)
+              (looking-back "case +[[:alpha:]_][[:alnum:]_]*:" (line-beginning-position))) 
+        'scala-case)
 	;; EMACS=emacs
         ;; myVar_=
 	(;; (not (eq ?{ list-start-char))
          ;; case ex: IOException => // Handle other I/O (error
          ;; val foo = bar * baz
          ;; val q =  (2 to n-
-         (member char (list ?: ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
+         ;; => result :+ ((x, default))
+         (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ((and (member char (list ?:))
               (member (char-before (1- (point))) operator-known-operators))
@@ -1137,7 +1141,7 @@ Haskell: (>=>) :: Monad"
           ;; :(load
           ;; (x: (A, A))._1
           (not (nth 1 pps))
-          (member char (list  ?: ?\; ?. ?- ?$ ?~ ?^ ?&)))
+          (member char (list  ?\; ?. ?- ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
         ;; val expected:
         ;; ((and (member char (list ?:))
@@ -1284,6 +1288,8 @@ Haskell: (>=>) :: Monad"
 	 'scala-notsecond)
 	;; EMACS=emacs
 	;; :help
+        ((member char (list ?:))
+         'scala-doc)
 	((and
           ;; (not (eq ?{ list-start-char))
           (not (nth 1 pps))
@@ -2061,8 +2067,8 @@ Haskell: (>=>) :: Monad"
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        (cond ((and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-              (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
-              ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+              ;; (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
               )
              ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
               (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
