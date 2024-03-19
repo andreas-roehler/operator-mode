@@ -567,5 +567,18 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?:))
     (should (char-equal (char-before (- (point) 2)) ?x))))
 
+(ert-deftest operator-scala-test-06giAO ()
+  (operator-test
+      "{ case (x, y) => y : :"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?:))))
+
+
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here

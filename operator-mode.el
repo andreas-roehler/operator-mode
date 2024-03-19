@@ -1062,7 +1062,7 @@ Haskell: (>=>) :: Monad"
         ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position) ))
          'scala-comment)
         ((and (eq char ?:)
-              (looking-back "case +[[:alpha:]_][[:alnum:]_]*:" (line-beginning-position))) 
+              (looking-back "case +[[:alpha:]_][[:alnum:]_]*:" (line-beginning-position)))
         'scala-case)
 	;; EMACS=emacs
         ;; myVar_=
@@ -1288,12 +1288,15 @@ Haskell: (>=>) :: Monad"
 	 'scala-notsecond)
 	;; EMACS=emacs
 	;; :help
-        ((member char (list ?:))
+        ((and (member char (list ?:))
+              (looking-back "^.*scala> +" (line-beginning-position))
+              ;; (string-match "^.*scala> +" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))
+              )
          'scala-doc)
 	((and
           ;; (not (eq ?{ list-start-char))
           (not (nth 1 pps))
-           ;; s.indexOf.('o')
+          ;; s.indexOf.('o')
           ;; <?>
           ;; x <- y
           ;; 2 * r
@@ -1364,7 +1367,8 @@ Haskell: (>=>) :: Monad"
                       (and (eq ?{ list-start-char) (member char (list ?=)))
                       ;; map{ case (x, y) = >
                       ;; scala> evens + +
-                      (member char (list ?/ ?+ ?- ?& ?| ?= ?< ?> ?.)))
+                      ;; { case (x, y) => y ::
+                      (member char (list ?: ?/ ?+ ?- ?& ?| ?= ?< ?> ?.)))
                    t)
                  ))
     ;; (setq notfirst (and notfirst nojoin))
@@ -2071,8 +2075,8 @@ Haskell: (>=>) :: Monad"
               (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
               )
              ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
-              (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
-              ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+              ;; (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
               )
              ;; all this is not working:
              ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
