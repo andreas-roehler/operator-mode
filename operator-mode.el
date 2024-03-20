@@ -1062,7 +1062,7 @@ Haskell: (>=>) :: Monad"
         ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position) ))
          'scala-comment)
         ((and (eq char ?:)
-              (looking-back "case +[[:alpha:]_][[:alnum:]_]*:" (line-beginning-position)))
+              (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:" (line-beginning-position))))
         'scala-case)
 	;; EMACS=emacs
         ;; myVar_=
@@ -2061,6 +2061,7 @@ Haskell: (>=>) :: Monad"
       (`py-ipython-shell-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`scala-mode
+       (require 'scala-mode)
        (operator--do-scala-mode char orig pps list-start-char notfirst notsecond))
       (`sh-mode
        ;; (if (ignore-errors (shell-command ":sh env"))
@@ -2071,10 +2072,12 @@ Haskell: (>=>) :: Monad"
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        (cond ((and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+              (require 'scala-mode)
               ;; (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
               (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
               )
              ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
+              (require 'scala-mode)
               ;; (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
               (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
               )
