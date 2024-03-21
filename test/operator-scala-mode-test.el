@@ -591,5 +591,17 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?:))
     (should (char-equal (char-before (- (point) 2)) ?t))))
 
+(ert-deftest operator-scala-test-AOW04t ()
+  (operator-test
+      "def doppel(x:"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?x))))
+
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here

@@ -1062,7 +1062,7 @@ Haskell: (>=>) :: Monad"
         ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position) ))
          'scala-comment)
         ((and (eq char ?:)
-              (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:" (line-beginning-position))))
+              (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position)))
         'scala-case)
 	;; EMACS=emacs
         ;; myVar_=
@@ -1183,8 +1183,10 @@ Haskell: (>=>) :: Monad"
 	  ((and (char-equal ?\[ list-start-char)
 		(char-equal ?, char))
 	   'scala-construct-for-export)
-	  ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-	   'pattern-match-on-list)))))
+          ;; def doppel(x: Int): Int = { 2 * x }
+	  ;; ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	   ;; 'pattern-match-on-list)
+          ))))
 
 (defun operator--do-scala-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Scala"
