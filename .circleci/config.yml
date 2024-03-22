@@ -1,7 +1,7 @@
 version: 2.1
 
 aktion:
-  echo "Gebe Umgebung aus" 
+  echo "Gebe Umgebung aus"
   ls -lart
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))" \
-            --eval "(load (expand-file-name \"operator-mode.el\"))" \
+            --eval "(load \"operator-mode.el\")" \
             --eval "(setq operator-mode-debug nil)" \
             --eval "(setq python-indent-offset 4)" \
             --eval "(setq python-indent-guess-indent-offset nil)" \
@@ -40,4 +40,4 @@ jobs:
 workflows:
   opemode-workflow:
     jobs:
-      - opemode  
+      - opemode
