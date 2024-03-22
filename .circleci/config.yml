@@ -24,11 +24,11 @@ jobs:
             emacs -Q --batch \
             --eval "(message (emacs-version))" \
             --eval "(message (getenv \"PWD\"))" \
-            --eval "(load \"operator-mode.el\")" \
             --eval "(setq operator-mode-debug nil)" \
             --eval "(setq python-indent-offset 4)" \
             --eval "(setq python-indent-guess-indent-offset nil)" \
             --eval "(setq python-indent-guess-indent-offset-verbose nil)" \
+            --eval "(load \"/root/operator-mode/operator-mode.el\")" \
             --eval "(load \"/root/operator-mode/test/operator-setup-tests.el\")" \
             --eval "(load \"/root/operator-mode/test/operator-python-mode-test.el\")" \
             --eval "(load \"/root/operator-mode/test/operator-other-test.el\")" \
