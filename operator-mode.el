@@ -1223,7 +1223,8 @@ Haskell: (>=>) :: Monad"
         ;; <?>,
         ;; 2 * r
         ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
-	((and (not (eq ?{ list-start-char))(not (member (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
+        ;; scala> :t
+	((and (not (eq ?{ list-start-char))(not (member (char-before (1- (point))) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1261,7 +1262,8 @@ Haskell: (>=>) :: Monad"
 	;; ((member char (list ?\; ?,)))
 	((or (and (member (char-before (1- (point))) operator-known-operators)
                   ;; List(((a.last), false))+
-                  (not (member (char-before (1- (point))) (list ?\))))
+                  ;; scala> :t
+                  (not (member (char-before (1- (point))) (list ?> ?\))))
                   (not (member char (list ??))))
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
@@ -1370,8 +1372,10 @@ Haskell: (>=>) :: Monad"
                       ;; map{ case (x, y) = >
                       ;; scala> evens + +
                       ;; { case (x, y) => y ::
-                      (member char (list ?: ?/ ?+ ?- ?& ?| ?= ?< ?> ?.)))
-                   t)
+                      (and (member char (list ?: ?/ ?+ ?- ?& ?| ?= ?< ?> ?.))
+                      ;; scala> :t 
+                      (not (member (char-before (1- (point))) (list ?>)))))
+                 t)
                  ))
     ;; (setq notfirst (and notfirst nojoin))
     (operator--final char orig notfirst notsecond nojoin)))
