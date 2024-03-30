@@ -1253,6 +1253,7 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
                      ;; b.map{ case i => (i, i + 1)
                      ;; (0 to 10).map(n =>
+                     (not (char-equal ?{ list-start-char))
                      (not (member char (list ?= ?& ?+ ?* ?- ?< ?>)))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
 		     ;; (eq (- (point) 2)(nth 1 pps))))
@@ -1373,7 +1374,7 @@ Haskell: (>=>) :: Monad"
                       ;; scala> evens + +
                       ;; { case (x, y) => y ::
                       (and (member char (list ?: ?/ ?+ ?- ?& ?| ?= ?< ?> ?.))
-                      ;; scala> :t 
+                      ;; scala> :t
                       (not (member (char-before (1- (point))) (list ?>)))))
                  t)
                  ))
