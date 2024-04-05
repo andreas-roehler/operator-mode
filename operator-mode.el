@@ -1141,7 +1141,7 @@ Haskell: (>=>) :: Monad"
           ;; :(load
           ;; (x: (A, A))._1
           (not (nth 1 pps))
-          (member char (list  ?\; ?. ?- ?$ ?~ ?^ ?&)))
+          (member char (list  ?_ ?\; ?. ?- ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
         ;; val expected:
         ;; ((and (member char (list ?:))
