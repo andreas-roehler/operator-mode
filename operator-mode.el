@@ -1140,7 +1140,7 @@ Haskell: (>=>) :: Monad"
           ;; val foo = bar * baz
           ;; :(load
           ;; (x: (A, A))._1
-          (not (nth 1 pps))
+          ;; (not (nth 1 pps))
           (member char (list  ?_ ?\; ?. ?- ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
         ;; val expected:
@@ -1224,12 +1224,10 @@ Haskell: (>=>) :: Monad"
         ;; 2 * r
         ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
         ;; scala> :t
-	((and (not (eq ?{ list-start-char))(not (member (char-before (1- (point))) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?: ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
+	((and (not (eq ?{ list-start-char))(not (member (char-before (1- (point))) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?$ ?~ ?_  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
-	 'rm-attention)
 	((looking-back "^scala>" (line-beginning-position))
 	 'comint-last-prompt)
 	(list-start-char
@@ -1307,7 +1305,7 @@ Haskell: (>=>) :: Monad"
           ;; 2 * r
           ;; scala> :help
           ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
-          (member char (list ? ?: ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
+          (member char (list ? ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
           ;; 6.7
           ;; (not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
           )

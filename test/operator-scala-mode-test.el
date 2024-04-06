@@ -627,6 +627,19 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?s))
     ))
 
+(ert-deftest operator-scala-test-jK7nXo ()
+  (operator-test
+      ".map{case k => k._"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?_))
+    (should (char-equal (char-before (1- (point))) ?.))
+    ))
+
+
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
