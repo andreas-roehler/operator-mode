@@ -651,6 +651,19 @@ firstArg match {
     (should (char-equal (char-before (1- (point))) ?:))
     ))
 
+(ert-deftest operator-scala-test-QlueoL ()
+  (operator-test
+      "case class Foo(bar:"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?r))
+    ))
+
 
 
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
