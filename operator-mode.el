@@ -1200,7 +1200,8 @@ Haskell: (>=>) :: Monad"
                   ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
                   ;; case _ =
                   ;; (-15, false, 10) /
-                  ((and (member char (list ?? ?& ?| ?> ?< ?+ ?=))
+                  ;; val a =  0 : :
+                  ((and (member char (list ?? ?& ?| ?> ?< ?+ ?= ?:))
                         (not (eq (char-before (- (point) 2)) ?_)))
                    nil)
                   ((and (member char (list ?/ ?? ?& ?| ?> ?< ?+ ?=))
