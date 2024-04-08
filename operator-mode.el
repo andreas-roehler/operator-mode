@@ -1264,9 +1264,11 @@ Haskell: (>=>) :: Monad"
 	((or (and (member (char-before (1- (point))) operator-known-operators)
                   ;; List(((a.last), false))+
                   ;; scala> :t
+                  (not (looking-back "scala> ." (line-beginning-position)))
                   (not (member (char-before (1- (point))) (list ?> ?\))))
                   (not (member char (list ??))))
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
+                  (not (looking-back "scala> ." (if (functionp 'pos-bol)(pos-bol)(1- (line-beginning-position)))))
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   (not (eq char ??))))
 	 'scala-join-known-operators)
@@ -1375,7 +1377,8 @@ Haskell: (>=>) :: Monad"
                       ;; { case (x, y) => y ::
                       (and (member char (list ?: ?/ ?+ ?- ?& ?| ?= ?< ?> ?.))
                       ;; scala> :t
-                      (not (member (char-before (1- (point))) (list ?>)))))
+                      (not (member (char-before (1- (point))) (list ?>)))
+                      (not (looking-back "scala> *.?" (if (functionp 'pos-bol)(pos-bol)(1- (line-beginning-position)))))))
                  t)
                  ))
     ;; (setq notfirst (and notfirst nojoin))
