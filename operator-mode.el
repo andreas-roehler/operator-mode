@@ -1057,13 +1057,13 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'scala-notfirst)
         ((and (nth 3 pps)
-             (member char (list ?/ ?. ?_)))
+              (member char (list ?/ ?. ?_)))
          'scala-in-string)
-        ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position) ))
+        ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position)))
          'scala-comment)
         ((and (eq char ?:)
               (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position)))
-        'scala-case)
+         'scala-case)
 	;; EMACS=emacs
         ;; myVar_=
 	(;; (not (eq ?{ list-start-char))
@@ -1073,9 +1073,11 @@ Haskell: (>=>) :: Monad"
          ;; => result :+ ((x, default))
          (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
 	 'scala-punkt)
-        ((and (member char (list ?:))
-              (member (char-before (1- (point))) operator-known-operators))
-         'scala-double-colon)
+        ;; [+A]
+        ((and (member char (list ?: ?+))
+              (or (member (char-before (1- (point))) operator-known-operators)
+                  (eq list-start-char ?\[)))
+         'scala-v)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
@@ -1102,7 +1104,7 @@ Haskell: (>=>) :: Monad"
                ;; scala> p.map(x=>x)
 	       ((and (nth 1 pps)
                      (char-equal ?\( list-start-char))
-	       	        'scala-in-list-p)
+	       	'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
@@ -1129,6 +1131,10 @@ Haskell: (>=>) :: Monad"
   ;; (unless (eq ?{ list-start-char)
   (cond (notsecond
 	 'scala-notsecond)
+        ((and (member char (list ?: ?+))
+              (or (member (char-before (1- (point))) operator-known-operators)
+                  (eq list-start-char ?\[)))
+         'scala-v)
 	;; EMACS=emacs
 	;; :help
 	((and
@@ -1140,6 +1146,9 @@ Haskell: (>=>) :: Monad"
           ;; (not (nth 1 pps))
           (member char (list  ?_ ?\; ?. ?- ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
+        ((and (member char (list ?+))
+              (member (char-before (1- (point))) operator-known-operators))
+         'scala-v)
         ;; val expected:
         ;; ((and (member char (list ?:))
         ;;       (not (member (char-before (1- (point))) operator-known-operators)))
@@ -1214,6 +1223,10 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
+        ((and (member char (list ?: ?+))
+              (or (member (char-before (1- (point))) operator-known-operators)
+                  (eq list-start-char ?\[)))
+         'scala-v)
         ((nth 3 pps)
          'in-string)
         ((and (eq char ?:)
@@ -1292,6 +1305,10 @@ Haskell: (>=>) :: Monad"
   ;; (unless (eq ?{ list-start-char)
   (cond (notsecond
 	 'scala-notsecond)
+        ((and (member char (list ?: ?+))
+              (or (member (char-before (1- (point))) operator-known-operators)
+                  (eq list-start-char ?\[)))
+         'scala-v)
 	;; EMACS=emacs
 	;; :help
         ((and (member char (list ?:))
@@ -1355,7 +1372,7 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond
-          ;; ((char-equal ?, char)
+          ;; ((char-equal? , char)
 	  ;;       'scala-list-separator)
 	  ((and (char-equal ?\[ list-start-char)
 		(char-equal ?, char))
