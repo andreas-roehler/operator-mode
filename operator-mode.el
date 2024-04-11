@@ -1102,11 +1102,7 @@ Haskell: (>=>) :: Monad"
                ;; scala> p.map(x=>x)
 	       ((and (nth 1 pps)
                      (char-equal ?\( list-start-char))
-	       ;;       (or (eq (1- (current-column)) (current-indentation))
-	       ;;  	 (eq (- (point) 2)(nth 1 pps))
-               ;;           ;; def main(args: Array[String]): Unit =
-               ;;           (and (not (eq list-start-char ?{)) (looking-back "^[ \t]*def[ \t]+.*" (line-beginning-position)))))
-	        'scala-in-list-p)
+	       	        'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
@@ -1220,6 +1216,9 @@ Haskell: (>=>) :: Monad"
 	 'scala-notfirst)
         ((nth 3 pps)
          'in-string)
+        ((and (eq char ?:)
+              (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position)))
+         'scala-case)
 	;; EMACS=emacs
         ;; s.indexOf.('o')
         ;; <?>,
@@ -1268,7 +1267,7 @@ Haskell: (>=>) :: Monad"
                   (not (member (char-before (1- (point))) (list ?> ?\))))
                   (not (member char (list ??))))
 	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
-                  (not (looking-back "scala> ." (if (functionp 'pos-bol)(pos-bol)(1- (line-beginning-position)))))
+                  (not (looking-back "scala> ." (if (functionp 'pos-bol) (pos-bol) (1- (line-beginning-position)))))
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   (not (eq char ??))))
 	 'scala-join-known-operators)
@@ -1296,9 +1295,10 @@ Haskell: (>=>) :: Monad"
 	;; EMACS=emacs
 	;; :help
         ((and (member char (list ?:))
-              (looking-back "^.*scala> +" (line-beginning-position))
-              ;; (string-match "^.*scala> +" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))
-              )
+              ;; (looking-back "^.*scala> +" (line-beginning-position))
+              (string-match "^.*scala> +" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))
+              ;; scala> val a:
+              (not (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position))))
          'scala-doc)
 	((and
           ;; (not (eq ?{ list-start-char))
