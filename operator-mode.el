@@ -1111,8 +1111,13 @@ Haskell: (>=>) :: Monad"
 	((or (and (member (char-before (1- (point))) operator-known-operators)
                   ;; List(((a.last), false))+
                   (not (member (char-before (1- (point))) (list ?\))))
+                  (not (member (char-before (- (point) 2)) (list ?_)))
                   (not (member char (list ??))))
-	     (and (eq (char-before (1- (point))) 32) (member (char-before (- (point) 2)) operator-known-operators) (not (eq (car-safe (syntax-after (- (point) 3))) 5))
+	     (and (eq (char-before (1- (point))) 32)
+                  (member (char-before (- (point) 2)) operator-known-operators)
+                  ;; case _ =
+                  (not (member (char-before (- (point) 2)) (list ?_)))
+                  (not (eq (car-safe (syntax-after (- (point) 3))) 5))
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   (not (eq char ??))))
 	 'scala-join-known-operators)
@@ -1207,15 +1212,19 @@ Haskell: (>=>) :: Monad"
                   ;; case _ =
                   ;; (-15, false, 10) /
                   ;; val a =  0 : :
-                  ((and (member char (list ?? ?& ?| ?> ?< ?+ ?= ?:))
-                        (not (eq (char-before (- (point) 2)) ?_)))
-                   nil)
-                  ((and (member char (list ?/ ?? ?& ?| ?> ?< ?+ ?=))
+                  ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?| ))
+                        (not (or (eq (char-before (1- (point))) ?_)
+                                 (eq (char-before (- (point) 2)) ?_)))
                         (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
                    nil)
-                  ;; case _ => println("huh?")
-                  ((and (member char (list ?=))(eq (char-before (1- (point))) ?_))
-                   t)
+                  ;; ((and (member char (list ?/ ?? ?& ?| ?> ?< ?+ ?=))
+                  ;;       (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
+                  ;;  nil)
+                  ;; case_ => println("huh?")
+                  ((and (member char (list ?=))
+                        (or (eq (char-before (1- (point))) ?_)
+                            (eq (char-before (- (point) 2)) ?_))
+                        t))
                   (t t))))
     (operator--final char orig notfirst notsecond nojoin)))
 
