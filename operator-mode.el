@@ -1139,7 +1139,7 @@ Haskell: (>=>) :: Monad"
         ((and (member char (list ?: ?+))
               (or
                (and (member (char-before (1- (point))) operator-known-operators)
-                    (not (member (char-before (1- (point))) (list 41 ?\] ?})))) 
+                    (not (member (char-before (1- (point))) (list 41 ?\] ?}))))
                   (eq list-start-char ?\[)))
          'scala-v)
 	;; EMACS=emacs
@@ -1330,17 +1330,19 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'scala-notsecond)
         ((and (member char (list ?: ?+))
-              (or (member (char-before (1- (point))) operator-known-operators)
-                  (eq list-start-char ?\[)))
+              (or
+               (and (member (char-before (1- (point))) operator-known-operators)
+                    (not (member (char-before (1- (point))) (list 41 ?\] ?}))))
+               (eq list-start-char ?\[)))
          'scala-v)
 	;; EMACS=emacs
 	;; :help
-        ((and (member char (list ?:))
-              ;; (looking-back "^.*scala> +" (line-beginning-position))
-              (string-match "^.*scala> +" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))
-              ;; scala> val a:
-              (not (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position))))
-         'scala-doc)
+        ;; ((and (member char (list ?:))
+        ;;       ;; (looking-back "^.*scala> +" (line-beginning-position))
+        ;;       (string-match "^.*scala> +" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))
+        ;;       ;; scala> val a:
+        ;;       (not (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position))))
+        ;;  'scala-doc)
 	((and
           ;; (not (eq ?{ list-start-char))
           (not (nth 1 pps))
