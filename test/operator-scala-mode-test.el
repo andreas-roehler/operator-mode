@@ -688,6 +688,20 @@ firstArg match {
     (should (char-equal (char-before (- (point) 1)) ?=))
     ))
 
+(ert-deftest operator-scala-test-LwiUI5 ()
+  (operator-test
+      "def foo(bar: Bar):"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?:))
+    (should (char-equal (char-before (- (point) 2)) 41)) 
+    ))
+
+
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
