@@ -698,7 +698,7 @@ firstArg match {
     (operator-do)
     (should (char-equal (char-before (point)) 32))
     (should (char-equal (char-before (- (point) 1)) ?:))
-    (should (char-equal (char-before (- (point) 2)) 41)) 
+    (should (char-equal (char-before (- (point) 2)) 41))
     ))
 
 (ert-deftest operator-scala-test-4Bbofh ()
@@ -711,10 +711,38 @@ firstArg match {
     (operator-do)
     (should (char-equal (char-before (point)) 32))
     (should (char-equal (char-before (- (point) 1)) ?>))
-    (should (char-equal (char-before (- (point) 2)) ?=)) 
+    (should (char-equal (char-before (- (point) 2)) ?=))
+    ))
+
+(ert-deftest operator-scala-test-5uuUAl ()
+  (operator-test
+      "b.filter(x => x="
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-scala-test-6sgxTY ()
+  (operator-test
+      "val a = (_:"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
 
+
+           
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here

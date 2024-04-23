@@ -1095,16 +1095,16 @@ Haskell: (>=>) :: Monad"
 		'scala-operator--in-list-continue)
                ;; val b = a.map{ case x => x._1 + 4 * x._2*
 	       ;; ((char-equal ?* char)
-	       ;;  'scala-char-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'scala-listing)
 	       ((nth 3 pps)
 		'scala-and-nth-1-pps-nth-3-pps)
                ;; .settings(name := "muster")
                ;; scala> p.map(x=>x)
-	       ((and (nth 1 pps)
-                     (char-equal ?\( list-start-char))
-	       	'scala-in-list-p)
+	       ;; ((and (nth 1 pps)
+               ;;       (char-equal ?\( list-start-char)
+               ;;       )
+	       ;; 	'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
@@ -1139,7 +1139,8 @@ Haskell: (>=>) :: Monad"
         ((and (member char (list ?: ?+))
               (or
                (and (member (char-before (1- (point))) operator-known-operators)
-                    (not (member (char-before (1- (point))) (list 41 ?\] ?}))))
+                    ;; val a = (_:
+                    (not (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
                   (eq list-start-char ?\[)))
          'scala-v)
 	;; EMACS=emacs
@@ -1206,15 +1207,20 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--scala-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
 	 (nojoin (cond
+                  ;; b.filter(x => x =
+                  ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
+                        (not (member (char-before (1- (point))) operator-known-operators)))
+                   t)
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
                    t)
+
                   ;; val result = d + +
                   ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
                   ;; case _ =
                   ;; (-15, false, 10) /
                   ;; val a =  0 : :
-                  ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?| ))
+                  ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
                         (not (or (eq (char-before (1- (point))) ?_)
                                  (eq (char-before (- (point) 2)) ?_)))
                         (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
