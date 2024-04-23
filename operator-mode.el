@@ -1342,7 +1342,7 @@ Haskell: (>=>) :: Monad"
         ((and (member char (list ?: ?+))
               (or
                (and (member (char-before (1- (point))) operator-known-operators)
-                    (not (member (char-before (1- (point))) (list 41 ?\] ?}))))
+                    (not (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
                (eq list-start-char ?\[)))
          'scala-v)
 	;; EMACS=emacs
@@ -1351,7 +1351,8 @@ Haskell: (>=>) :: Monad"
               ;; (looking-back "^.*scala> +" (line-beginning-position))
               (string-match "^.*scala> +" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))
               ;; scala> val a:
-              (not (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position))))
+              ;; scala> val a = (_:
+              (not (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]=_\\( ][[:alnum:]=_\\( ]*:") (line-beginning-position))))
          'scala-doc)
 	((and
           ;; (not (eq ?{ list-start-char))
@@ -1413,7 +1414,7 @@ Haskell: (>=>) :: Monad"
 	  ((and (char-equal ?\[ list-start-char)
 		(char-equal ?, char))
 	   'scala-construct-for-export)
-	  ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	  ((and (char-equal ?: char) (looking-back "(\\.:" (line-beginning-position)))
 	   'pattern-match-on-list)))))
 
 (defun operator--do-scala-shell-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -1422,6 +1423,9 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--scala-shell-notsecond char pps list-start-char notsecond))
 	 (nojoin
           (cond
+           ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
+                 (not (member (char-before (1- (point))) operator-known-operators)))
+            t)
            ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
            ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
             t)
@@ -1444,7 +1448,7 @@ Haskell: (>=>) :: Monad"
                      (eq (char-before (- (point) 2)) ?_))
                  t))
            (t t))))
-        (operator--final char orig notfirst notsecond nojoin)))
+    (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--sh-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
