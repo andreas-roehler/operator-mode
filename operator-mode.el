@@ -2050,8 +2050,15 @@ Haskell: (>=>) :: Monad"
         (t
          ;; (or (unless nojoin (operator--join-operators-maybe char))
          (save-excursion (goto-char (1- orig))
-		         (unless (eq (char-before) ?\s)
-			   (just-one-space)))))
+                         ;; b.foreach(x =>
+                         (if nojoin
+		             (unless (eq (char-before) ?\s)
+			       (just-one-space))
+                           (and
+                            (eq (char-before) 32)
+                            (member (char-before (1- (point))) operator-known-operators)
+                            (not (member (char-before (1- (point))) (list 41 ?\] ?})))
+                            (delete-char -1))))))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
