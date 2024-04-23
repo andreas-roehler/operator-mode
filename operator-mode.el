@@ -1435,9 +1435,11 @@ Haskell: (>=>) :: Monad"
            ;; (-15, false, 10) /
            ;; val a =  0 : :
            ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                 (not (or (eq (char-before (1- (point))) ?_)
+                 (not (or (member (char-before (- (point) 1)) (list ?_))
                           (eq (char-before (- (point) 2)) ?_)))
-                 (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
+                 (not (member (char-before (- (point) 1))(list ?\) ?\] ?})))
+                 ;; (not (member (char-before (- (point) 2))(list ?\) ?\] ?})))
+                 )
             nil)
            ;; ((and (member char (list ?/ ?? ?& ?| ?> ?< ?+ ?=))
            ;;       (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
