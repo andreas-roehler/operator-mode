@@ -1071,7 +1071,8 @@ Haskell: (>=>) :: Monad"
          ;; val foo = bar * baz
          ;; val q =  (2 to n-
          ;; => result :+ ((x, default))
-         (member char (list ?. ?- ?$ ?~ ?_  ?^ ?& 41 ?\;))
+         ;; b.foreach(println _
+         (member char (list ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ;; [+A]
         ((and (member char (list ?: ?+))
