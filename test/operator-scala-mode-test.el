@@ -753,9 +753,6 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
-
-
-           
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here
