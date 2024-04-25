@@ -426,6 +426,19 @@
     (should (eq (char-before (1- (point))) ?:))
     (should (eq (char-before (- (point) 2)) ?'))))
 
+(ert-deftest operator-python-test-uAppBY ()
+  (operator-test
+      "a="
+    'python-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    ;; take action inside comments if operator-mode-in-comments-p is t
+    (should (eq (char-before) 32))
+    (should (eq (char-before (- (point) 1)) ?=))
+    (should (eq (char-before (- (point) 2)) 32))))
+
 
 
 (provide 'operator-python-mode-test)
