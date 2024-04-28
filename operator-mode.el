@@ -1094,7 +1094,9 @@ Haskell: (>=>) :: Monad"
 	 'scala-punkt)
         ;; [+A]
         ((and (member char (list ?: ?+))
-              (or (member (char-before (1- (point))) operator-known-operators)
+              (or
+               (and (member (char-before (1- (point))) operator-known-operators)
+                    (not (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
                   (eq list-start-char ?\[)))
          'scala-v)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1228,7 +1230,8 @@ Haskell: (>=>) :: Monad"
 	 (nojoin (cond
                   ;; b.filter(x => x =
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                        (not (member (char-before (1- (point))) operator-known-operators)))
+                        (or (not (member (char-before (1- (point))) operator-known-operators))
+                        (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
                    t)
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
