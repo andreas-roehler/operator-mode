@@ -235,7 +235,7 @@ Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
   (let* ((erg (or (and pps (nth 8 pps))
 		  (nth 8 (parse-partial-sexp (point-min) (point)))
 		  (ignore-errors (eq 7 (car-safe (syntax-after (point)))))
-		  ;; (ignore-errors (eq 7 (car-safe (syntax-after (1- (point))))))
+		  ;; (ignore-errors (eq 7 (car-safe (syntax-after (- (point) 1)))))
 		  (and comment-start
 		       (or (looking-at comment-start)
 			   (looking-back comment-start (line-beginning-position))))
@@ -361,7 +361,7 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--python-notsecond char pps list-start-char notsecond))
          (nojoin (cond
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                        (not (member (char-before (1- (point))) operator-known-operators)))
+                        (not (member (char-before (- (point) 1)) operator-known-operators)))
                    t)
                   ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
                    t)
@@ -383,7 +383,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 notfirst)
         ;; for(i = 0; i < 100000; i)
-        ((and (eq (char-before (1- (point))) ?i) (eq char ?+)(nth 1 pps))
+        ((and (eq (char-before (- (point) 1)) ?i) (eq char ?+)(nth 1 pps))
          'in-loop)
 	;; (;; echo(**kargs)
         ;;  ;; while((line = foo
@@ -597,7 +597,7 @@ Haskell: (>=>) :: Monad"
 	 'haskell-import)
 	((looking-back "<." (line-beginning-position))
 	 'haskell->)
-        ;; ((and (nth 1 pps) (not (and (eq (char-before (1- (point))) 40) (eq char ?$))))
+        ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
         ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
         ;;  'in-list)
 	((and
@@ -607,7 +607,7 @@ Haskell: (>=>) :: Monad"
            (and
             (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
             ;; "pure ($ y) <*> u"
-            (not (and (eq (char-before (1- (point))) 40) (eq char ?$)))
+            (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
             ;; (<=
             ;; (==)
             ;; mylast (_:xs) = mylast xs
@@ -758,7 +758,7 @@ Haskell: (>=>) :: Monad"
 	 'haskell-import)
 	((looking-back "<\\*" (line-beginning-position))
 	 'haskell->)
-        ;; ((and (nth 1 pps) (not (and (eq (char-before (1- (point))) 40) (eq char ?$))))
+        ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
         ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
         ;;  'in-list)
 	((and
@@ -767,7 +767,7 @@ Haskell: (>=>) :: Monad"
            (and
             (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
             ;; "pure ($ y) <*> u"
-            (not (and (eq (char-before (1- (point))) 40) (eq char ?$)))
+            (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
             ;; (<=
             ;; (==)
             ;; mylast (_:xs) = mylast xs
@@ -819,8 +819,8 @@ Haskell: (>=>) :: Monad"
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'idris-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'idris-<)
@@ -920,8 +920,8 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'idris-repl-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'idris-repl-<)
@@ -1011,8 +1011,8 @@ Haskell: (>=>) :: Monad"
 	       ))
 	((member char (list ?\;))
 	 'sml-closing-expression)
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'sml-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'sml-<)
@@ -1077,7 +1077,7 @@ Haskell: (>=>) :: Monad"
         ((and (nth 3 pps)
               (member char (list ?/ ?. ?_)))
          'scala-in-string)
-        ((and (char-equal char 47) (eq (1- (point)) (line-beginning-position)))
+        ((and (char-equal char 47) (eq (- (point) 1) (line-beginning-position)))
          'scala-comment)
         ((and (eq char ?:)
               (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position)))
@@ -1095,8 +1095,8 @@ Haskell: (>=>) :: Monad"
         ;; [+A]
         ((and (member char (list ?: ?+))
               (or
-               (and (member (char-before (1- (point))) operator-known-operators)
-                    (not (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
+               (and (member (char-before (- (point) 1)) operator-known-operators)
+                    (not (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))))
                   (eq list-start-char ?\[)))
          'scala-v)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
@@ -1129,12 +1129,12 @@ Haskell: (>=>) :: Monad"
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
-	((or (and (member (char-before (1- (point))) operator-known-operators)
+	((or (and (member (char-before (- (point) 1)) operator-known-operators)
                   ;; List(((a.last), false))+
-                  (not (member (char-before (1- (point))) (list ?\))))
+                  (not (member (char-before (- (point) 1)) (list ?\))))
                   (not (member (char-before (- (point) 2)) (list ?_)))
                   (not (member char (list ??))))
-	     (and (eq (char-before (1- (point))) 32)
+	     (and (eq (char-before (- (point) 1)) 32)
                   (member (char-before (- (point) 2)) operator-known-operators)
                   ;; case _ =
                   (not (member (char-before (- (point) 2)) (list ?_)))
@@ -1159,9 +1159,9 @@ Haskell: (>=>) :: Monad"
 	 'scala-notsecond)
         ((and (member char (list ?: ?+))
               (or
-               (and (member (char-before (1- (point))) operator-known-operators)
+               (and (member (char-before (- (point) 1)) operator-known-operators)
                     ;; val a = (_:
-                    (not (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
+                    (not (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))))
                   (eq list-start-char ?\[)))
          'scala-v)
 	;; EMACS=emacs
@@ -1176,11 +1176,11 @@ Haskell: (>=>) :: Monad"
           (member char (list  ?_ ?\; ?. ?- ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
         ;; ((and (member char (list ?+))
-        ;;       (member (char-before (1- (point))) operator-known-operators))
+        ;;       (member (char-before (- (point) 1)) operator-known-operators))
         ;;  'scala-v)
         ;; val expected:
         ;; ((and (member char (list ?:))
-        ;;       (not (member (char-before (1- (point))) operator-known-operators)))
+        ;;       (not (member (char-before (- (point) 1)) operator-known-operators)))
         ;;  'scala-double-colon)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1230,8 +1230,9 @@ Haskell: (>=>) :: Monad"
 	 (nojoin (cond
                   ;; b.filter(x => x =
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                        (or (not (member (char-before (1- (point))) operator-known-operators))
-                        (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
+                        (not (or (member (char-before (- (point) 1)) operator-known-operators)
+                                 (member (char-before (- (point) 2)) operator-known-operators)))
+                        (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
                    t)
                   ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
@@ -1243,7 +1244,7 @@ Haskell: (>=>) :: Monad"
                   ;; (-15, false, 10) /
                   ;; val a =  0 : :
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                        (not (or (eq (char-before (1- (point))) ?_)
+                        (not (or (eq (char-before (- (point) 1)) ?_)
                                  (eq (char-before (- (point) 2)) ?_)))
                         (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
                    nil)
@@ -1252,7 +1253,7 @@ Haskell: (>=>) :: Monad"
                   ;;  nil)
                   ;; case_ => println("huh?")
                   ((and (member char (list ?=))
-                        (or (eq (char-before (1- (point))) ?_)
+                        (or (eq (char-before (- (point) 1)) ?_)
                             (eq (char-before (- (point) 2)) ?_))
                         t))
                   (t t))))
@@ -1263,7 +1264,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'scala-notfirst)
         ((and (member char (list ?: ?+))
-              (or (member (char-before (1- (point))) operator-known-operators)
+              (or (member (char-before (- (point) 1)) operator-known-operators)
                   (eq list-start-char ?\[))
               ;; :help
               ;; (looking-back "^.*scala> +" (line-beginning-position))
@@ -1282,7 +1283,7 @@ Haskell: (>=>) :: Monad"
         ;; 2 * r
         ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
         ;; scala> :t
-	((and (not (eq ?{ list-start-char))(not (member (char-before (1- (point))) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?$ ?~  ?^ ?& ?/ 40 41)))
+	((and (not (eq ?{ list-start-char))(not (member (char-before (- (point) 1)) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?$ ?~  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1316,12 +1317,12 @@ Haskell: (>=>) :: Monad"
 	;; ((member char (list ?\; ?,)))
         ((and
           (not (string-match "^.*scala> *:?" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point))))
-          (or (and (member (char-before (1- (point))) operator-known-operators)
+          (or (and (member (char-before (- (point) 1)) operator-known-operators)
                    ;; List(((a.last), false))+
-                   (not (member (char-before (1- (point))) (list ?\))))
+                   (not (member (char-before (- (point) 1)) (list ?\))))
                    (not (member (char-before (- (point) 2)) (list ?_)))
                    (not (member char (list ??))))
-	      (and (eq (char-before (1- (point))) 32)
+	      (and (eq (char-before (- (point) 1)) 32)
                    (member (char-before (- (point) 2)) operator-known-operators)
                    ;; case _ =
                    (not (member (char-before (- (point) 2)) (list ?_)))
@@ -1329,13 +1330,13 @@ Haskell: (>=>) :: Monad"
                    ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                    (not (eq char ??)))))
 	 'scala-join-known-operators)
-	;; ((or (and (member (char-before (1- (point))) operator-known-operators)
+	;; ((or (and (member (char-before (- (point) 1)) operator-known-operators)
         ;;           ;; List(((a.last), false))+
         ;;           ;; scala> :t
         ;;           (not (looking-back "scala> ." (line-beginning-position)))
-        ;;           (not (member (char-before (1- (point))) (list ?> ?\))))
+        ;;           (not (member (char-before (- (point) 1)) (list ?> ?\))))
         ;;           (not (member char (list ??))))
-	;;      (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)
+	;;      (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)
         ;;           (not (looking-back "scala> ." (if (functionp 'pos-bol) (pos-bol) (1- (line-beginning-position)))))
         ;;           ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
         ;;           (not (eq char ??))))
@@ -1343,8 +1344,8 @@ Haskell: (>=>) :: Monad"
         ;; ((member char (list ?\; ?,)))
 	;; ((or
         ;;  ;; (1 to 3).map { x => (1 to 3) }
-        ;;  (and (not (member char (list ?})))  (member (char-before (1- (point))) operator-known-operators))
-	;;      (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+        ;;  (and (not (member char (list ?})))  (member (char-before (- (point) 1)) operator-known-operators))
+	;;      (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	;;  'scala-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala-<)
@@ -1363,8 +1364,8 @@ Haskell: (>=>) :: Monad"
 	 'scala-notsecond)
         ((and (member char (list ?: ?+))
               (or
-               (and (member (char-before (1- (point))) operator-known-operators)
-                    (not (member (char-before (1- (point))) (list 41 ?\] ?} ?_))))
+               (and (member (char-before (- (point) 1)) operator-known-operators)
+                    (not (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))))
                (eq list-start-char ?\[)))
          'scala-v)
 	;; EMACS=emacs
@@ -1387,14 +1388,14 @@ Haskell: (>=>) :: Monad"
           ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
           (member char (list ? ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
           ;; 6.7
-          ;; (not (member  (char-before (1- (point))) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
+          ;; (not (member  (char-before (- (point) 1)) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
           )
 	 'scala-punkt)
         ;; method invocation
         ;; val sumMore = (1).+(2)
         ((and
           (not (nth 1 pps))
-          (member (char-before (1- (point))) (list ?.)))
+          (member (char-before (- (point) 1)) (list ?.)))
 	 'method-invocation)
 	((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
@@ -1470,7 +1471,7 @@ Haskell: (>=>) :: Monad"
            ;;  nil)
            ;; case_ => println("huh?")
            ((and (member char (list ?=))
-                 (or (eq (char-before (1- (point))) ?_)
+                 (or (eq (char-before (- (point) 1)) ?_)
                      (eq (char-before (- (point) 2)) ?_))
                  t))
            (t t))))
@@ -1723,8 +1724,8 @@ Haskell: (>=>) :: Monad"
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'coq-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'coq-<)
@@ -1800,8 +1801,8 @@ Haskell: (>=>) :: Monad"
         ((member char (list ?\)))
          'emacs-lisp-closen-paren)
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'emacs-lisp-join-known-operators)
 	((looking-back "^;" (line-beginning-position))
 	 'emacs-lisp-comment-start)
@@ -1810,12 +1811,12 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
-        ((eq (char-before (1- (point))) ??)
+        ((eq (char-before (- (point) 1)) ??)
           'emacs-lisp-after-question-mark)
         ;; ((and (looking-back syntactic-close-for-re (line-beginning-position)) (not (eq (char-before) ?\;)) (not (string-match "\\+\\+" (buffer-substring-no-properties (line-beginning-position) (point)))))
         ;;      ";")
         ;; (should (eq (char-before) ?\;
-        ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (1- (point)))))
+        ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (- (point) 1))))
          'emacs-lisp-semicolon)
         ;; (let*
         ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?&  ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??))
@@ -1869,8 +1870,8 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 		'agda-in-list-p)))
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'agda-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 		'agda-<)
@@ -1945,8 +1946,8 @@ Haskell: (>=>) :: Monad"
 	((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 	 'org-in-list-p)
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'org-join-known-operators)
 	((looking-back "^<s?" (line-beginning-position))
 	 'org-src-block)
@@ -2000,8 +2001,8 @@ Haskell: (>=>) :: Monad"
 	 'text-notfirst)
 	((member char (list ?\; ?\( ?, ?. ?: ?\? ?! ?@ ?- ?_ 47))
 	 'text-punct-class)
-	((or (member (char-before (1- (point))) operator-known-operators)
-	     (and (eq (char-before (1- (point)))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+	((or (member (char-before (- (point) 1)) operator-known-operators)
+	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'text-join-known-operators)
 	((member char (list ?*))
 	 'text-org-special)
@@ -2064,7 +2065,7 @@ Haskell: (>=>) :: Monad"
      (or
       ;; ~$ lspci -k|
       ;; org-mode: * *
-      (and (eq (char-before (1- (point))) 32)(member (char-before (- (point) 2)) operator-known-operators))
+      (and (eq (char-before (- (point) 1)) 32)(member (char-before (- (point) 2)) operator-known-operators))
       (member (char-before (- (point) 1)) operator-known-operators))
      (not (or
            (ignore-errors (eq (char-syntax (char-before (- (point) 1))) 41))
@@ -2081,7 +2082,7 @@ Haskell: (>=>) :: Monad"
            (save-excursion (backward-char)
 		           (and
                             (eq (char-before) 32)
-                            (member (char-before (1- (point))) operator-known-operators)
+                            (member (char-before (- (point) 1)) operator-known-operators)
                             (delete-char -1)))))
         (t
          ;; (or (unless nojoin (operator--join-operators-maybe char))
@@ -2092,8 +2093,8 @@ Haskell: (>=>) :: Monad"
 			       (just-one-space))
                            (and
                             (eq (char-before) 32)
-                            (member (char-before (1- (point))) operator-known-operators)
-                            (not (member (char-before (1- (point))) (list 41 ?\] ?})))
+                            (member (char-before (- (point) 1)) operator-known-operators)
+                            (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
                             (delete-char -1))))))
   (unless notsecond
     (if (eq (char-after) ?\s)
@@ -2126,7 +2127,7 @@ Haskell: (>=>) :: Monad"
              (member char (list ?`))
              (or
               (not (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2)))
-              (eq (char-before (1- (point))) 32)))
+              (eq (char-before (- (point) 1)) 32)))
 	    'operator--do-intern-generic-on-symbols)))
          (notsecond
           (cond
@@ -2136,7 +2137,7 @@ Haskell: (>=>) :: Monad"
              (member char (list ?`))
              ;; odd numbers of backticks before last one
              (< 0 (% (count-matches "`" (line-beginning-position) (point)) 2))
-             ;; (eq (char-before (1- (point))) 32)
+             ;; (eq (char-before (- (point) 1)) 32)
              )
             'operator--do-intern-generic-on-symbols)
            ((and (member char (list ?@ ?> ?.)) (looking-back (concat "<[[:alnum:]_@.]+" (char-to-string char)) (line-beginning-position)))
@@ -2221,7 +2222,7 @@ Haskell: (>=>) :: Monad"
          (not (nth 8 (parse-partial-sexp (point-min) (point))))
          )
         ;; grep 'asf\|
-        (not (and (eq (char-before (1- (point))) 92) (not (eq (char-before (- (point) 2)) ?\)))))
+        (not (and (eq (char-before (- (point) 1)) 92) (not (eq (char-before (- (point) 2)) ?\)))))
 	(operator--do-intern (char-before) (copy-marker (point)))))
 
 ;;;###autoload
