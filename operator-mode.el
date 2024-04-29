@@ -1228,6 +1228,10 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--scala-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--scala-notsecond char pps list-start-char notsecond))
 	 (nojoin (cond
+                  ;; def foo() =
+                  ((and (member (char-before (point)) operator-known-operators)
+                        (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
+                   t)
                   ;; b.filter(x => x =
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
                         (not (or (member (char-before (- (point) 1)) operator-known-operators)
