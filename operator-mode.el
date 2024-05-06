@@ -1121,8 +1121,10 @@ Haskell: (>=>) :: Monad"
 	       ((nth 3 pps)
 		'scala-and-nth-1-pps-nth-3-pps)
                ;; .settings(name := "muster")
-               ;; scala> p.map(x=>x)
+               ;; scala> p.map(x => x)
+               ;; def ein(xs: List[Int], maxW: Double=
 	       ((and (nth 1 pps)
+                     (not (member char (list ?=)))
                      (char-equal ?\( list-start-char)
                      (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position)))
                      )
@@ -1292,7 +1294,10 @@ Haskell: (>=>) :: Monad"
         ;; 2 * r
         ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
         ;; scala> :t
-	((and (not (eq ?{ list-start-char))(not (member (char-before (- (point) 1)) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))) (member char (list ? ?. ?- ?$ ?~  ?^ ?& ?/ 40 41)))
+	((and (not (eq ?{ list-start-char))
+              ;; (not (member (char-before (- (point) 1)) (list ?> ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
+              ;; val init = 0;
+              (member char (list ?\; ? ?. ?- ?$ ?~  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)

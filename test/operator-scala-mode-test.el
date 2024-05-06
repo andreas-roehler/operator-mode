@@ -818,6 +818,19 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) ?c))
     ))
 
+(ert-deftest operator-scala-test-Fb7XNE ()
+  (operator-test
+      "def byFoo[A](xs: Seq[A], maxF: Double="
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
 
 
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
