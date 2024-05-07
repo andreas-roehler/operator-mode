@@ -318,6 +318,10 @@ Haskell: (>=>) :: Monad"
          )
     (cond (notsecond
 	   notsecond)
+          ;; a[0:
+          ((and in-list-p
+                (char-equal ?\[ list-start-char))
+           'python-range)
           ;;  a^2
           ((member char (list ?^))
            'python-punct)

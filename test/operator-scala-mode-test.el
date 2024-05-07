@@ -831,6 +831,36 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-J218My ()
+  (operator-test
+"def foo(xs: List[Int], m: Double = 5): List[Int] = {
+  privat zff Double="
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-scala-test-wFtHxI ()
+  (operator-test
+"def ein(xs: List[Int], maxW: Double = 5): List[Int] = {
+  foo:"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?:))
+    (sit-for 0.1) 
+    (should (char-equal (char-before (- (point) 2)) ?o))
+    ))
+
+
 
 
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
