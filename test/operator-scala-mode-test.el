@@ -856,12 +856,21 @@ firstArg match {
     (operator-do)
     (should (char-equal (char-before (point)) 32))
     (should (char-equal (char-before (- (point) 1)) ?:))
-    (sit-for 0.1) 
     (should (char-equal (char-before (- (point) 2)) ?o))
     ))
 
-
-
+(ert-deftest operator-scala-test-RY8dL5 ()
+  (operator-test
+      "case Fixed,"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before (point)) 32))
+    (should (char-equal (char-before (- (point) 1)) ?,))
+    (should (char-equal (char-before (- (point) 2)) ?d))
+    ))
 
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
 (provide 'operator-scala-mode-test)

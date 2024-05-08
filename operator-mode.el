@@ -1094,7 +1094,8 @@ Haskell: (>=>) :: Monad"
          ;; val q =  (2 to n-
          ;; => result :+ ((x, default))
          ;; b.foreach(println _
-         (member char (list ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
+         ;; case Fixed,
+         (member char (list ?, ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ;; [+A]
         ((and (member char (list ?: ?+))
