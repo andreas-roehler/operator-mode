@@ -37,6 +37,16 @@
   :type 'boolean
   :group 'programming)
 
+(defcustom  operator-in-string-p nil
+  "If aktive inside a string. "
+  :type 'boolean
+  :group 'programming)
+
+(defcustom  operator-in-comment-p nil
+  "If aktive inside a commented section. "
+  :type 'boolean
+  :group 'programming)
+
 (defvar operator-mode-debug t
   "Debugging mode")
 
@@ -2121,7 +2131,7 @@ Haskell: (>=>) :: Monad"
       (just-one-space)))
   (when fix-whitespace (delete-horizontal-space)))
 
-(defun operator--do-intern (char orig)
+(defun operator--do-intern (char orig pps)
   (let* ((start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
 		       (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
 		      ((eq major-mode 'haskell-interactive-mode)
@@ -2129,7 +2139,7 @@ Haskell: (>=>) :: Monad"
                            (min (cdr comint-last-prompt) (line-beginning-position))
                            (point-min)))
 		      (t (point-min))))
-	 (pps (parse-partial-sexp start (point)))
+	 ;; (pps (parse-partial-sexp start (point)))
 	 (list-start-char
 	  (and (nth 1 pps) (save-excursion
 			     (goto-char (nth 1 pps)) (char-after))))
@@ -2232,17 +2242,20 @@ Haskell: (>=>) :: Monad"
 (defun operator-do ()
   "Act according to operator before point, if any."
   (interactive "*")
-  (and  (member (char-before) operator-known-operators)
-	(or
-	 ;; must not check if allowed anyway
-         ;; p : filterPrime [x|
-	 ;; (and (member major-mode (list 'haskell-mode 'haskell-interactive-mode))(eq (char-before) ?|))
-         (eq major-mode 'shell-mode)
-         (not (nth 8 (parse-partial-sexp (point-min) (point))))
-         )
-        ;; grep 'asf\|
-        (not (and (eq (char-before (- (point) 1)) 92) (not (eq (char-before (- (point) 2)) ?\)))))
-	(operator--do-intern (char-before) (copy-marker (point)))))
+  (when (member (char-before) operator-known-operators)
+    (let ((pps (parse-partial-sexp (point-min) (point))))
+      (when (and
+             (or
+	      (eq major-mode 'shell-mode)
+              (or (and (nth 3 pps) operator-in-string-p)
+                  (not (nth 3 pps)))
+              (or (and (nth 4 pps) operator-in-comment-p)
+                  (not (nth 4 pps)))
+              ;; (not (nth 8 (parse-partial-sexp (point-min) (point))))
+              )
+             ;; grep 'asf\|
+             (not (and (eq (char-before (- (point) 1)) 92) (not (eq (char-before (- (point) 2)) ?\))))))
+        (operator--do-intern (char-before) (copy-marker (point)) pps)))))
 
 ;;;###autoload
 (define-minor-mode operator-mode
