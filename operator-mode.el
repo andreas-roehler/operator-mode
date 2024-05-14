@@ -1108,6 +1108,9 @@ Haskell: (>=>) :: Monad"
          ;; case Fixed,
          (member char (list ?, ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
 	 'scala-punkt)
+        ((and (member char (list ?_))
+              (eq (char-before (- (point) 1)) ?.))
+	 'scala-tuple)
         ;; [+A]
         ((and (member char (list ?: ?+))
               (or

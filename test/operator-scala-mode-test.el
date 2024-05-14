@@ -898,6 +898,27 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-wk9Rfr ()
+  (operator-test
+      "def fipFoo[A](xs: Seq[A]): Seq[(A, Int)] = {
+  type Acc = (Int, Seq[A])
+  val i : Acc = (0, Seq())
+  val u: (Acc, A) => Acc = {
+    case (pac, x) =>  bar._}
+  xs.foldLeft(i)(u)
+}
+"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward "_")
+    (forward-char 1)
+    (operator-do)
+    (should (char-equal (char-before (point)) ?_))
+    (should (char-equal (char-before (- (point) 1)) ?.))
+    (should (char-equal (char-before (- (point) 2)) ?r))
+    ))
+
 
 
 ;; xs.foldLeft(init){ (x, y) => x :+ y._1 :+ y._2 }
