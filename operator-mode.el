@@ -1143,7 +1143,7 @@ Haskell: (>=>) :: Monad"
                ;; scala> p.map(x => x)
                ;; def ein(xs: List[Int], maxW: Double=
 	       ((and (nth 1 pps)
-                     (not (member char (list ?=)))
+                     (not (member char (list ?% ?% ?* ?+ ?=)))
                      (char-equal ?\( list-start-char)
                      (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position))))
 		'scala-in-list-p)
@@ -1223,7 +1223,8 @@ Haskell: (>=>) :: Monad"
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala->)
 	((and (nth 1 pps)
-              (not (member char (list ?, ?: ?=)))
+              (not (member char (list ?% ?% ?* ?+ ?= ?: ?,)))
+              ;; (not (member char (list ?, ?: ?=)))
 	      (or
                ;; val q =  (2 to n-1
 	       (member char (list ?@ ?. ?-))
@@ -1317,6 +1318,9 @@ Haskell: (>=>) :: Monad"
               ;; val init = 0;
               (member char (list ?\; ? ?. ?- ?$ ?~  ?^ ?& ?/ 40 41)))
 	 'scala-punkt)
+        ((and (member char (list ?_))
+              (eq (char-before (- (point) 1)) ?.))
+	 'scala-tuple)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((looking-back "^scala>" (line-beginning-position))
