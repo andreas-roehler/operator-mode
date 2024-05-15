@@ -329,7 +329,8 @@ Haskell: (>=>) :: Monad"
     (cond (notsecond
 	   notsecond)
           ;; a[0:
-          ((and in-list-p
+          ((and (member char (list ?,))
+                in-list-p
                 (char-equal ?\[ list-start-char))
            'python-range)
           ;;  a^2
