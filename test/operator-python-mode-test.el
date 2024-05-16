@@ -463,7 +463,7 @@
     ;; take action inside comments if operator-mode-in-comments-p is t
     (should (eq (char-before) 32))
     (should (eq (char-before (- (point) 1)) ?,))
-    (should (eq (char-before (- (point) 2)) ?\[))))
+    (should (eq (char-before (- (point) 2)) ?1))))
 
 
 
