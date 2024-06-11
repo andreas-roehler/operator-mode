@@ -1621,7 +1621,8 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'shell-notfirst)
         ;; git commit -s -a -m "sdf,
-	((member char (list 41 ?. ?\; ?@ ?= ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ??))
+        ;; ghci> myTake =
+	((member char (list 41 ?. ?\; ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ??))
 		'shell-punkt)
         ((and (member char (list ?.))
               comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
@@ -1670,7 +1671,8 @@ Haskell: (>=>) :: Monad"
   (cond (notsecond
 	 'shell-notsecond)
         ;; foo@foo:~$ . foo
-	((member char (list ?. ?= ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ??))
+        ;; ghci> myTake =
+	((member char (list ?. ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ??))
 	 'shell-punkt)
         ;; co -r1.0 foo.
         ;; ((and (eq char ?.) (looking-back "[^ ] *\." (line-beginning-position)))
@@ -1702,11 +1704,13 @@ Haskell: (>=>) :: Monad"
 	 'shell-in-list-p)
 	(list-start-char
 	 (cond
-	  ((and (char-equal ?\[ list-start-char)
-		(char-equal ?, char))
-	   'shell-construct-for-export)
+          ;; ghci> myTake [1,
+	  ;; ((and (char-equal ?\[ list-start-char)
+	  ;;       (char-equal ?, char))
+	  ;;  'shell-construct-for-export)
 	  ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-	   'pattern-match-on-list)))))
+	   'pattern-match-on-list)))
+        ))
 
 (defun operator--do-shell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Shell-mode"
@@ -1717,7 +1721,8 @@ Haskell: (>=>) :: Monad"
           (unless (and (member char (list
                                      ;; $> ./foo
                                      ;; . .alias
-                                ?. ?/ ?& ?| ?= ?> ?<))
+                                     ;; ghci> myTake =
+                                     ?. ?/ ?& ?| ?> ?<))
                        comint-last-prompt (< 2 (- (point) (cdr comint-last-prompt))))
             t)))
     (operator--final char orig notfirst notsecond nojoin)))
