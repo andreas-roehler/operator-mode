@@ -666,9 +666,10 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--haskell-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
-                ((and (member char (list ?: ?=))
+                ((and (member char operator-known-operators)
                       ;; foo (x:xs)=
-                      (looking-back (concat "^[[:alnum:] ]+" (char-to-string char)) (line-beginning-position))))
+                      (looking-back (concat "[][:alnum:]+})]" (char-to-string char))
+                                     (line-beginning-position))))
 		((and (member char (list ?=))
 		      (save-excursion (backward-char)
 				      (looking-back "_ +" (line-beginning-position)))))
@@ -817,16 +818,33 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--do-haskell-interactive-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
-  (let* ((notfirst (operator--haskell-interactive-notfirst char pps list-start-char notfirst))
-	 (notsecond (operator--haskell-interactive-notsecond char pps list-start-char notsecond))
+  (let* ((notfirst (operator--haskell-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--haskell-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
-		((and
+                ((and (member char operator-known-operators)
+                      ;; foo (x:xs)=
+                      (looking-back (concat "[][:alnum:]+})]" 
+                                            (char-to-string char))
+                                            (line-beginning-position))))
+		((and (member char (list ?=))
 		      (save-excursion (backward-char)
 				      (looking-back "_ +" (line-beginning-position)))))
 		((save-excursion (backward-char)
-				 (looking-back ") +" (line-beginning-position)))))))
-    (operator--final char orig notfirst notsecond nojoin)))
+				 (looking-back ") *" (line-beginning-position)))))))
+    (operator--final char orig notfirst notsecond nojoin))
+  ;; (let* ((notfirst (operator--haskell-interactive-notfirst char pps list-start-char notfirst))
+  ;;        (notsecond (operator--haskell-interactive-notsecond char pps list-start-char notsecond))
+  ;;        (nojoin
+  ;;         (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
+  ;;       	((and
+  ;;       	      (save-excursion (backward-char)
+  ;;       			      (looking-back "_ +" (line-beginning-position)))))
+  ;;       	((save-excursion (backward-char)
+  ;;       			 (looking-back ") +" (line-beginning-position)))))))
+  ;;   (operator--final char orig notfirst notsecond nojoin)
+  )
+
 
 (defun operator--idris-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
