@@ -2111,6 +2111,7 @@ Haskell: (>=>) :: Monad"
 
 ;; (operator--join-operators-maybe char)))
 (defun operator--final (char orig &optional notfirst notsecond nojoin fix-whitespace)
+  "If spaces are required, maybe join nonetheless?"
   (cond (notfirst
 	 (unless nojoin
            (save-excursion (backward-char)
@@ -2126,11 +2127,13 @@ Haskell: (>=>) :: Monad"
 		             (unless (eq (char-before) ?\s)
 			       (just-one-space))
                            (unless
-                               (eq (char-before) 32)
-                             ;; (member (char-before (- (point) 1)) operator-known-operators)
-                             ;; (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
-                             ;; (delete-char -1)
-                             (fixup-whitespace))))))
+                               ;; join
+                               ;; (eq (char-before) 32)
+                               (and (member (char-before (- (point) 1)) operator-known-operators)
+                                    (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
+                                    (delete-char -1))
+                             ;; (fixup-whitespace)
+                             )))))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
