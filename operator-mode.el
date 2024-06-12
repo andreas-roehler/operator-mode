@@ -824,7 +824,8 @@ Haskell: (>=>) :: Monad"
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
                 ((and (member char operator-known-operators)
                       ;; foo (x:xs)=
-                      (looking-back (concat "[][:alnum:]+})]" 
+                      ;; asdf = eins +
+                      (looking-back (concat "[][:alnum:]+})]"
                                             (char-to-string char))
                                             (line-beginning-position))))
 		((and (member char (list ?=))
