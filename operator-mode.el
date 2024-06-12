@@ -821,7 +821,7 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--haskell-interactive-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
-		((and (member char (list ?=))
+		((and
 		      (save-excursion (backward-char)
 				      (looking-back "_ +" (line-beginning-position)))))
 		((save-excursion (backward-char)
@@ -2125,11 +2125,12 @@ Haskell: (>=>) :: Monad"
                          (if nojoin
 		             (unless (eq (char-before) ?\s)
 			       (just-one-space))
-                           (and
-                            (eq (char-before) 32)
-                            (member (char-before (- (point) 1)) operator-known-operators)
-                            (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
-                            (delete-char -1))))))
+                           (unless
+                               (eq (char-before) 32)
+                             ;; (member (char-before (- (point) 1)) operator-known-operators)
+                             ;; (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
+                             ;; (delete-char -1)
+                             (fixup-whitespace))))))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
