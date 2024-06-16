@@ -781,6 +781,32 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-haskell-test-2TvOMX ()
+  (operator-test
+      "import Prelude hiding (|"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) ?|))
+    (should (eq (char-before (1- (point))) 40))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-haskell-test-o50A26 ()
+  (operator-test
+      "sum' (x:"
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) ?:))
+    (should (eq (char-before (1- (point))) ?x))
+    (should (eq (char-before (- (point) 2)) 40))
+    ))
+
 
 
 (provide 'operator-haskell-mode-test)

@@ -512,15 +512,20 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\[  ?\( ?{)))
+         'haskell-after-opening)
         ((and (nth 1 pps) (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?\; ?\" ?' ?, ?. ?? 41) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
          ;; if n < 0 then -1
          ;; (x-
-         ;; foo (xs:
          ;; [p x | x <
          ;; [f x | x <-
          'haskell-punct-in-list)
+        ;; sum' (x:
+        ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+         'pattern-match-on-list)
         ((member char (list ?_ 41))
          'haskell-punct)
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
@@ -577,6 +582,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'notsecond)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\[  ?\( ?{)))
+         'haskell-after-opening)
         ;; (x:_n
         ((and (nth 1 pps)
               ;; (+)
@@ -635,8 +643,8 @@ Haskell: (>=>) :: Monad"
                 ;; "(x<="
                 (member char (list ?< ?| ?=))
                 ;; list-start-char (char-equal 40 list-start-char)
-                )
-           ))
+)
+))
 	 ;; (not (looking-back "-." (line-beginning-position)))
 	 'haskell-in-list-p)
         ;; ((looking-back " *}*;" (line-beginning-position))
@@ -650,7 +658,7 @@ Haskell: (>=>) :: Monad"
               ;; evens n = map f [1..n]
               (member char (list ?, ?.))
 	      ;; (char-equal ?, char)
-              )
+)
          'haskell-in-bracketed)
         ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
@@ -680,6 +688,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-interactive-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\[  ?\( ?{ )))
+         'haskell-after-opening)
         ;; foo (Rect 2 3)
         ((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'haskell-list-delimiter)
@@ -743,6 +754,9 @@ Haskell: (>=>) :: Monad"
 (defun operator--haskell-interactive-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'haskell-notsecond)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\[  ?\( ?{)))
+         'haskell-after-opening)
         ((member char (list ?-))
          'haskell-interactive-option)
         ((nth 3 pps)
@@ -795,7 +809,7 @@ Haskell: (>=>) :: Monad"
                 (member char (list ?< ?|))
                 ;; list-start-char (char-equal 40 list-start-char)
                 )))
-	 ;; (not (looking-back "-." (line-beginning-position)))
+	 ;; (not (looking- back "-." (line-beginning-position)))
 	 'haskell-in-list-p)
         ;; ((looking-back " *}*;" (line-beginning-position))
         ;;  'semicolon-braced-list-start-char)
@@ -805,21 +819,21 @@ Haskell: (>=>) :: Monad"
 	 'separator)
         ((and
           ;; list-start-char (char-equal ?\[ list-start-char)
-              ;; evens n = map f [1..n]
-              (member char (list ?.))
-	      ;; (char-equal ?, char)
-              )
+          ;; evens n = map f [1..n]
+          (member char (list ?.))
+	  ;; (char-equal ?, char)
+          )
          'haskell-in-bracketed)
         ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+         ;; silence compiler warning Unused lexical argument ‘list- start-char’
+         nil)))
 
 (defun operator--do-haskell-interactive-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
-  (let* ((notfirst (operator--haskell-notfirst char pps list-start-char notfirst))
-	 (notsecond (operator--haskell-notsecond char pps list-start-char notsecond))
+  (let* ((notfirst (operator--haskell-interactive-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--haskell-interactive-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
                 ((and (member char operator-known-operators)
@@ -2214,7 +2228,8 @@ Haskell: (>=>) :: Monad"
       (`idris-repl-mode
        (operator--do-idris-repl-mode char orig pps list-start-char notfirst notsecond))
       (`haskell-interactive-mode
-       (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
+       ;; (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-haskell-mode
        (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
       (`java-mode
