@@ -299,7 +299,7 @@ Haskell: (>=>) :: Monad"
 	  ;; with open('/path/to/some/file') as file_1,
 	  ((member char (list ?\; ?, 40 41 ?@))
 	   'python-list-op)
-	  ((member char (list ?- ?. ?_))
+	  ((member char (list ?. ?_))
 	   'python-dot)
 	  ;; def f(x, y):
 	  ;; if len(sys.argv) == 1:
