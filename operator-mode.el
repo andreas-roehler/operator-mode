@@ -1212,6 +1212,13 @@ Haskell: (>=>) :: Monad"
   ;; (unless (eq ?{ list-start-char)
   (cond (notsecond
 	 'scala-notsecond)
+        (; in interaktive shell
+         (and (member char (list ?:))
+              ;; alternative form here, in case ‘pos-bol’ isn't available
+              (or
+               (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+               (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
+         'in-interaktive-shell)
         ((and (member char (list ?: ?+))
               (or
                (and (member (char-before (- (point) 1)) operator-known-operators)
@@ -1272,8 +1279,7 @@ Haskell: (>=>) :: Monad"
   	;;   ((and (char-equal ?\[ list-start-char)
 	;; 	(char-equal ?, char))
 	;;    'scala-construct-for-export)))
-        )
-  )
+        ))
 
 (defun operator--do-scala-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Scala"
@@ -1285,8 +1291,7 @@ Haskell: (>=>) :: Monad"
                         (or
                          (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))
                          ;; val foo=
-                         (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position))))
-                        )
+                         (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position)))))
                    t)
                   ;; b.filter(x => x =
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
@@ -1294,7 +1299,13 @@ Haskell: (>=>) :: Monad"
                                  (member (char-before (- (point) 2)) operator-known-operators)))
                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
                    t)
-                  ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
+                  (; in interaktive shell
+                   (and (member char (list ?:))
+                        ;; alternative form here, in case ‘pos-bol’ isn't available
+                        (or
+                         (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+                         (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
+                   t);; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
                   ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
                    t)
 
@@ -2253,15 +2264,14 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
-       (cond ((and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+       (cond (;; alternative form here, in case ‘pos-bol’ isn't available
+              (or
+               (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+               (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point)))))
               (require 'scala-mode)
-              ;; (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
-              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
-              )
-             ((and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
-              (require 'scala-mode)
-              ;; (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
-              (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+              (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+              ;; better honor the shell-specific from common scala
+              ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
               )
              ;; all this is not working:
              ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
