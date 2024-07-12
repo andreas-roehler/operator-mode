@@ -1768,7 +1768,7 @@ Haskell: (>=>) :: Monad"
                                      ;; $> ./foo
                                      ;; . .alias
                                      ;; ghci> myTake =
-                                     ?. ?/ ?& ?| ?> ?<))
+                                     ?/ ?& ?| ?> ?<))
                        comint-last-prompt (< 2 (- (point) (cdr comint-last-prompt))))
             t)))
     (operator--final char orig notfirst notsecond nojoin)))
