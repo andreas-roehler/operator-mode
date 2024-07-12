@@ -675,25 +675,27 @@ Haskell: (>=>) :: Monad"
 	 (nojoin
 	  (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
                 ((and (member char operator-known-operators)
-                      ;; foo (x:xs)=
-                      (looking-back (concat "[][:alnum:]+})]" (char-to-string char))
-                                     (line-beginning-position))))
-		((and (member char (list ?=))
-		      (save-excursion (backward-char)
-				      (looking-back "_ +" (line-beginning-position)))))
-		((save-excursion (backward-char)
-				 (looking-back ") *" (line-beginning-position)))))))
+                      ;; (concat "[][:alnum:]+})]" (char-to-string char))
+                      ;; foo (x:xs) =
+                      ;; a = "asd" ++
+                      (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position)))
+                 )
+                ((and (member char (list ?=))
+                      (save-excursion (backward-char)
+                                      (looking-back "_ +" (line-beginning-position)))))
+                ((save-excursion (backward-char)
+                                 (looking-back ") *" (line-beginning-position)))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--haskell-interactive-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
-	 'haskell-notfirst)
+         'haskell-notfirst)
         ((and (member char operator-known-operators)
               (member (char-before (- (point) 1))(list ?\[  ?\( ?{ )))
          'haskell-after-opening)
         ;; foo (Rect 2 3)
         ((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
-	 'haskell-list-delimiter)
+         'haskell-list-delimiter)
         ((nth 3 pps)
          'in-string-p)
 	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
@@ -2242,7 +2244,8 @@ Haskell: (>=>) :: Monad"
        ;; (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-haskell-mode
-       (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
+       ;; (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`java-mode
        (operator--do-java-mode char orig pps list-start-char notfirst notsecond))
       (`org-mode
@@ -2329,13 +2332,13 @@ With prefix-key ‘C-q’ inserts character literally."
   ;; body
   (if (and operator-mode (not (when (ignore-errors (file-exists-p (buffer-file-name))) (string= (file-name-nondirectory (buffer-file-name)) "operator-mode.el"))))
       (progn ;; (operator-setup)
-	     (add-hook 'post-self-insert-hook
+             (add-hook 'post-self-insert-hook
                        ;; #'operator-post-self-insert-function nil t)
-		       #'operator-do nil t))
+                       #'operator-do nil t))
     (setq operator-mode nil)
     (remove-hook 'post-self-insert-hook
-		 ;; #'operator-post-self-insert-function t)))
-		 #'operator-do t)))
+                 ;; #'operator-post-self-insert-function t)))
+                 #'operator-do t)))
 
 (provide 'operator-mode)
 ;;; operator-mode.el ends here
