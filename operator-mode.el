@@ -515,7 +515,9 @@ Haskell: (>=>) :: Monad"
         ((and (member char operator-known-operators)
               (member (char-before (- (point) 1))(list ?\[  ?\( ?{)))
          'haskell-after-opening)
-        ((and (nth 1 pps) (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?\; ?\" ?' ?, ?. ?? 41) ))
+        ((and (nth 1 pps)
+              (not (haskell-session-maybe))
+              (member char (list ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?\; ?\" ?' ?, ?. ?? 41) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
          ;; if n < 0 then -1
