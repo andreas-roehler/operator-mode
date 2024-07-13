@@ -625,6 +625,11 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
+          (not (haskell-session-maybe))
+          ;; (haskell-interactive-session)
+          ;; (not (or
+          ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  haskell-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+          ;;      (and comint-last-prompt (string-match haskell-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
           (or
 	   ;; "pure ($ y) <*> u"
            (and

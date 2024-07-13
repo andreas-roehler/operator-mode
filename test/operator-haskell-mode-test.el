@@ -820,8 +820,21 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (- (point) 2)) ?+))
     ))
 
+(ert-deftest operator-haskell-test-1WqlzB ()
+  (operator-test
+      "a="
+    'haskell-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?=))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
 
 
+"trennzeichen(tail xs,(xs !! 0) ++ \" : \" ++"
 
 (provide 'operator-haskell-mode-test)
 ;;; operator-haskell-mode-test.el ends here
