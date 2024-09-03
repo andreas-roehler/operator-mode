@@ -846,7 +846,7 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (- (point) 2)) 32))
     ))
 
-(ert-deftest operator-haskell-test-Hm92NC ()
+(ert-deftest operator-haskell-test-MknT8i ()
   (operator-test
       "a ! !"
     'haskell-mode

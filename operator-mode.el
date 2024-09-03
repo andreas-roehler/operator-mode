@@ -1572,7 +1572,8 @@ Haskell: (>=>) :: Monad"
         ;; alias foo=
         ;; "ssh root@"
         ;; FOO={
-	((member char (list ?{ ?= ?@ ?: ?$ ?~ ?_ ?^ ?/ ?, ?. ?? ?\;))
+        ;; python-components-*
+	((member char (list ?- ?* ?{ ?= ?@ ?: ?$ ?~ ?_ ?^ ?/ ?, ?. ?? ?\;))
 		'shell-punkt)
 	((and (eq char ?.)(looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
@@ -1621,7 +1622,8 @@ Haskell: (>=>) :: Monad"
 	 'shell-notsecond)
 	;; EMACS=emacs
         ;; echo "Foo: $i" &&
-	((member char (list ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?/ ?. ??))
+        ;; python-components-*
+	((member char (list ?* ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?/ ?. ??))
 		'shell-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
