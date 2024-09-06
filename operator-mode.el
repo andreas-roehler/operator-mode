@@ -1131,6 +1131,9 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
+        ;; val init:
+        ((member (char-before) (list ?:))
+         'scala-punct)
         ((and (nth 3 pps)
               (member char (list ?/ ?. ?_)))
          'scala-in-string)
@@ -1221,6 +1224,10 @@ Haskell: (>=>) :: Monad"
   ;; (unless (eq ?{ list-start-char)
   (cond (notsecond
 	 'scala-notsecond)
+        ;; b +: a
+        ((and (member (char-before) (list ?:))
+              (looking-back "[[:alpha:]]:"))
+         'scala-punct)
         (; in interaktive shell
          (and (member char (list ?:))
               ;; alternative form here, in case ‘pos-bol’ isn't available
@@ -1228,9 +1235,10 @@ Haskell: (>=>) :: Monad"
                (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
                (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
          'in-interaktive-shell)
-        ((and (member char (list ?: ?+))
+        ((and (member char (list ?+))
               (or
                (and (member (char-before (- (point) 1)) operator-known-operators)
+                    ;; b +: a
                     ;; val a = (_:
                     (not (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))))
                (eq list-start-char ?\[)))
@@ -1343,6 +1351,9 @@ Haskell: (>=>) :: Monad"
   ;; map { y => (x, y) -> x * y })
   (cond (notfirst
 	 'scala-notfirst)
+        ;; val init:
+        ((member (char-before) (list ?:))
+         'scala-punct)
         ((and (member char (list ?: ?+))
               (or (member (char-before (- (point) 1)) operator-known-operators)
                   (eq list-start-char ?\[))

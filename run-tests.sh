@@ -249,6 +249,7 @@ entfernt () {
 --eval "(require 'operator-setup-tests)" \
 \
 -load $TEST1 \
+-load $TEST2 \
 -load $TEST3 \
 -load $TEST4 \
 -load $TEST5 \
@@ -283,6 +284,7 @@ if [ $IFLOCAL != 1 ]; then
 	    #  l) echo "hier: Lade Testumgebung ‘hier’";hier;;
 	    #  m) echo "h20: Lade \$TEST20: \"$TEST20\"";h20;;
 	    n) echo "hier: Lade Testumgebung ‘hier’";hier;;
+            z) echo "hier: Lade Testumgebung ‘entfernt’";entfernt;;
             
 	esac
 	#  shift
