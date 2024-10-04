@@ -925,7 +925,7 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f") 
+    (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should (char-equal (char-before (point)) 32))
     (should (char-equal (char-before (- (point) 1)) ?,))
@@ -938,12 +938,26 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f") 
+    (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should (char-equal (char-before (point)) 32))
     (should (char-equal (char-before (- (point) 1)) ?:))
     (should (char-equal (char-before (- (point) 2)) ?+))
     ))
+
+(ert-deftest operator-scala-test-wMG9fK ()
+  (operator-test
+      "a.reduce(_"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?_))
+    (should (char-equal (char-before (- (point) 1)) 40))
+    (should (char-equal (char-before (- (point) 2)) ?e))
+    ))
+
 
 (provide 'operator-scala-mode-test)
 ;;; operator-scala-mode-test.el ends here

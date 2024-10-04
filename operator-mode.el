@@ -1132,8 +1132,8 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst
 	 'scala-notfirst)
         ;; val init:
-        ((member (char-before) (list ?:))
-         'scala-punct)
+        ((member (char-before (- (point) 1)) (list 40))
+         'scala-before)
         ((and (nth 3 pps)
               (member char (list ?/ ?. ?_)))
          'scala-in-string)
@@ -1152,7 +1152,7 @@ Haskell: (>=>) :: Monad"
          ;; => result :+ ((x, default))
          ;; b.foreach(println _
          ;; case Fixed,
-         (member char (list ?, ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
+         (member char (list ?: ?, ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ((and (member char (list ?_))
               (eq (char-before (- (point) 1)) ?.))
