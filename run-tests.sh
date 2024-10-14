@@ -74,6 +74,7 @@ TEST6=${TESTDIR}/operator-shell-mode-test.el
 TEST7=${TESTDIR}/operator-java-mode-test.el
 TEST8=${TESTDIR}/operator-scala-mode-test.el
 TEST9=${TESTDIR}/operator-haskell-mode-test.el
+TEST10=${TESTDIR}/operator-coq-mode-test.el
 
 echo "\$TEST1: $TEST1"
 
@@ -207,6 +208,30 @@ h9 () {
 -f ert-run-tests-batch-and-exit
 }
 
+h10 () {
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/lib/\"))" \
+--eval "(require 'span)" \
+--eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/generic/\"))" \
+--eval "(require 'cl-lib)" \
+--eval "(require 'proof-script)" \
+--eval "(require 'pg-vars)" \
+--eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/coq\"))" \
+--eval "(require 'coq)" \
+--eval "(require 'coq-smie)" \
+--eval "(require 'coq-syntax)" \
+--eval "(require 'coq-mode)" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
+\
+-load $TEST10 \
+-f ert-run-tests-batch-and-exit
+}
+
 hier () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
@@ -233,6 +258,7 @@ hier () {
 -load $TEST7 \
 -load $TEST8 \
 -load $TEST9 \
+-load $TEST10 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -270,7 +296,7 @@ if [ $IFLOCAL != 1 ]; then
 	    7) echo "h7: Lade \$TEST7: \"$TEST7\"";h7;;
 	    8) echo "h8: Lade \$TEST8: \"$TEST8\"";h8;;
 	    9) echo "h9: Lade \$TEST9: \"$TEST9\"";h9;;
-	    #  a) echo "h10: Lade \$TEST10: \"$TEST10\"";h10;;
+	    a) echo "h10: Lade \$TEST10: \"$TEST10\"";h10;;
 	    #  b) echo "h11: Lade \$TEST11: \"$TEST11\"";h11;;
 	    #  c) echo "h12: Lade \$TEST12: \"$TEST12\"";h12;;
 	    #  d) echo "h13: Lade \$TEST13: \"$TEST13\"";h13;;
@@ -299,4 +325,3 @@ else
     echo "Lade testumgebung \"ENTFERNT\""
     entfernt
 fi
-

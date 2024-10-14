@@ -1796,53 +1796,14 @@ Haskell: (>=>) :: Monad"
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'coq-notfirst)
-
-	(list-start-char
-	 ;; data Contact =  Contact { name :: "asdf" }
-	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
-		'coq-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
-		'coq-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
-		'coq-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'coq-char-equal-\*-in-list-p)
-	       ((member char (list ?\( ?\) ?\]))
-		'coq-listing)
-	       ((nth 3 pps)
-		'coq-and-nth-1-pps-nth-3-pps)
-	       ;; ((and (nth 1 pps) (not (member char (list ?, ?\[ ?\] ?\)))))
-	       ;; 	'coq-in-list-p)
-	       ((and (nth 1 pps)
-		     (or (eq (1- (current-column)) (current-indentation))
-			 (eq (- (point) 2)(nth 1 pps))))
-		'coq-in-list-p)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
-		'pattern-match-on-list)
-	       ))
-	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (- (point) 1)) operator-known-operators)
-	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
-	 'coq-join-known-operators)
-	((looking-back "<\\*" (line-beginning-position))
-	 'coq-<)
-	((looking-back "^-" (line-beginning-position))
-	 'coq-comment-start)
-	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
-	((looking-back "return +[^ ]+" (line-beginning-position)))
-	((looking-back "import +[^ ]+" (line-beginning-position))
-	 'coq-import)
-	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+        ((member char (list ?, ?\;))
+         'coq-list)))
 
 (defun operator--coq-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'coq-notsecond)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'coq-list-delimter)
-
 	((nth 3 pps)
 	 'coq-in-string)
 	;; index-p
@@ -1858,7 +1819,9 @@ Haskell: (>=>) :: Monad"
 	 'coq->)
 	((and (nth 1 pps)
 	      (or (eq (1- (current-column)) (current-indentation))
-		  (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))))
+                  ;; Definition my_list : list nat := [47;
+		  ;; (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point))))
+                  ))
 	 'coq-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
@@ -1876,7 +1839,8 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--coq-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position) ))))))
+                ((and (member char (list ?: ))
+                      (save-excursion (backward-char) (looking-back ") *" (line-beginning-position) )))))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--emacs-lisp-notfirst (char pps list-start-char notfirst)
@@ -2196,10 +2160,12 @@ Haskell: (>=>) :: Monad"
                                ;; join
                                ;; (eq (char-before) 32)
                                (and (member (char-before (- (point) 1)) operator-known-operators)
-                                    (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
-                                    (delete-char -1))
-                             ;; (fixup-whitespace)
-                             )))))
+                                    (prog1
+                                        (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
+                                      (delete-char -1)))
+                             ;; coq
+                             ;; Definition orb (b1:bool) (b2:bool) : bool :
+                             (fixup-whitespace))))))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
