@@ -15,8 +15,7 @@ according to language might result in
 Should work out of the box for most languages.
 Currently the following languages have the own config:
 
-Agda
-
+Agda  \
 Clojure
 
 Coq
