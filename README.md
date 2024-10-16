@@ -16,26 +16,16 @@ Should work out of the box for most languages.
 Currently the following languages have the own config:
 
 Agda  \
-Clojure
-
-Coq
-
-Emacs Lisp
-
-Haskell
-
-Idris
-
-Java
-
-Python
-
-Scala
-
-Shell
-
-Sql
-
+Clojure  \
+Coq  \
+Emacs Lisp  \
+Haskell  \
+Idris  \
+Java  \
+Python  \
+Scala  \
+Shell  \
+Sql  \
 Text
 
 Bug-reports are welcome.
