@@ -13,7 +13,7 @@ according to language might result in
     a = 10 * 5 + 2
 
 Should work out of the box for most languages.
-Currently the following languages have the own config:
+Currently the following languages are explicitly configured:
 
 Agda  \
 Clojure  \
@@ -28,7 +28,7 @@ Shell  \
 Sql  \
 Text
 
-Bug-reports are welcome.
+Please file bug-report, should your language is missing.
 
 ## Setup
 
