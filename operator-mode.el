@@ -2162,7 +2162,7 @@ Haskell: (>=>) :: Monad"
                                ;; join
                                ;; (eq (char-before) 32)
                                (or
-                                (and (member (char-before (- (point) 1)) operator-known-operators)w
+                                (and (member (char-before (- (point) 1)) operator-known-operators)
                                      (prog1
                                          (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
                                        (delete-char -1)))
