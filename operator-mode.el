@@ -1331,8 +1331,11 @@ Haskell: (>=>) :: Monad"
                   ;; case _ =
                   ;; (-15, false, 10) /
                   ;; val a =  0 : :
-                  ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                        (not (or (eq (char-before (- (point) 1)) ?_)
+                  ((and (member char
+                                (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|)
+                                )
+                        ;; def init: Acc = Map(xs.head._1 ->
+                        (not (or (member (char-before (- (point) 1)) (list ?- ?_))
                                  (eq (char-before (- (point) 2)) ?_)))
                         (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
                    nil)
@@ -1343,8 +1346,7 @@ Haskell: (>=>) :: Monad"
                   ((and (member char (list ?=))
                         (or (eq (char-before (- (point) 1)) ?_)
                             (eq (char-before (- (point) 2)) ?_))
-                        t))
-                  (t t))))
+                        t)))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--scala-shell-notfirst (char pps list-start-char notfirst)
@@ -2159,10 +2161,14 @@ Haskell: (>=>) :: Monad"
                            (unless
                                ;; join
                                ;; (eq (char-before) 32)
-                               (and (member (char-before (- (point) 1)) operator-known-operators)
-                                    (prog1
-                                        (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
-                                      (delete-char -1)))
+                               (or
+                                (and (member (char-before (- (point) 1)) operator-known-operators)w
+                                     (prog1
+                                         (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
+                                       (delete-char -1)))
+                                ;; def init: Acc = Map(xs.head._1 ->
+                                (member (char-before) operator-known-operators))
+
                              ;; coq
                              ;; Definition orb (b1:bool) (b2:bool) : bool :
                              (fixup-whitespace))))))
