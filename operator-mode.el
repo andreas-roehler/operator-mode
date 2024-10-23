@@ -1228,13 +1228,14 @@ Haskell: (>=>) :: Monad"
         ((and (member (char-before) (list ?:))
               (looking-back "[[:alpha:]]:"))
          'scala-punct)
-        (; in interaktive shell
-         (and (member char (list ?:))
-              ;; alternative form here, in case ‘pos-bol’ isn't available
-              (or
-               (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-               (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
-         'in-interaktive-shell)
+        ;; (; in interaktive shell
+        ;;  (and (member char (list ?:))
+        ;;       ;; alternative form here, in case ‘pos-bol’ isn't available
+        ;;       (or
+        ;;        (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+        ;;        ;; (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
+        ;;        ))
+        ;;  'in-interaktive-shell)
         ((and (member char (list ?+))
               (or
                (and (member (char-before (- (point) 1)) operator-known-operators)
@@ -1316,22 +1317,7 @@ Haskell: (>=>) :: Monad"
                                  (member (char-before (- (point) 2)) operator-known-operators)))
                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
                    t)
-                  (; in interaktive shell
-                   (and (member char (list ?:))
-                        ;; alternative form here, in case ‘pos-bol’ isn't available
-                        (or
-                         (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-                         (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
-                   t);; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
-                  ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
-                   t)
-
-                  ;; val result = d + +
-                  ;; def foo(a: Seq[Int]): Seq[(Int, Boolean)] = ???
-                  ;; case _ =
-                  ;; (-15, false, 10) /
-                  ;; val a =  0 : :
-                  ((and (member char
+                                    ((and (member char
                                 (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|)
                                 )
                         ;; def init: Acc = Map(xs.head._1 ->
@@ -1339,10 +1325,6 @@ Haskell: (>=>) :: Monad"
                                  (eq (char-before (- (point) 2)) ?_)))
                         (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
                    nil)
-                  ;; ((and (member char (list ?/ ?? ?& ?| ?> ?< ?+ ?=))
-                  ;;       (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
-                  ;;  nil)
-                  ;; case_ => println("huh?")
                   ((and (member char (list ?=))
                         (or (eq (char-before (- (point) 1)) ?_)
                             (eq (char-before (- (point) 2)) ?_))
