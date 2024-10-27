@@ -2274,6 +2274,7 @@ Haskell: (>=>) :: Monad"
   (interactive "*")
   (when (and (member (char-before) operator-known-operators)
              (or
+              (eolp)
               (eq (char-syntax (char-after)) 41)
               ;; (i != 0)
               (not (member (char-after) operator-known-operators))))
