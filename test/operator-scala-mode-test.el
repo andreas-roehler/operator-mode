@@ -971,6 +971,19 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) ?-))
     ))
 
+(ert-deftest operator-scala-test-sOrTO1 ()
+  (operator-test
+      "if (i != 0)"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward "=") 
+    (operator-do)
+    (should (char-equal (char-before) ?!))
+    (should (char-equal (char-before (- (point) 1)) 32))
+    (should (char-equal (char-before (- (point) 2)) ?i))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)

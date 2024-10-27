@@ -2272,7 +2272,9 @@ Haskell: (>=>) :: Monad"
 (defun operator-do ()
   "Act according to operator before point, if any."
   (interactive "*")
-  (when (member (char-before) operator-known-operators)
+  (when (and (member (char-before) operator-known-operators)
+              ;; (i != 0)
+             (not (member (char-after) operator-known-operators)))
     (let ((pps (parse-partial-sexp (point-min) (point))))
       (when (and
              (or
