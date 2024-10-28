@@ -1317,9 +1317,11 @@ Haskell: (>=>) :: Monad"
                                  (member (char-before (- (point) 2)) operator-known-operators)))
                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
                    t)
-                                    ((and (member char
-                                (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|)
-                                )
+                  ((and (member char (list ?{))
+                        (looking-back "= *" (line-beginning-position)))
+                   t)
+                  ((and (member char
+                                (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
                         ;; def init: Acc = Map(xs.head._1 ->
                         (not (or (member (char-before (- (point) 1)) (list ?- ?_))
                                  (eq (char-before (- (point) 2)) ?_)))

@@ -997,6 +997,19 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-W8ndJW ()
+  (operator-test
+      "def foo[A, K](xs: Seq[A])(by: A => K): Map[K, Seq[A]] ={"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (search-backward "{") 
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?{))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)
