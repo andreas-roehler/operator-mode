@@ -1228,14 +1228,6 @@ Haskell: (>=>) :: Monad"
         ((and (member (char-before) (list ?:))
               (looking-back "[[:alpha:]]:"))
          'scala-punct)
-        ;; (; in interaktive shell
-        ;;  (and (member char (list ?:))
-        ;;       ;; alternative form here, in case ‘pos-bol’ isn't available
-        ;;       (or
-        ;;        (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-        ;;        ;; (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))
-        ;;        ))
-        ;;  'in-interaktive-shell)
         ((and (member char (list ?+))
               (or
                (and (member (char-before (- (point) 1)) operator-known-operators)
@@ -1290,14 +1282,7 @@ Haskell: (>=>) :: Monad"
 	       (eq (1- (current-column)) (current-indentation))
                ;; } catch {
 	       (and (not (member char (list ?{))) (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point)))))))
-	 'scala-in-list-p)
-	;; (list-start-char
-	;;  ;; data Contact =  Contact { name :: "asdf" }
-	;;  (cond
-  	;;   ((and (char-equal ?\[ list-start-char)
-	;; 	(char-equal ?, char))
-	;;    'scala-construct-for-export)))
-        ))
+	 'scala-in-list-p)))
 
 (defun operator--do-scala-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Scala"
@@ -1318,7 +1303,7 @@ Haskell: (>=>) :: Monad"
                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
                    t)
                   ((and (member char (list ?{))
-                        (looking-back "= *" (line-beginning-position)))
+                        (looking-back "= *{" (line-beginning-position)))
                    t)
                   ((and (member char
                                 (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
@@ -1347,7 +1332,6 @@ Haskell: (>=>) :: Monad"
               ;; (looking-back "^.*scala> +" (line-beginning-position))
               (not (string-match "^.*scala> *:?" (buffer-substring-no-properties (or (and (ignore-errors (functionp 'pos-bol)) (pos-bol)) (line-beginning-position)) (point)))))
          ;; scala> val a:
-         ;; (not (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_][[:alnum:]_]*:") (line-beginning-position))))
          'scala-v)
         ((nth 3 pps)
          'in-string)
@@ -1782,8 +1766,11 @@ Haskell: (>=>) :: Monad"
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'coq-notfirst)
+        ;; Check andb.
         ((member char (list ?, ?\;))
-         'coq-list)))
+         'coq-list)
+        ((member char (list ?.))
+         'coq-close)))
 
 (defun operator--coq-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
@@ -2244,6 +2231,15 @@ Haskell: (>=>) :: Monad"
        (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
       (`shell-mode
        (cond (;; alternative form here, in case ‘pos-bol’ isn't available
+              (or
+               (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*Coq <.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+               (and comint-last-prompt (string-match "^.*Coq <.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point)))))
+              (require 'coq-mode)
+              (operator--do-coq-mode char orig pps list-start-char notfirst notsecond)
+              ;; better honor the shell-specific from common scala
+              ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+              )
+             (;; alternative form here, in case ‘pos-bol’ isn't available
               (or
                (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
                (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point)))))

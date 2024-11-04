@@ -82,6 +82,19 @@
     (should (eq (char-before (- (point) 2)) ?'))
     ))
 
+(ert-deftest operator-coq-mode-test-hL49NR ()
+  (operator-test
+      "Check andb."
+    'coq-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (- (point) 1)) ?.))
+    (should (eq (char-before (- (point) 2)) ?b))
+    ))
+
 
 
  
