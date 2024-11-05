@@ -369,7 +369,7 @@ Haskell: (>=>) :: Monad"
            ;; silence compiler warning Unused lexical argument ‘list-start-char’
            nil))))
 
-(defun operator--do-python-mode (char orig pps list-start-char &optional notfirst notsecond nojoin)
+(defun operator--do-python-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Python"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((notfirst (operator--python-notfirst char pps list-start-char notfirst))
@@ -1152,7 +1152,7 @@ Haskell: (>=>) :: Monad"
          ;; => result :+ ((x, default))
          ;; b.foreach(println _
          ;; case Fixed,
-         (member char (list ?: ?, ?. ?- ?$ ?~ ?^ ?& 41 ?\;))
+         (member char (list ?: ?, ?. ?$ ?~ ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ((and (member char (list ?_))
               (eq (char-before (- (point) 1)) ?.))
@@ -1191,7 +1191,7 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
                      (not (member char (list ?% ?% ?* ?+ ?=)))
                      (char-equal ?\( list-start-char)
-                     (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position))))
+                     (save-excursion (forward-char -1) (looking-back "[[:alnum:]]" (line-beginning-position))))
 		'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
@@ -1211,13 +1211,14 @@ Haskell: (>=>) :: Monad"
 	 'scala-join-known-operators)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala-<)
-	((looking-back "^-" (line-beginning-position))
-	 'scala-comment-start)
-	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
-	((looking-back "return +[^ ]+" (line-beginning-position)))
-	((looking-back "import +[^ ]+" (line-beginning-position))
-	 'scala-import)
-	((looking-back "forall +[^ ]+.*" (line-beginning-position)))))
+	;; ((looking-back "^-" (line-beginning-position))
+	;;  'scala-comment-start)
+	;; ((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	;; ((looking-back "return +[^ ]+" (line-beginning-position)))
+	;; ((looking-back "import +[^ ]+" (line-beginning-position))
+	;;  'scala-import)
+	;; ((looking-back "forall +[^ ]+.*" (line-beginning-position))))
+  ))
 
 (defun operator--scala-notsecond (char pps list-start-char notsecond)
   ;; map { y => (x, y) -> x * y })
@@ -1245,7 +1246,7 @@ Haskell: (>=>) :: Monad"
           ;; :(load
           ;; (x: (A, A))._1
           ;; (not (nth 1 pps))
-          (member char (list ?_ ?\; ?. ?- ?$ ?~ ?^ ?&)))
+          (member char (list ?_ ?\; ?. ?$ ?~ ?^ ?&)))
 	 'scala-punkt)
         ;; ((and (member char (list ?+))
         ;;       (member (char-before (- (point) 1)) operator-known-operators))
@@ -1278,7 +1279,7 @@ Haskell: (>=>) :: Monad"
               ;; (not (member char (list ?, ?: ?=)))
 	      (or
                ;; val q =  (2 to n-1
-	       (member char (list ?@ ?. ?-))
+	       (member char (list ?@ ?.))
 	       (eq (1- (current-column)) (current-indentation))
                ;; } catch {
 	       (and (not (member char (list ?{))) (not (string-match "[[:blank:]]" (buffer-substring-no-properties (nth 1 pps) (point)))))))
