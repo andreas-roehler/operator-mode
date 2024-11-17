@@ -1812,7 +1812,9 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--coq-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--coq-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond ((member char (list ?, ?\[ ?\] ?\))))
+	  (cond ((eq 40 (cdr (syntax-after (- (point) 2))))
+                 'syntax)
+                ((member char (list ?, ?\[ ?\] ?\))))
                 ((and (member char (list ?: ))
                       (save-excursion (backward-char) (looking-back ") *" (line-beginning-position) )))))))
     (operator--final char orig notfirst notsecond nojoin)))
@@ -2028,9 +2030,8 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
-		;; ((save-excursion (backward-char) (looking-back ") +" (line-beginning-position))))
-                ((looking-back "^\\* *." (line-beginning-position))
-                 'org-at-heading)
+                ;; ((looking-back "^\\* *." (line-beginning-position))
+                ;;  'org-at-heading)
                 )))
     (operator--final char orig notfirst notsecond nojoin)))
 
