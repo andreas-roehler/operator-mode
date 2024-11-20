@@ -1225,10 +1225,11 @@ Haskell: (>=>) :: Monad"
   ;; (unless (eq ?{ list-start-char)
   (cond (notsecond
 	 'scala-notsecond)
-        ;; b +: a
-        ((and (member (char-before) (list ?:))
-              (looking-back "[[:alpha:]]:"))
-         'scala-punct)
+        ;; ((and (member (char-before) (list ?:))
+        ;;       ;; b +: a
+        ;;       ;; def foo(bar:
+        ;;       (looking-back "[^[:alpha:]]:"))
+        ;;  'scala-punct)
         ((and (member char (list ?+))
               (or
                (and (member (char-before (- (point) 1)) operator-known-operators)

@@ -1036,6 +1036,19 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-idivQe ()
+  (operator-test
+      "def foo(bar:"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f") 
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?:))
+    (should (char-equal (char-before (- (point) 2)) ?r))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)
