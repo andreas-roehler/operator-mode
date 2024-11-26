@@ -1295,7 +1295,10 @@ Haskell: (>=>) :: Monad"
                   ((and (member (char-before (point)) operator-known-operators)
                         (or
                          (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))
-                         ;; val foo=
+                         (and
+                          (member (char-before (- (point) 1)) (list 32))
+                          (member (char-before (- (point) 2)) (list 41 ?\] ?} ?_)))
+                          ;; val foo=
                          (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position)))))
                    t)
                   ;; b.filter(x => x =
