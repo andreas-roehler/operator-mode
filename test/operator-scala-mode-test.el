@@ -977,7 +977,7 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (search-backward "=") 
+    (search-backward "=")
     (operator-do)
     (should (char-equal (char-before) ?!))
     (should (char-equal (char-before (- (point) 1)) 32))
@@ -990,7 +990,7 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (search-backward "}") 
+    (search-backward "}")
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -1003,7 +1003,7 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (search-backward "{") 
+    (search-backward "{")
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?{))
@@ -1016,7 +1016,7 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (search-backward "{") 
+    (search-backward "{")
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?-))
@@ -1029,7 +1029,7 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (search-backward "{") 
+    (search-backward "{")
     (operator-do)
     (should (char-equal (char-before) ?-))
     (should (char-equal (char-before (- (point) 1)) ?n))
@@ -1042,11 +1042,25 @@ firstArg match {
     'scala-mode
     operator-mode-debug
     (goto-char (point-max))
-    (skip-chars-backward " \t\r\n\f") 
+    (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?:))
     (should (char-equal (char-before (- (point) 2)) ?r))
+    ))
+
+(ert-deftest operator-scala-test-UJGIku ()
+  (operator-test
+      "def foo(a: Long=,"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (search-backward ",") 
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
 

@@ -1152,7 +1152,7 @@ Haskell: (>=>) :: Monad"
          ;; => result :+ ((x, default))
          ;; b.foreach(println _
          ;; case Fixed,
-         (member char (list ?: ?, ?. ?$ ?~ ?^ ?& 41 ?\;))
+         (member char (list ?, ?. ?$ ?~ ?^ ?& 41 ?\;))
 	 'scala-punkt)
         ((and (member char (list ?_))
               (eq (char-before (- (point) 1)) ?.))
@@ -2281,7 +2281,9 @@ Haskell: (>=>) :: Monad"
               (eolp)
               (eq (char-syntax (char-after)) 41)
               ;; (i != 0)
-              (not (member (char-after) operator-known-operators))))
+              (not (member (char-after) operator-known-operators))
+              ;; def largestSumDezDigits(a: Long=,
+              (member (char-after) (list ?,))))
     (let ((pps (parse-partial-sexp (point-min) (point))))
       (when (and
              (or
