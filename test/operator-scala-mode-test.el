@@ -1056,12 +1056,48 @@ firstArg match {
     operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
-    (search-backward ",") 
+    (search-backward ",")
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
+
+(ert-deftest operator-scala-test-Er8CUv ()
+  (operator-test
+      "def foo(xs: Seq[Int], a: Int): Int =?"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ??))
+    (should (char-equal (char-before (- (point) 2)) 32))))
+
+(ert-deftest operator-scala-test-VM1sN5 ()
+  (operator-test
+      "def foo(xs: Seq[Int], a: Int): Int = ??"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ??))
+    (should (char-equal (char-before (- (point) 2)) ??))))
+
+(ert-deftest operator-scala-test-6VtEIS ()
+  (operator-test
+      "def foo(xs: Seq[Int], a: Int): Int = ???"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ??))
+    (should (char-equal (char-before (- (point) 2)) ??))))
 
 
 

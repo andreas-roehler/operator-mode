@@ -1294,7 +1294,8 @@ Haskell: (>=>) :: Monad"
                   ;; def foo() =
                   ((and (member (char-before (point)) operator-known-operators)
                         (or
-                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))
+                          ;; def foo(xs: Seq[Int], a: Int): Int =?
+                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_ ?=))
                          (and
                           (member (char-before (- (point) 1)) (list 32))
                           (member (char-before (- (point) 2)) (list 41 ?\] ?} ?_)))
