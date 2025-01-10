@@ -1294,12 +1294,15 @@ Haskell: (>=>) :: Monad"
                   ;; def foo() =
                   ((and (member (char-before (point)) operator-known-operators)
                         (or
-                          ;; def foo(xs: Seq[Int], a: Int): Int =?
-                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_ ?=))
+                         (progn
+                           ;; would need a sit-for, but just a ‘progn’ does it
+                           ;; (sit-for 0.1)
+                           ;; def foo(xs: Seq[Int], a: Int): Int =?
+                           (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_ ?=)))
                          (and
                           (member (char-before (- (point) 1)) (list 32))
                           (member (char-before (- (point) 2)) (list 41 ?\] ?} ?_)))
-                          ;; val foo=
+                         ;; val foo=
                          (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position)))))
                    t)
                   ;; b.filter(x => x =
@@ -1991,16 +1994,17 @@ Haskell: (>=>) :: Monad"
 	((and (nth 1 pps) (not (member char (list ?: ?, ?\[ ?\] ?\)))))
 	 'org-in-list-p)
 	;; ((member char (list ?\; ?,)))
-	((or (member (char-before (- (point) 1)) operator-known-operators)
-	     (and (eq (char-before (- (point) 1))?\s) (member (char-before (- (point) 2)) operator-known-operators)))
+        ;; xs[i] = 1.5 > len(test_list) =
+	((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
+	 ;; (not (eq (char-before (- (point) 1))?\s)) (member (char-before (- (point) 2)) operator-known-operators)))
 	 'org-join-known-operators)
 	((looking-back "^<s?" (line-beginning-position))
 	 'org-src-block)
 	((looking-back "^ *#\\+TBLFM:.*" (line-beginning-position))
 	 'org-TBLFM)
         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
 
 (defun operator--org-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
@@ -2035,6 +2039,10 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
+                ;; xs[i] = 1.5 > len(test_list) =
+                ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
+                ((and (member (char-before) operator-known-operators)(eq (char-before (- (point) 1))?\s))
+                 t)
                 ;; ((looking-back "^\\* *." (line-beginning-position))
                 ;;  'org-at-heading)
                 )))
