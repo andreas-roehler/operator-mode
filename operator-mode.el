@@ -2041,7 +2041,7 @@ Haskell: (>=>) :: Monad"
 	  (cond ((member char (list ?, ?\[ ?\] ?\))))
                 ;; xs[i] = 1.5 > len(test_list) =
                 ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
-                ((and (member (char-before) operator-known-operators)(eq (char-before (- (point) 1))?\s))
+                ((and (member (char-before) operator-known-operators)(eq (char-before (- (point) 1)) 41))
                  t)
                 ;; ((looking-back "^\\* *." (line-beginning-position))
                 ;;  'org-at-heading)
@@ -2149,15 +2149,17 @@ Haskell: (>=>) :: Monad"
                                ;; (eq (char-before) 32)
                                (or
                                 (and (member (char-before (- (point) 1)) operator-known-operators)
-                                     (prog1
-                                         (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
-                                       (delete-char -1)))
-                                ;; def init: Acc = Map(xs.head._1 ->
-                                (member (char-before) operator-known-operators))
+                                     (not (member (char-before (- (point) 1)) (list 41 ?\] ?}))))
+                                (member (char-before) (list 32 9 ?\f)))
+                             (delete-char -1)))
 
-                             ;; coq
-                             ;; Definition orb (b1:bool) (b2:bool) : bool :
-                             (fixup-whitespace))))))
+                         ;; def init: Acc = Map(xs.head._1 ->
+                         ;; (member (char-before) operator-known-operators))
+
+                         ;; coq
+                         ;; Definition orb (b1:bool) (b2:bool) : bool :
+                         ;; (fixup-whitespace)
+                         )))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
