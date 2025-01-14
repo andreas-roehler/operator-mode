@@ -2139,27 +2139,28 @@ Haskell: (>=>) :: Monad"
                             (delete-char -1)))))
         (t
          ;; (or (unless nojoin (operator--join-operators-maybe char))
-         (save-excursion (goto-char (1- orig))
-                         ;; b.foreach(x =>
-                         (if nojoin
-		             (unless (eq (char-before) ?\s)
-			       (just-one-space))
-                           (unless
-                               ;; join
-                               ;; (eq (char-before) 32)
-                               (or
-                                (and (member (char-before (- (point) 1)) operator-known-operators)
-                                     (not (member (char-before (- (point) 1)) (list 41 ?\] ?}))))
-                                (member (char-before) (list 32 9 ?\f)))
-                             (delete-char -1)))
+         (save-excursion
 
-                         ;; def init: Acc = Map(xs.head._1 ->
-                         ;; (member (char-before) operator-known-operators))
+           ;; (goto-char (1- orig))
+           ;; b.foreach(x =>
+           (if nojoin
+	       (unless (eq (char-before) ?\s)
+		 (just-one-space))
+             (when
+                 (and (member (char-before) operator-known-operators)
+                      ;; (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
+                      (member (char-before (- (point) 1)) (list 32 9 ?\f))
+                      (member (char-before (- (point) 2)) operator-known-operators))
+               (save-excursion (forward-char -1)
+                               (delete-char -1))))
 
-                         ;; coq
-                         ;; Definition orb (b1:bool) (b2:bool) : bool :
-                         ;; (fixup-whitespace)
-                         )))
+           ;; def init: Acc = Map(xs.head._1 ->
+           ;; (member (char-before) operator-known-operators))
+
+           ;; coq
+           ;; Definition orb (b1:bool) (b2:bool) : bool :
+           ;; (fixup-whitespace)
+           )))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
