@@ -2146,13 +2146,15 @@ Haskell: (>=>) :: Monad"
            (if nojoin
 	       (unless (eq (char-before) ?\s)
 		 (just-one-space))
-             (when
+             (if
                  (and (member (char-before) operator-known-operators)
                       ;; (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
                       (member (char-before (- (point) 1)) (list 32 9 ?\f))
                       (member (char-before (- (point) 2)) operator-known-operators))
+                 (save-excursion (forward-char -1)
+                                 (delete-char -1))
                (save-excursion (forward-char -1)
-                               (delete-char -1))))
+                               (fixup-whitespace))))
 
            ;; def init: Acc = Map(xs.head._1 ->
            ;; (member (char-before) operator-known-operators))
