@@ -2291,6 +2291,8 @@ Haskell: (>=>) :: Monad"
   "Act according to operator before point, if any."
   (interactive "*")
   (when (and (member (char-before) operator-known-operators)
+             ;; not after escaped characters, as in psql: werkstatt1-> \d+
+             (not (ar-escaped-p (- (point) 2))) 
              (or
               (eolp)
               (eq (char-syntax (char-after)) 41)
