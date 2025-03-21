@@ -1181,7 +1181,8 @@ Haskell: (>=>) :: Monad"
 		'scala-operator--in-list-continue)
                ;; val b = a.map{ case x => x._1 + 4 * x._2*
 	       ;; ((char-equal ?* char)
-	       ((member char (list ?\( ?\) ?\]))
+               ;; val a = (3, 5)
+	       ((member char (list ?\) ?\]))
 		'scala-listing)
 	       ((nth 3 pps)
 		'scala-and-nth-1-pps-nth-3-pps)
@@ -1667,7 +1668,7 @@ Haskell: (>=>) :: Monad"
 	 'shell-notfirst)
         ;; git commit -s -a -m "sdf,
         ;; ghci> myTake =
-	((member char (list 41 ?. ?\; ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ??))
+	((member char (list 41 ?. ?\; ?@ ?- ?: ?$ ?~ ?_ ?^ ?& ?* ?/ ?, ?! ??))
 		'shell-punkt)
         ((and (member char (list ?.))
               comint-last-prompt (< 1 (- (point) (cdr comint-last-prompt))))
@@ -1717,7 +1718,7 @@ Haskell: (>=>) :: Monad"
 	 'shell-notsecond)
         ;; foo@foo:~$ . foo
         ;; ghci> myTake =
-	((member char (list ?. ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ??))
+	((member char (list ?. ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ?! ??))
 	 'shell-punkt)
         ;; co -r1.0 foo.
         ;; ((and (eq char ?.) (looking-back "[^ ] *\." (line-beginning-position)))
@@ -2144,8 +2145,9 @@ Haskell: (>=>) :: Monad"
            ;; (goto-char (1- orig))
            ;; b.foreach(x =>
            (if nojoin
+               (save-excursion (backward-char)
 	       (unless (eq (char-before) ?\s)
-		 (just-one-space))
+		 (just-one-space)))
              (if
                  (and (member (char-before) operator-known-operators)
                       ;; (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
@@ -2292,7 +2294,7 @@ Haskell: (>=>) :: Monad"
   (interactive "*")
   (when (and (member (char-before) operator-known-operators)
              ;; not after escaped characters, as in psql: werkstatt1-> \d+
-             (not (ar-escaped-p (- (point) 2))) 
+             (not (ar-escaped-p (- (point) 2)))
              (or
               (eolp)
               (eq (char-syntax (char-after)) 41)
