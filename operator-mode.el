@@ -1143,6 +1143,8 @@ Haskell: (>=>) :: Monad"
               (or (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_()][[:alnum:]_()]*:") (line-beginning-position))
                   (save-excursion (backward-char) (looking-back ") *" (line-beginning-position)))))
          'scala-case)
+        ((and (member char (list ?_))(not (looking-back "println[ \\t]*_*" (line-beginning-position))))
+         'scala-underscore)
 	;; EMACS=emacs
         ;; myVar_=
 	(;; (not (eq ?{ list-start-char))
@@ -1192,7 +1194,9 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
                      (not (member char (list ?% ?% ?* ?+ ?=)))
                      (char-equal ?\( list-start-char)
-                     (save-excursion (forward-char -1) (looking-back "[[:alnum:]]" (line-beginning-position))))
+                     (save-excursion (forward-char -1)
+                                     (looking-back "[[:alnum:]]" (line-beginning-position))
+                                     (not (looking-back "println[ \\t]*_*" (line-beginning-position)))                                     ))
 		'scala-in-list-p)
 	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))

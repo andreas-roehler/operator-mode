@@ -748,9 +748,9 @@ firstArg match {
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (char-equal (char-before (point)) 32))
-    (should (char-equal (char-before (- (point) 1)) ?_))
-    (should (char-equal (char-before (- (point) 2)) 32))
+    (should (char-equal (char-before (point)) ?_))
+    (should (char-equal (char-before (- (point) 1)) 32))
+    (should (char-equal (char-before (- (point) 2)) ?n))
     ))
 
 (ert-deftest operator-scala-test-Z7OFnT ()
@@ -1098,6 +1098,18 @@ firstArg match {
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ??))
     (should (char-equal (char-before (- (point) 2)) ??))))
+
+(ert-deftest operator-scala-test-h4AKTY ()
+  (operator-test
+      "new_"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?_))
+    (should (char-equal (char-before (- (point) 1)) ?w))
+    ))
 
 
 
