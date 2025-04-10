@@ -1869,10 +1869,10 @@ Haskell: (>=>) :: Monad"
         ;; ((and (looking-back syntactic-close-for-re (line-beginning-position)) (not (eq (char-before) ?\;)) (not (string-match "\\+\\+" (buffer-substring-no-properties (line-beginning-position) (point)))))
         ;;      ";")
         ;; (should (eq (char-before) ?\;
-        ((and (char-equal ?\;  char) (char-equal ?? (char-before (- (point) 2))) (char-equal ?\\ (char-before (- (point) 1))))
+        ((and (char-equal ?\;  char) (char-equal ?\\ (char-before (- (point) 1)))(ignore-errors (char-equal ?? (char-before (- (point) 2)))))
          'emacs-lisp-semicolon)
         ;; (let*
-        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?&  ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??))
+        ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?&  ?_ ?- ?+ ?= ?| ?: ?\" ?' ?, ?. ??))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))
 	 'emacs-lisp-list-delimter)
@@ -2043,7 +2043,8 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--org-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond ((member char (list ?, ?\[ ?\] ?\))))
+          ;; \([[:alpha:]+]\)-u\. → \1- u.
+	  (cond ((member char (list ?, ?\[ ?\] ?\) ?\; ?-)))
                 ;; xs[i] = 1.5 > len(test_list) =
                 ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
                 ((and (member (char-before) operator-known-operators)(eq (char-before (- (point) 1)) 41))
