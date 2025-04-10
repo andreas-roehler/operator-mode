@@ -260,7 +260,7 @@ Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
   (save-excursion
     (and (nth 1 pps)
 	 (goto-char (nth 1 pps))
-	 (char-equal ?{ (char-after)))))
+	 (equal ?{ (char-after)))))
 
 (defun operator--continue-p ()
   "Uses-cases:
@@ -271,13 +271,13 @@ Optional arg PPS output of (parse-partial-sexp (point-min) (point))"
 (defun operator--in-list-continue-p (list_start_c following_start_c)
   "Use-cases:
 Haskell: (>=>) :: Monad"
-  (and list_start_c following_start_c (char-equal list_start_c ?\()
+  (and list_start_c following_start_c (equal list_start_c ?\()
        (member following_start_c operator-known-operators)))
 
 (defun operator--closing-colon (char)
-  (and (char-equal char ?:)
-       ;; (char-equal (char-before (- (point) 1)) ?\))
-       (not (char-equal (char-before (- (point) 1)) 32))))
+  (and (equal char ?:)
+       ;; (equal (char-before (- (point) 1)) ?\))
+       (not (equal (char-before (- (point) 1)) 32))))
 
 (defun operator--python-notfirst (char pps list-start-char &optional notfirst)
   (let* ((in-list-p (nth 1 pps))
@@ -331,7 +331,7 @@ Haskell: (>=>) :: Monad"
           ;; a[0:
           ((and (not (member char (list ?,)))
                 in-list-p
-                (char-equal ?\[ list-start-char))
+                (equal ?\[ list-start-char))
            'python-range)
           ;;  a^2
           ((member char (list ?^))
@@ -339,7 +339,7 @@ Haskell: (>=>) :: Monad"
 	  ;; echo(**kargs)
 	  ((and (member char (list ?* ?= ?^)) in-list-p)
 	   'python-*-in-list-p)
-	  ((and (char-equal ?- char) in-list-p)
+	  ((and (equal ?- char) in-list-p)
 	   'python---in-list-p)
 	  ;; print('%(language)s has %(number)03d quote types.' %
 	  ;;     {'language': "Python", "number": 2})
@@ -347,7 +347,7 @@ Haskell: (>=>) :: Monad"
 	  ;; print(f"Elementweise Addition: {m1 + m2}
 	  ;; ((and (nth 1 pps) (nth 3 pps))
 	  ;;  'python-string-in-list)
-	  ;; (char-equal char ?~)
+	  ;; (equal char ?~)
 	  ;; with open('/path/to/some/file') as file_1,
 	  ((member char (list ?{ ?\; ?\( ?\) ?~ ?\[ ?\] ?@))
 	   'python-list-op)
@@ -359,7 +359,7 @@ Haskell: (>=>) :: Monad"
 	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 	       (and
 		;; return self.first_name, self.last_name
-		(not (char-equal char ?,))
+		(not (equal char ?,))
 		(and
                  ;; allow division
                  (member char (list ?. ?_))
@@ -441,7 +441,7 @@ Haskell: (>=>) :: Monad"
 	((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 	     (and
 	      ;; return self.first_name, self.last_name
-	      (not (char-equal char ?,))
+	      (not (equal char ?,))
 	      (and (not (nth 1 pps))(looking-back "return +[^ ]+.*" (line-beginning-position)))))
 	 'java-after-symbol)
         (list-start-char
@@ -526,7 +526,7 @@ Haskell: (>=>) :: Monad"
          ;; [f x | x <-
          'haskell-punct-in-list)
         ;; sum' (x:
-        ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
         ((member char (list ?_ 41))
          'haskell-punct)
@@ -553,17 +553,17 @@ Haskell: (>=>) :: Monad"
 	;;  ;; (unless (eq list-start-char ?{)
 	;;  (cond
         ;;   ;; already as 'separator
-        ;;   ;; ((char-equal ?, char)
+        ;;   ;; ((equal ?, char)
 	;;   ;;  'haskell-list-separator)
-	;;   ((and (char-equal ?\[ list-start-char)
-	;; 	(char-equal ?. char))
+	;;   ((and (equal ?\[ list-start-char)
+	;; 	(equal ?. char))
 	;;    'haskell-construct-for-export)
-	;;   ((and (char-equal ?\[ list-start-char)
-	;; 	(char-equal ?, char))
+	;;   ((and (equal ?\[ list-start-char)
+	;; 	(equal ?, char))
 	;;    'haskell-operator--in-list-continue)
 	;;   ;; let x = 5 in x * x
-	;;   ;; ((char-equal ?* char)
-	;;   ;; 	'haskell-char-equal-\*-in-list-p)
+	;;   ;; ((equal ?* char)
+	;;   ;; 	'haskell-equal-\*-in-list-p)
 	;;   ((member char (list ?\( ?\) ?\] ?_))
 	;;    'haskell-listing)
 	;;   ((and (nth 1 pps)
@@ -573,7 +573,7 @@ Haskell: (>=>) :: Monad"
 	;;    'in-list)
 	;;   ((and (nth 3 pps)(not (eq (char-before) ?|)))
 	;;    'haskell-and-nth-1-pps-nth-3-pps)
-	;;   ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	;;   ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 	;;    'pattern-match-on-list)))
         ((nth 4 pps)
          'haskell-in-comment)
@@ -614,7 +614,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'haskell-comment-start)
@@ -649,7 +649,7 @@ Haskell: (>=>) :: Monad"
                 ;; "(september <|> oktober)"
                 ;; "(x<="
                 (member char (list ?< ?| ?=))
-                ;; list-start-char (char-equal 40 list-start-char)
+                ;; list-start-char (equal 40 list-start-char)
 )
 ))
 	 ;; (not (looking-back "-." (line-beginning-position)))
@@ -658,16 +658,16 @@ Haskell: (>=>) :: Monad"
         ;;  'semicolon-braced-list-start-char)
         ;; ;; data Contact =  Contact { name :: "asdf" }
         ;; (cond ;; (
-        ;;  ;; 	(char-equal ?, char)
+        ;;  ;; 	(equal ?, char)
         ;;  ;; 	'haskell-list-separator)
         ((and
-          ;; list-start-char (char-equal ?\[ list-start-char)
+          ;; list-start-char (equal ?\[ list-start-char)
               ;; evens n = map f [1..n]
               (member char (list ?, ?.))
-	      ;; (char-equal ?, char)
+	      ;; (equal ?, char)
 )
          'haskell-in-bracketed)
-        ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
         ((nth 4 pps)
          'haskell-in-comment)
@@ -736,17 +736,17 @@ Haskell: (>=>) :: Monad"
 	;; (list-start-char
 	;;  ;; data Contact =  Contact { name :: "asdf" }
 	;;  ;; (unless (eq list-start-char ?{)
-	;;  (cond ((char-equal ?, char)
+	;;  (cond ((equal ?, char)
 	;; 	'haskell-list-separator)
-	;;        ((and (char-equal ?\[ list-start-char)
-	;; 	     (char-equal ?. char))
+	;;        ((and (equal ?\[ list-start-char)
+	;; 	     (equal ?. char))
 	;; 	'haskell-construct-for-export)
-	;;        ((and (char-equal ?\[ list-start-char)
-	;; 	     (char-equal ?, char))
+	;;        ((and (equal ?\[ list-start-char)
+	;; 	     (equal ?, char))
 	;; 	'haskell-operator--in-list-continue)
 	;;        ;; let x = 5 in x * x
-	;;        ;; ((char-equal ?* char)
-	;;        ;; 	'haskell-char-equal-\*-in-list-p)
+	;;        ;; ((equal ?* char)
+	;;        ;; 	'haskell-equal-\*-in-list-p)
 	;;        ((member char (list ?\( ?\) ?\] ?_))
 	;; 	'haskell-listing)
 	;;        ((and (nth 1 pps)
@@ -756,7 +756,7 @@ Haskell: (>=>) :: Monad"
 	;; 	'in-list)
 	;;        ((and (nth 3 pps)(not (eq (char-before) ?|)))
 	;; 	'haskell-and-nth-1-pps-nth-3-pps)
-	;;        ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	;;        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 	;; 	'pattern-match-on-list)))
         ))
 
@@ -789,7 +789,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'haskell-comment-start)
@@ -816,7 +816,7 @@ Haskell: (>=>) :: Monad"
            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
                 ;; "(september <|> oktober)"
                 (member char (list ?< ?|))
-                ;; list-start-char (char-equal 40 list-start-char)
+                ;; list-start-char (equal 40 list-start-char)
                 )))
 	 ;; (not (looking- back "-." (line-beginning-position)))
 	 'haskell-in-list-p)
@@ -827,13 +827,13 @@ Haskell: (>=>) :: Monad"
         ((member char (list ?/))
 	 'separator)
         ((and
-          ;; list-start-char (char-equal ?\[ list-start-char)
+          ;; list-start-char (equal ?\[ list-start-char)
           ;; evens n = map f [1..n]
           (member char (list ?.))
-	  ;; (char-equal ?, char)
+	  ;; (equal ?, char)
           )
          'haskell-in-bracketed)
-        ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
         (list-start-char
          ;; silence compiler warning Unused lexical argument ‘list- start-char’
@@ -907,7 +907,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'idris-comment-start)
@@ -927,12 +927,12 @@ Haskell: (>=>) :: Monad"
          'pps)
 	;; (list-start-char
 	;;  ;; data Contact =  Contact { name :: "asdf" }
-	;;  (cond ((char-equal ?, char)
+	;;  (cond ((equal ?, char)
 	;; 	'idris-list-separator)
-	;;        ((and (char-equal ?\[ list-start-char)
-	;; 	     (char-equal ?, char))
+	;;        ((and (equal ?\[ list-start-char)
+	;; 	     (equal ?, char))
 	;; 	'idris-construct-for-export)
-	;;        ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	;;        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 	;; 	'pattern-match-on-list)))
         ))
 
@@ -953,16 +953,16 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'idris-repl-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'idris-repl-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'idris-repl-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'idris-repl-char-equal-\*-in-list-p)
+	       ((equal ?* char)
+		'idris-repl-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'idris-repl-listing)
 	       ((nth 3 pps)
@@ -973,7 +973,7 @@ Haskell: (>=>) :: Monad"
 		     (or (eq (1- (current-column)) (current-indentation))
 			 (eq (- (point) 2)(nth 1 pps))))
 		'idris-repl-in-list-p)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
@@ -1002,7 +1002,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'idris-repl-comment-start)
@@ -1016,12 +1016,12 @@ Haskell: (>=>) :: Monad"
 	 'idris-repl-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'idris-repl-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'idris-repl-construct-for-export)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))))
 
 (defun operator--do-idris-repl-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -1043,16 +1043,16 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'sml-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'sml-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'sml-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'sml-char-equal-\*-in-list-p)
+	       ((equal ?* char)
+		'sml-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'sml-listing)
 	       ((nth 3 pps)
@@ -1063,7 +1063,7 @@ Haskell: (>=>) :: Monad"
 		     (or (eq (1- (current-column)) (current-indentation))
 			 (eq (- (point) 2)(nth 1 pps))))
 		'sml-in-list-p)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
 	       ))
 	((member char (list ?\;))
@@ -1096,7 +1096,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'sml-comment-start)
@@ -1110,12 +1110,12 @@ Haskell: (>=>) :: Monad"
 	 'sml-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'sml-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'sml-construct-for-export)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))))
 
 (defun operator--do-sml-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -1137,7 +1137,7 @@ Haskell: (>=>) :: Monad"
         ((and (nth 3 pps)
               (member char (list ?/ ?. ?_)))
          'scala-in-string)
-        ((and (char-equal char 47) (eq (- (point) 1) (line-beginning-position)))
+        ((and (equal char 47) (eq (- (point) 1) (line-beginning-position)))
          'scala-comment)
         ((and (eq char ?:)
               (or (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_()][[:alnum:]_()]*:") (line-beginning-position))
@@ -1173,16 +1173,16 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'scala-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'scala-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'scala-operator--in-list-continue)
                ;; val b = a.map{ case x => x._1 + 4 * x._2*
-	       ;; ((char-equal ?* char)
+	       ;; ((equal ?* char)
                ;; val a = (3, 5)
 	       ((member char (list ?\) ?\]))
 		'scala-listing)
@@ -1193,12 +1193,12 @@ Haskell: (>=>) :: Monad"
                ;; def ein(xs: List[Int], maxW: Double=
 	       ((and (nth 1 pps)
                      (not (member char (list ?% ?% ?* ?+ ?=)))
-                     (char-equal ?\( list-start-char)
+                     (equal ?\( list-start-char)
                      (save-excursion (forward-char -1)
                                      (looking-back "[[:alnum:]]" (line-beginning-position))
                                      (not (looking-back "println[ \\t]*_*" (line-beginning-position)))                                     ))
 		'scala-in-list-p)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
 	((or (and (member (char-before (- (point) 1)) operator-known-operators)
@@ -1270,7 +1270,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'scala-comment-start)
@@ -1372,13 +1372,13 @@ Haskell: (>=>) :: Monad"
 	 'comint-last-prompt)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'scala-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'scala-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'scala-operator--in-list-continue)
 	       ((member char (list ?\( ?\) ?\]))
 		'scala-listing)
@@ -1388,12 +1388,12 @@ Haskell: (>=>) :: Monad"
 	       ((and (nth 1 pps)
                      ;; b.map{ case i => (i, i + 1)
                      ;; (0 to 10).map(n =>
-                     (not (char-equal ?{ list-start-char))
+                     (not (equal ?{ list-start-char))
                      (not (member char (list ?= ?& ?+ ?* ?- ?< )))
 		     ;; (or (eq (1- (current-column)) (current-indentation))
 		     ;; (eq (- (point) 2)(nth 1 pps))))
                      'scala-in-list-p))
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
         ((and
@@ -1493,7 +1493,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'scala-comment-start)
@@ -1513,12 +1513,12 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 (cond
-          ;; ((char-equal? , char)
+          ;; ((equal? , char)
 	  ;;       'scala-list-separator)
-	  ((and (char-equal ?\[ list-start-char)
-		(char-equal ?, char))
+	  ((and (equal ?\[ list-start-char)
+		(equal ?, char))
 	   'scala-construct-for-export)
-	  ((and (char-equal ?: char) (looking-back "(\\.:" (line-beginning-position)))
+	  ((and (equal ?: char) (looking-back "(\\.:" (line-beginning-position)))
 	   'pattern-match-on-list)))))
 
 (defun operator--do-scala-shell-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -1577,16 +1577,16 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'shell-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'shell-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'shell-operator--in-list-continue)
-	       ;; ((char-equal ?* char)
-	       ;;  'shell-char-equal-\*-in-list-p)
+	       ;; ((equal ?* char)
+	       ;;  'shell-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'shell-listing)
 	       ((nth 3 pps)
@@ -1597,7 +1597,7 @@ Haskell: (>=>) :: Monad"
 		     (or (eq (1- (current-column)) (current-indentation))
 			 (eq (- (point) 2)(nth 1 pps))))
 		'shell-in-list-p)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)
 	       ))
 	;; ((member char (list ?\; ?,)))
@@ -1633,7 +1633,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'shell-comment-start)
@@ -1649,12 +1649,12 @@ Haskell: (>=>) :: Monad"
 	;;  'shell-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'shell-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'shell-construct-for-export)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))))
 
 (defun operator--do-sh-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -1683,16 +1683,16 @@ Haskell: (>=>) :: Monad"
 	 'rm-attention)
 
 	(list-start-char
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'shell-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'shell-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'shell-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'shell-char-equal-\*-in-list-p)
+	       ((equal ?* char)
+		'shell-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'shell-listing)
 	       ((nth 3 pps)
@@ -1703,7 +1703,7 @@ Haskell: (>=>) :: Monad"
 		     (or (eq (1- (current-column)) (current-indentation))
 			 (eq (- (point) 2)(nth 1 pps))))
 		'shell-in-list-p)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
 
@@ -1737,7 +1737,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'shell-comment-start)
@@ -1755,10 +1755,10 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 (cond
           ;; ghci> myTake [1,
-	  ;; ((and (char-equal ?\[ list-start-char)
-	  ;;       (char-equal ?, char))
+	  ;; ((and (equal ?\[ list-start-char)
+	  ;;       (equal ?, char))
 	  ;;  'shell-construct-for-export)
-	  ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	  ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 	   'pattern-match-on-list)))
         ))
 
@@ -1796,7 +1796,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'coq-comment-start)
@@ -1812,12 +1812,12 @@ Haskell: (>=>) :: Monad"
 	 'coq-in-list-p)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'coq-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'coq-construct-for-export)
-	       ((and (char-equal ?: char) (looking-back "(.:" (line-beginning-position)))
+	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))))
 
 (defun operator--do-coq-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -1869,7 +1869,7 @@ Haskell: (>=>) :: Monad"
         ;; ((and (looking-back syntactic-close-for-re (line-beginning-position)) (not (eq (char-before) ?\;)) (not (string-match "\\+\\+" (buffer-substring-no-properties (line-beginning-position) (point)))))
         ;;      ";")
         ;; (should (eq (char-before) ?\;
-        ((and (char-equal ?\;  char) (char-equal ?\\ (char-before (- (point) 1)))(ignore-errors (char-equal ?? (char-before (- (point) 2)))))
+        ((and (equal char  ?\;) (equal (char-before (- (point) 1)) ?\\) (equal (char-before (- (point) 2)) ??))
          'emacs-lisp-semicolon)
         ;; (let*
         ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?&  ?_ ?- ?+ ?= ?| ?: ?\" ?' ?, ?. ??))
@@ -1906,16 +1906,16 @@ Haskell: (>=>) :: Monad"
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'agda-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?. char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?. char))
 		'agda-construct-for-export)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'agda-operator--in-list-continue)
-	       ((char-equal ?* char)
-		'agda-char-equal-\*-in-list-p)
+	       ((equal ?* char)
+		'agda-equal-\*-in-list-p)
 	       ((member char (list ?\( ?\) ?\]))
 		'agda-listing)
 	       ((nth 3 pps)
@@ -1938,15 +1938,15 @@ Haskell: (>=>) :: Monad"
 
 (defun operator--agda-notsecond (char pps list-start-char notsecond)
   (cond (notsecond)
-	((or (char-equal ?\[ char) (char-equal ?\( char))
+	((or (equal ?\[ char) (equal ?\( char))
 	 'agda-list-opener)
 
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
-	 (cond ((char-equal ?, char)
+	 (cond ((equal ?, char)
 		'agda-list-separator)
-	       ((and (char-equal ?\[ list-start-char)
-		     (char-equal ?, char))
+	       ((and (equal ?\[ list-start-char)
+		     (equal ?, char))
 		'agda-construct-for-export)
 	       ((and (nth 1 pps) (not (member char (list ?: ?,))))
 		'agda-in-list-p)))
@@ -1957,7 +1957,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^-" (line-beginning-position))
 	 'agda-comment-start)
@@ -1979,7 +1979,7 @@ Haskell: (>=>) :: Monad"
   (cond (notfirst 'org-notfirst)
 	((nth 1 pps)
 	 'org-in-list-p)
-	((char-equal ?, char)
+	((equal ?, char)
 	 'org-list-separator)
         ;; _sys_membarrier
 	((member char (list ?_ ?$ ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
@@ -1990,8 +1990,8 @@ Haskell: (>=>) :: Monad"
 	   'org-punct-class))
 	((looking-back "[[:alpha:]äöüß.]" (line-beginning-position))
 	 'org-in-word)
-	((char-equal ?* char)
-	 'org-char-equal-*)
+	((equal ?* char)
+	 'org-equal-*)
 	((member char (list ?\( ?\) ?\] 47))
 	 'org-listing)
 	((nth 3 pps)
@@ -2028,7 +2028,7 @@ Haskell: (>=>) :: Monad"
 	;; index-p
 	((and
 	  ;; "even <$> (2,2)"
-	  (not (char-equal char ?,))
+	  (not (equal char ?,))
 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
 	((looking-back "^<s?" (line-beginning-position))
 	 'org-src-block)
