@@ -184,7 +184,6 @@ h8 () {
 --eval "(add-to-list 'load-path (getenv \"PWD\"))" \
 --eval "(add-to-list 'load-path (getenv \"SCALAMODE\"))" \
 --eval "(require 'scala-mode)" \
---eval "(add-to-list 'load-path (getenv \"PWD\"))" \
 --eval "(require 'operator-mode)" \
 --eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
 --eval "(require 'operator-setup-tests)" \

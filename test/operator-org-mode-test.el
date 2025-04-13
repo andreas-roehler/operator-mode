@@ -100,6 +100,33 @@
     (should (eq (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-org-mode-test-Q3aDM8 ()
+  (operator-test
+      "!+"
+    'org-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?+))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-org-mode-test-I0fS1A ()
+  (operator-test
+      "?+"
+    'org-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (1- (point))) ?+))
+    (should (eq (char-before (- (point) 2)) 32))
+    ))
+
+
 
 
 (provide 'operator-org-mode-test)
