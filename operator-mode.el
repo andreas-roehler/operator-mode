@@ -1866,9 +1866,6 @@ Haskell: (>=>) :: Monad"
 	 'emacs-lisp-notsecond)
         ((eq (char-before (- (point) 1)) ??)
           'emacs-lisp-after-question-mark)
-        ;; ((and (looking-back syntactic-close-for-re (line-beginning-position)) (not (eq (char-before) ?\;)) (not (string-match "\\+\\+" (buffer-substring-no-properties (line-beginning-position) (point)))))
-        ;;      ";")
-        ;; (should (eq (char-before) ?\;
         ((and (equal char  ?\;) (equal (char-before (- (point) 1)) ?\\) (equal (char-before (- (point) 2)) ??))
          'emacs-lisp-semicolon)
         ;; (let*
@@ -1878,8 +1875,8 @@ Haskell: (>=>) :: Monad"
 	 'emacs-lisp-list-delimter)
 	((nth 3 pps)
 	 'emacs-lisp-in-string)
-	((looking-back "^;" (line-beginning-position))
-	 'emacs-lisp-comment-start)
+	;; ((looking-back "^;" (line-beginning-position))
+	;;  'emacs-lisp-comment-start)
         (list-start-char
            ;; silence compiler warning Unused lexical argument ‘list-start-char’
            nil)))
@@ -1893,7 +1890,7 @@ Haskell: (>=>) :: Monad"
                  'nojoin-emacs-lisp1)
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))
                  'nojoin-emacs-lisp1)
-                ((member char (list ?\( ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\; ?\" ?' ?, ?. ??)
+                ((member char (list ?\( ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\" ?' ?, ?. ??)
                  )
                  'lisp-no-join-punct)
                 ((nth 3 pps) 'no-join-in-string))))
@@ -2047,8 +2044,8 @@ Haskell: (>=>) :: Monad"
 	  (cond ((member char (list ?, ?\[ ?\] ?\) ?\; ?-)))
                 ;; xs[i] = 1.5 > len(test_list) =
                 ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
-                ((or (member (char-before (- (point) 1)) (list 41 ?? ?!))
-                     (member (char-before (- (point) 2)) (list 41 ?? ?!)))
+                ((or (member (char-before (- (point) 1)) (list 41 ?? ?! ?.))
+                     (member (char-before (- (point) 2)) (list 41 ?? ?! ?.)))
                  t)
                 ;; ((looking-back "^\\* *." (line-beginning-position))
                 ;;  'org-at-heading)
