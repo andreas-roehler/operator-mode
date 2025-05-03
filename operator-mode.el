@@ -1201,19 +1201,21 @@ Haskell: (>=>) :: Monad"
 	       ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
 		'pattern-match-on-list)))
 	;; ((member char (list ?\; ?,)))
-	((or (and (member (char-before (- (point) 1)) operator-known-operators)
+	((and
+          ;; (member (char-before (- (point) 1)) operator-known-operators)
                   ;; List(((a.last), false))+
                   (not (member (char-before (- (point) 1)) (list ?\))))
                   (not (member (char-before (- (point) 2)) (list ?_)))
                   (not (member char (list ??))))
-	     (and (eq (char-before (- (point) 1)) 32)
-                  (member (char-before (- (point) 2)) operator-known-operators)
-                  ;; case _ =
-                  (not (member (char-before (- (point) 2)) (list ?_)))
-                  (not (eq (car-safe (syntax-after (- (point) 3))) 5))
-                  ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
-                  (not (eq char ??))))
-	 'scala-join-known-operators)
+         'scala-first)
+	((and (eq (char-before (- (point) 1)) 32)
+              ;; (member (char-before (- (point) 2)) operator-known-operators)
+              ;; case _ =
+              (not (member (char-before (- (point) 2)) (list ?_)))
+              (not (eq (car-safe (syntax-after (- (point) 3))) 5))
+              ;; def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ???
+              (not (eq char ??)))
+         'scala-second)
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala-<)
 	;; ((looking-back "^-" (line-beginning-position))
@@ -1230,6 +1232,11 @@ Haskell: (>=>) :: Monad"
   ;; (unless (eq ?{ list-start-char)
   (cond (notsecond
 	 'scala-notsecond)
+        ((and
+          (member (char-before (- (point) 1)) (list 32))
+          ;; scala> :
+          (member (char-before (- (point) 2)) (list ?>)))
+         'scala-prompt)
         ;; ((and (member (char-before) (list ?:))
         ;;       ;; b +: a
         ;;       ;; def foo(bar:
@@ -1300,13 +1307,13 @@ Haskell: (>=>) :: Monad"
                   ((and (member (char-before (point)) operator-known-operators)
                         (or
                          (progn
-                           ;; would need a sit-for, but just a ‘progn’ does it
-                           ;; (sit-for 0.1)
                            ;; def foo(xs: Seq[Int], a: Int): Int =?
                            (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_ ?=)))
                          (and
                           (member (char-before (- (point) 1)) (list 32))
-                          (member (char-before (- (point) 2)) (list 41 ?\] ?} ?_)))
+
+                          ;; scala> :
+                          (member (char-before (- (point) 2)) (list 41 ?\] ?} ?_ ?>)))
                          ;; val foo=
                          (save-excursion (forward-char -1) (looking-back "[[:alnum:]_]" (line-beginning-position)))))
                    t)
@@ -1467,7 +1474,8 @@ Haskell: (>=>) :: Monad"
           ;; 2 * r
           ;; scala> :help
           ;; def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ???
-          (member char (list ? ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/))
+          ;; sed -r 's,
+          (member char (list ? ?. ?$ ?~ ?_ ?^ ?& 40 41 ?/ ?,))
           ;; 6.7
           ;; (not (member  (char-before (- (point) 1)) (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9)))
           )
@@ -2039,17 +2047,17 @@ Haskell: (>=>) :: Monad"
   "Org"
   (let* ((notfirst (operator--org-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
-	 (nojoin
-          ;; \([[:alpha:]+]\)-u\. → \1- u.
-	  (cond ((member char (list ?, ?\[ ?\] ?\) ?\; ?-)))
-                ;; xs[i] = 1.5 > len(test_list) =
-                ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
-                ((or (member (char-before (- (point) 1)) (list 41 ?? ?! ?.))
-                     (member (char-before (- (point) 2)) (list 41 ?? ?! ?.)))
-                 t)
-                ;; ((looking-back "^\\* *." (line-beginning-position))
-                ;;  'org-at-heading)
-                )))
+	 (nojoin t))
+          ;; ;; \([[:alpha:]+]\)-u\. → \1- u.
+	  ;; (cond ((member char (list ?, ?\[ ?\] ?\) ?\; ?-)))
+          ;;       ;; xs[i] = 1.5 > len(test_list) =
+          ;;       ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
+          ;;       ((or (member (char-before (- (point) 1)) (list 41 ?? ?! ?.))
+          ;;            (member (char-before (- (point) 2)) (list 41 ?? ?! ?.)))
+          ;;        t)
+          ;;       ;; ((looking-back "^\\* *." (line-beginning-position))
+          ;;       ;;  'org-at-heading)
+          ;;       )))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--text-notfirst (char pps list-start-char notfirst)
