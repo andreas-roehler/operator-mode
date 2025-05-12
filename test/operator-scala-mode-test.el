@@ -1111,6 +1111,32 @@ firstArg match {
     (should (char-equal (char-before (- (point) 1)) ?w))
     ))
 
+(ert-deftest operator-scala-test-fNBkPK ()
+  (operator-test
+      "/ / keep"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (search-backward " ")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?/))
+    ))
+
+(ert-deftest operator-scala-test-2BVc9I ()
+  (operator-test
+      "// keep"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (search-backward " ") 
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?/))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)

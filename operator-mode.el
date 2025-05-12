@@ -2148,34 +2148,7 @@ Haskell: (>=>) :: Monad"
 		           (and
                             (eq (char-before) 32)
                             (member (char-before (- (point) 1)) operator-known-operators)
-                            (delete-char -1)))))
-        (t
-         ;; (or (unless nojoin (operator--join-operators-maybe char))
-         (save-excursion
-
-           ;; (goto-char (1- orig))
-           ;; b.foreach(x =>
-           (if nojoin
-               (save-excursion (backward-char)
-	       (unless (eq (char-before) ?\s)
-		 (just-one-space)))
-             (if
-                 (and (member (char-before) operator-known-operators)
-                      ;; (not (member (char-before (- (point) 1)) (list 41 ?\] ?})))
-                      (member (char-before (- (point) 1)) (list 32 9 ?\f))
-                      (member (char-before (- (point) 2)) operator-known-operators))
-                 (save-excursion (forward-char -1)
-                                 (delete-char -1))
-               (save-excursion (forward-char -1)
-                               (fixup-whitespace))))
-
-           ;; def init: Acc = Map(xs.head._1 ->
-           ;; (member (char-before) operator-known-operators))
-
-           ;; coq
-           ;; Definition orb (b1:bool) (b2:bool) : bool :
-           ;; (fixup-whitespace)
-           )))
+                            (delete-char -1))))))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)
