@@ -139,6 +139,18 @@
     (should (eq (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-org-mode-test-Deu5fW ()
+  (operator-test
+      "33,"
+    'org-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) ?,))
+    (should (eq (char-before (1- (point))) ?3))
+    ))
+
 
 
 (provide 'operator-org-mode-test)

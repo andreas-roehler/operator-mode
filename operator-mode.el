@@ -1139,7 +1139,7 @@ Haskell: (>=>) :: Monad"
          'scala-in-string)
         ((and (equal char 47) (eq (- (point) 1) (line-beginning-position)))
          'scala-comment)
-        ((and (eq char ?:)
+        ((and (member char (list ?: ?? ?, ?. ?!))
               (or (looking-back (concat scala-syntax:other-keywords-unsafe-re " +[[:alpha:]_()][[:alnum:]_()]*:") (line-beginning-position))
                   (save-excursion (backward-char) (looking-back ") *" (line-beginning-position)))))
          'scala-case)
@@ -1154,7 +1154,7 @@ Haskell: (>=>) :: Monad"
          ;; => result :+ ((x, default))
          ;; b.foreach(println _
          ;; case Fixed,
-         (member char (list ?, ?. ?$ ?~ ?^ ?& 41 ?\;))
+         (member char (list ?$ ?~ ?^ ?& 41 ?\; ?.))
 	 'scala-punkt)
         ((and (member char (list ?_))
               (eq (char-before (- (point) 1)) ?.))
@@ -1168,8 +1168,9 @@ Haskell: (>=>) :: Monad"
          'scala-v)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
-	;; ((and (eq char ?*) (looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
-	;;  'rm-attention)
+        ((and (member char (list ?: ?? ?, ?. ?!))
+	 (looking-back "[ \t]+[[:alpha:]]*[ \t]*." (line-beginning-position)))
+	 'scala-attention)
 	(list-start-char
 	 ;; data Contact =  Contact { name :: "asdf" }
 	 ;; (unless (eq list-start-char ?{)
@@ -1192,7 +1193,7 @@ Haskell: (>=>) :: Monad"
                ;; scala> p.map(x => x)
                ;; def ein(xs: List[Int], maxW: Double=
 	       ((and (nth 1 pps)
-                     (not (member char (list ?% ?% ?* ?+ ?=)))
+                     (member char (list ?: ?\[ ?\]))
                      (equal ?\( list-start-char)
                      (save-excursion (forward-char -1)
                                      (looking-back "[[:alnum:]]" (line-beginning-position))
@@ -1206,7 +1207,7 @@ Haskell: (>=>) :: Monad"
                   ;; List(((a.last), false))+
                   (not (member (char-before (- (point) 1)) (list ?\))))
                   (not (member (char-before (- (point) 2)) (list ?_)))
-                  (not (member char (list ??))))
+                  (not (member char (list ?? ?=))))
          'scala-first)
 	((and (eq (char-before (- (point) 1)) 32)
               ;; (member (char-before (- (point) 2)) operator-known-operators)
@@ -1237,11 +1238,9 @@ Haskell: (>=>) :: Monad"
           ;; scala> :
           (member (char-before (- (point) 2)) (list ?>)))
          'scala-prompt)
-        ;; ((and (member (char-before) (list ?:))
-        ;;       ;; b +: a
-        ;;       ;; def foo(bar:
-        ;;       (looking-back "[^[:alpha:]]:"))
-        ;;  'scala-punct)
+        ((and (member (char-before) (list ?.))
+              (not (looking-back "[^[:alpha:]]."))
+         'scala-dot))
         ((and (member char (list ?+))
               (or
                (and (member (char-before (- (point) 1)) operator-known-operators)
@@ -1288,7 +1287,7 @@ Haskell: (>=>) :: Monad"
 	((looking-back "<\\*" (line-beginning-position))
 	 'scala->)
 	((and (nth 1 pps)
-              (not (member char (list ?% ?% ?* ?+ ?= ?: ?,)))
+              (member char (list ?: ?\[ ?\]))
               ;; (not (member char (list ?, ?: ?=)))
 	      (or
                ;; val q =  (2 to n-1
@@ -2019,6 +2018,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--org-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'org-notsecond)
+        ((and (equal ?, char)(looking-back "[0-9]+." (line-beginning-position)))
+	 'org-decimal)
 	;; ((nth 1 pps)
 	;;  'org-in-list-p)
 	;; ((looking-back "[[:alpha:]äöüß.-]")
@@ -2142,13 +2143,19 @@ Haskell: (>=>) :: Monad"
 ;; (operator--join-operators-maybe char)))
 (defun operator--final (char orig &optional notfirst notsecond nojoin fix-whitespace)
   "If spaces are required, maybe join nonetheless?"
-  (cond (notfirst
-	 (unless nojoin
-           (save-excursion (backward-char)
-		           (and
-                            (eq (char-before) 32)
-                            (member (char-before (- (point) 1)) operator-known-operators)
-                            (delete-char -1))))))
+  (if notfirst
+      (progn
+        (unless nojoin
+          (save-excursion (backward-char)
+		          (and
+                           (eq (char-before) 32)
+                           (member (char-before (- (point) 1)) operator-known-operators)
+                           (delete-char -1)))))
+    ;; insert a whitespace before
+    (save-excursion (backward-char)
+                    (if nojoin
+                        (just-one-space)
+                      (delete-horizontal-space))))
   (unless notsecond
     (if (eq (char-after) ?\s)
 	(forward-char 1)

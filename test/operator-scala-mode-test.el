@@ -1131,10 +1131,48 @@ firstArg match {
     operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
-    (search-backward " ") 
+    (search-backward " ")
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?/))
+    ))
+
+(ert-deftest operator-scala-test-QJL4Ci ()
+  (operator-test
+      "// asdf?"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ??))
+    (should (char-equal (char-before (- (point) 2)) ?f))
+    ))
+
+(ert-deftest operator-scala-test-wuU2Rr ()
+  (operator-test
+      "(current.sum<"
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?<))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-scala-test-2lV956 ()
+  (operator-test
+      "current."
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) ?.))
+    (should (char-equal (char-before (- (point) 1)) ?t))
     ))
 
 
