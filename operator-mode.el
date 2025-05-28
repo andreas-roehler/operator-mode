@@ -1323,7 +1323,10 @@ Haskell: (>=>) :: Monad"
                         (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
                    t)
                   ((and (member char (list ?{))
-                        (looking-back "= *{" (line-beginning-position)))
+                        (or
+                         (looking-back "= *{" (line-beginning-position))
+                         (looking-back "[[:alpha:]_] *{" (line-beginning-position))
+                        ))
                    t)
                   ((and (member char
                                 (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
