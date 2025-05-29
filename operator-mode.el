@@ -1320,7 +1320,9 @@ Haskell: (>=>) :: Monad"
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
                         (not (or (member (char-before (- (point) 1)) operator-known-operators)
                                  (member (char-before (- (point) 2)) operator-known-operators)))
-                        (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_)))
+                        (or
+                          (member (char-before (- (point) 1)) (list 41 ?\] ?} ?_))
+                          (looking-back "[[:alnum:]_][  \t]*." (line-beginning-position))))
                    t)
                   ((and (member char (list ?{))
                         (or

@@ -1188,6 +1188,19 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-yS24WK ()
+  (operator-test
+      "{resFoo ="
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)
