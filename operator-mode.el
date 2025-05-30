@@ -1335,7 +1335,7 @@ Haskell: (>=>) :: Monad"
                         ;; def init: Acc = Map(xs.head._1 ->
                         (not (or (member (char-before (- (point) 1)) (list ?- ?_))
                                  (eq (char-before (- (point) 2)) ?_)))
-                        (not (member (char-before (- (point) 2))(list ?\) ?\] ?}))))
+                        (not (member (char-before (- (point) 2))(list char ?\) ?\] ?}))))
                    nil)
                   ((and (member char (list ?=))
                         (or (eq (char-before (- (point) 1)) ?_)

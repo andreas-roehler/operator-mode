@@ -1201,6 +1201,19 @@ firstArg match {
     (should (char-equal (char-before (- (point) 2)) 32))
     ))
 
+(ert-deftest operator-scala-test-Wl5NH3 ()
+  (operator-test
+      "assert(result = ="
+    'scala-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?=))
+    (should (char-equal (char-before (- (point) 2)) ?=))
+    ))
+
 
 
 (provide 'operator-scala-mode-test)
