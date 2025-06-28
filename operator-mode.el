@@ -1630,7 +1630,7 @@ Haskell: (>=>) :: Monad"
 	;; EMACS=emacs
         ;; echo "Foo: $i" &&
         ;; python-components-*
-	((member char (list ?* ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?/ ?. ??))
+	((member char (list ?* ?- ?@ ?: ?$ ?~ ?_ ?= ?^ ?/ ?. ?? ?,))
 		'shell-punkt)
 	((and (eq char ?*)(looking-back "[ \t]+[[:alpha:]]*[ \t]*\\*" (line-beginning-position)))
 	 'rm-attention)
@@ -1881,6 +1881,8 @@ Haskell: (>=>) :: Monad"
         ((and (equal char  ?\;) (equal (char-before (- (point) 1)) ?\\) (equal (char-before (- (point) 2)) ??))
          'emacs-lisp-semicolon)
         ;; (let*
+        ((and (member (char-before) (list ?*)) (eq (char-before (- (point) 1)) ?-))
+         'emacs-lisp-badge)
         ((member char (list ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?&  ?_ ?- ?+ ?= ?| ?: ?\" ?' ?, ?. ??))
          'emacs-lisp-punct)
 	((member char (list ?\[  ?\( ?{ ?\] ?\) ?}))

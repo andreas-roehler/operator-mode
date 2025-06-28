@@ -212,17 +212,18 @@ h10 () {
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
 --eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'cl-lib)" \
+--eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/\"))" \
+--eval "(require 'proof-general)"
 --eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/lib/\"))" \
 --eval "(require 'span)" \
 --eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/generic/\"))" \
---eval "(require 'cl-lib)" \
 --eval "(require 'proof-script)" \
 --eval "(require 'pg-vars)" \
 --eval "(add-to-list 'load-path (expand-file-name \"~/arbeit/emacs-lisp/PG/coq\"))" \
 --eval "(require 'coq)" \
 --eval "(require 'coq-smie)" \
 --eval "(require 'coq-syntax)" \
---eval "(require 'coq-mode)" \
 --eval "(require 'operator-mode)" \
 --eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
 --eval "(require 'operator-setup-tests)" \
@@ -230,6 +231,8 @@ h10 () {
 -load $TEST10 \
 -f ert-run-tests-batch-and-exit
 }
+
+# --eval "(require 'coq-mode)" \
 
 hier () {
     $EMACS -Q --batch \
