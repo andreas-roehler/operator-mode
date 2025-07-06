@@ -1780,13 +1780,17 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--shell-notsecond char pps list-start-char notsecond))
 	 (nojoin
           ;;  > ..
-          (unless (and (member char (list
-                                     ;; $> ./foo
-                                     ;; . .alias
-                                     ;; ghci> myTake =
-                                     ?* ?& ?+ ?/ ?: ?< ?= ?> ?? ?| ?!))
-                       comint-last-prompt (< 2 (- (point) (cdr comint-last-prompt))))
-            t)))
+          (cond ((looking-back "[[:alpha:]] *." (line-beginning-position))
+                 t)
+                ((and (member char (list
+                                    ;; $> ./foo
+                                    ;; . .alias
+                                    ;; ghci> myTake =
+                                    ?* ?& ?+ ?/ ?: ?< ?= ?> ?? ?| ?!))
+                      comint-last-prompt
+                      (< 2 (- (point) (cdr comint-last-prompt))))
+                 nil)
+                (t t))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--coq-notfirst (char pps list-start-char notfirst)
@@ -1900,13 +1904,16 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--emacs-lisp-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--emacs-lisp-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond ((member char (list ?, ?\[ ?\] ?\) ??))
+	  (cond (;; -* -
+                 (and (member (char-before) (list ?-)) (or (eq (char-before (- (point) 1)) ?*)(eq (char-before (- (point) 2)) ?*)))
+                 nil)
+                ((member char (list ?, ?\[ ?\] ?\) ??))
                  'nojoin-emacs-lisp1)
 		((save-excursion (backward-char) (looking-back ") +" (line-beginning-position)))
                  'nojoin-emacs-lisp1)
-                ((member char (list ?\( ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?* ?_ ?- ?+ ?= ?| ?: ?\" ?' ?, ?. ??)
-                 )
+                ((member char (list ?\( ?* ?< ?> ?~ ?! ?@ ?# ?$ ?^ ?& ?_ ?- ?+ ?= ?| ?: ?\" ?' ?, ?. ??))
                  'lisp-no-join-punct)
+
                 ((nth 3 pps) 'no-join-in-string))))
     (operator--final char orig notfirst notsecond nojoin)))
 
