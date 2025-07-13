@@ -1999,6 +1999,9 @@ Haskell: (>=>) :: Monad"
 	 'org-in-list-p)
 	((equal ?, char)
 	 'org-list-separator)
+        ;; * Eins -> Zwei
+        ((member char (list ?< ?> ))
+         'org-punct)
         ;; _sys_membarrier
 	((member char (list ?_ ?$ ?\; ?, ?. ?: ?\? ?! ?@ ?- 47))
 	 (unless
@@ -2034,6 +2037,9 @@ Haskell: (>=>) :: Monad"
 	 'org-notsecond)
         ((and (equal ?, char)(looking-back "[0-9]+." (line-beginning-position)))
 	 'org-decimal)
+        ;; * Eins -> Zwei
+        ;; ((member char (list ?< ?> ))
+         ;; 'org-punct)
 	;; ((nth 1 pps)
 	;;  'org-in-list-p)
 	;; ((looking-back "[[:alpha:]äöüß.-]")
