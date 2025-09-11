@@ -1734,7 +1734,7 @@ Haskell: (>=>) :: Monad"
 	 'shell-notsecond)
         ;; foo@foo:~$ . foo
         ;; ghci> myTake =
-	((member char (list ?. ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ?! ??))
+	((member char (list ?, ?. ?\; ?- ?: ?$ ?~ ?_ ?^ ?& ?@ ?* ?/ ?! ??))
 	 'shell-punkt)
         ;; co -r1.0 foo.
         ;; ((and (eq char ?.) (looking-back "[^ ] *\." (line-beginning-position)))
