@@ -56,9 +56,8 @@ BODY is code to be executed within the temp buffer "
        (funcall ,mode)
        (when ,debug
 	 (switch-to-buffer (current-buffer))
-	 (save-excursion (font-lock-fontify-region (point-min)(point-max)))
+	 ;; (save-excursion (font-lock-fontify-region (point-min)(point-max)))
        ,@body))
-  ;; (sit-for 0.1)
   ))
 
 (defmacro operator-test-point-min (contents mode debug &rest body)
@@ -73,7 +72,8 @@ BODY is code to be executed within the temp buffer.  Point is
        (goto-char (point-min))
        (when ,debug
 	 (switch-to-buffer (current-buffer))
-	 (save-excursion (font-lock-fontify-region (point-min)(point-max))))
+	 ;; (save-excursion (font-lock-fontify-region (point-min)(point-max)))
+         )
        ,@body)))
 
 ;; (ert-simulate-command (cons self-insert-command))

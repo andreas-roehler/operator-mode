@@ -1,6 +1,6 @@
 ;;; operator-python-mode-test.el --- operator python-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2022  Andreas Röhler
+;; Copyright (C) 2019-2025  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
@@ -477,6 +477,21 @@
     (should (eq (char-before) 32))
     (should (eq (char-before (- (point) 1)) ?-))
     (should (eq (char-before (- (point) 2)) 32))))
+
+(ert-deftest operator-python-test-4LvZRO ()
+  (operator-test
+      "if __name__="
+    'python-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (- (point) 1)) ?=))
+    (should (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before (- (point) 2)) ?_))
+    ))
+
 
 
 
