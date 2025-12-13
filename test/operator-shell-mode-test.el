@@ -51,6 +51,19 @@
     (should (char-equal (char-before (- (point) 2)) ?'))
     ))
 
+(ert-deftest  operator-shell-mode-test-A0szZx ()
+  (operator-test
+      "[ -d emacs ] ||"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (1- (point))) ?|))
+    (should (char-equal (char-before (- (point) 2)) ?|))
+    )
+  )
 
 (provide 'operator-shell-mode-test)
 ;;; operator-shell-mode-test.el ends here

@@ -1861,8 +1861,10 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--sh-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--sh-notsecond char pps list-start-char notsecond))
 	 (nojoin (unless (and
+                          ;; ||
                           (member char (list ?& ?< ?= ?> ?|))
-                          (eq (char-before (- (point) 2)) ?&))
+                          ;; (eq (char-before (- (point) 2)) ?&)
+                          )
                    t)))
     (operator--final char orig notfirst notsecond nojoin)))
 
@@ -2516,7 +2518,7 @@ Haskell: (>=>) :: Monad"
               )
              ;; grep 'asf\|
              (not (and (eq (char-before (- (point) 1)) 92) (not (eq (char-before (- (point) 2)) ?\))))))
-        (operator--do-intern 
+        (operator--do-intern
          (char-before)
          (copy-marker (point)) pps)))))
 
