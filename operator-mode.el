@@ -2257,7 +2257,8 @@ Haskell: (>=>) :: Monad"
   "Org"
   (let* ((notfirst (operator--org-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
-	 (nojoin t))
+	 (nojoin (or (member char (list ?*))
+                     t)))
           ;; ;; \([[:alpha:]+]\)-u\. → \1- u.
 	  ;; (cond ((member char (list ?, ?\[ ?\] ?\) ?\; ?-)))
           ;;       ;; xs[i] = 1.5 > len(test_list) =
