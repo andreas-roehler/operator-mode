@@ -1,6 +1,6 @@
 ;;; operator-sh-mode-test.el --- operator org-mode tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2024  Andreas Röhler
+;; Copyright (C) 2019-2026  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
@@ -161,6 +161,59 @@
     (should (char-equal (char-before (1- (point))) ?f))
     ))
 
+(ert-deftest operator-sh-mode-test-Z7Ib3q ()
+  (operator-test
+      "[ -d $HOME/foo ]|"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?|))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
+
+(ert-deftest operator-sh-mode-test-xjTom1 ()
+  (operator-test
+      "[ -d $HOME/foo ] ||"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?|))
+    (should (char-equal (char-before (- (point) 2)) ?|))
+    (should (char-equal (char-before (- (point) 3)) 32))
+    ))
+
+(ert-deftest operator-sh-mode-test-A3fGq2 ()
+  (operator-test
+      "[ -d $HOME/foo ] &&"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?&))
+    (should (char-equal (char-before (- (point) 2)) ?&))
+    (should (char-equal (char-before (- (point) 3)) 32))
+    ))
+
+(ert-deftest operator-sh-mode-test-TqZlWk ()
+  (operator-test
+      "[ -d $HOME/foo ]&"
+    'sh-mode
+    operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?&))
+    (should (char-equal (char-before (- (point) 2)) 32))
+    ))
 
 (provide 'operator-sh-mode-test)
 ;;; operator-sh-mode-test.el ends here
