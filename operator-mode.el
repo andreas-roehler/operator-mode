@@ -1820,6 +1820,8 @@ Haskell: (>=>) :: Monad"
 (defun operator--sh-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'shell-notfirst)
+        ((eq (char-before (- (point) 2)) char)
+         'char-equal-before)
 	;; EMACS=emacs
         ;; git commit -s -a -m "sdf,
         ;;  > ..
@@ -1918,13 +1920,15 @@ Haskell: (>=>) :: Monad"
   "Shell-mode"
   (let* ((notfirst (operator--sh-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--sh-notsecond char pps list-start-char notsecond))
-	 (nojoin (not (and
-                          ;; ||
-                          (member char (list ?& ?< ?= ?> ?|))
-                          (member (char-before (- (point) 1)) (list ?& ?< ?= ?> ?|))
-                          ;; (eq (char-before (- (point) 2)) ?&)
-                          )))
-                   )
+	 (nojoin (not (or
+                       ;; (eq (char-before (- (point) 2)) char)
+                       (eq notfirst 'char-equal-before)
+                       (and
+                        ;; ||
+                        (member char (list ?& ?< ?= ?> ?|))
+                        (member (char-before (- (point) 1)) (list ?& ?< ?= ?> ?|))
+                        ;; (eq (char-before (- (point) 2)) ?&)
+                        )))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--shell-notfirst (char pps list-start-char notfirst)
