@@ -1,6 +1,6 @@
 ;;; operator-other-test.el --- other tests  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2020  Andreas Röhler
+;; Copyright (C) 2019-2026  Andreas Röhler
 
 ;; Author: Andreas Röhler <andreas.roehler@easy-emacs.de>
 ;; Keywords: convenience
@@ -53,7 +53,6 @@
     (should (char-equal (char-before) 32))
     (should (looking-back "String greeting = " (line-beginning-position)))))
 
-
 ;; Org
 (ert-deftest operator-orgmode-test-WG0LXr ()
   (operator-test
@@ -74,7 +73,15 @@
     (should (char-equal (char-after) 32))
     (should (char-equal (char-before) ?,))))
 
-
+(ert-deftest operator-textmode-test-cmZTg0 ()
+  (operator-test
+      "dann:"
+    'text-mode
+    operator-mode-debug
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?:))))
 
 (provide 'operator-other-test)
 ;;; operator-other-test.el ends here
