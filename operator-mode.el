@@ -1163,7 +1163,7 @@ Haskell: (>=>) :: Monad"
               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
          'nix-after-opening)
         ((and (nth 1 pps)
-              
+
               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
@@ -1274,7 +1274,7 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
-          
+
           ;; (nix-interactive-session)
           ;; (not (or
           ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  nix-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
@@ -2449,7 +2449,20 @@ Haskell: (>=>) :: Monad"
         ((member char (list ?< ?>))
          'org-punct)
         ;; _sys_membarrier
-	((member char (list ?! ?$ ?, ?- ?. ?/ ?: ?\; ?? ?@ ?_))
+	((member char (list
+                       ?!
+                       ?$
+                       ?+
+                       ?,
+                       ?-
+                       ?.
+                       ?/
+                       ?:
+                       ??
+                       ?@
+                       ?\;
+                       ?_
+                       ))
 	 (unless
              (or
               (looking-back "^\\* *." (line-beginning-position))
@@ -2495,7 +2508,15 @@ Haskell: (>=>) :: Monad"
 	((member char (list ?\( ?\) ?/ ?\[ ?\]))
 	 'org-listing)
         ;; _sys_membarrier
-	((member char (list ?$ ?- ?. ?: ?@ ?_))
+	((member char (list
+                       ?$
+                       ?+
+                       ?-
+                       ?.
+                       ?:
+                       ?@
+                       ?_
+                       ))
 	 'org-punct-class)
 	;; index-p
 	((and
