@@ -2449,20 +2449,7 @@ Haskell: (>=>) :: Monad"
         ((member char (list ?< ?>))
          'org-punct)
         ;; _sys_membarrier
-	((member char (list
-                       ?!
-                       ?$
-                       ?+
-                       ?,
-                       ?-
-                       ?.
-                       ?/
-                       ?:
-                       ??
-                       ?@
-                       ?\;
-                       ?_
-                       ))
+	((member char (list 33 36 43 44 45 46 47 58 59 63 64 95 176))
 	 (unless
              (or
               (looking-back "^\\* *." (line-beginning-position))
