@@ -2503,6 +2503,7 @@ Haskell: (>=>) :: Monad"
                        ?:
                        ?@
                        ?_
+                       ?<
                        ))
 	 'org-punct-class)
 	;; index-p
@@ -2524,16 +2525,6 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
 	 (nojoin (or (member char (list ?*))
                      t)))
-          ;; ;; \([[:alpha:]+]\)-u\. → \1- u.
-	  ;; (cond ((member char (list ?, ?\[ ?\] ?\) ?\; ?-)))
-          ;;       ;; xs[i] = 1.5 > len(test_list) =
-          ;;       ;; ((and (member (char-before (- (point) 1)) operator-known-operators)(eq (char-before (- (point) 1))?\s))
-          ;;       ((or (member (char-before (- (point) 1)) (list 41 ?? ?! ?.))
-          ;;            (member (char-before (- (point) 2)) (list 41 ?? ?! ?.)))
-          ;;        t)
-          ;;       ;; ((looking-back "^\\* *." (line-beginning-position))
-          ;;       ;;  'org-at-heading)
-          ;;       )))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--text-notfirst (char pps list-start-char notfirst)
