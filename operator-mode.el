@@ -401,7 +401,7 @@ Haskell: (>=>) :: Monad"
               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
          'rust-after-opening)
         ((and (nth 1 pps)
-              
+
               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
@@ -510,7 +510,7 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
-          
+
           ;; (rust-interactive-session)
           ;; (not (or
           ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  rust-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
@@ -637,14 +637,7 @@ Haskell: (>=>) :: Monad"
               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
          'dhall-after-opening)
         ((and (nth 1 pps)
-              
               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
-         ;; bar n m = baz (foo n +
-         ;; foo p (x:xs) = and [p x |
-         ;; if n < 0 then -1
-         ;; (x-
-         ;; [p x | x <
-         ;; [f x | x <-
          'dhall-punct-in-list)
         ;; sum' (x:
         ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
@@ -684,16 +677,7 @@ Haskell: (>=>) :: Monad"
         ((and (nth 1 pps)
               ;; (+)
               (eq (nth 1 pps) (- (point) 2))
-              ;; (member char (list ?- ?_ ?:))
-              ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
-              ;; foo m n = Just (_
               (member char (list ?! ?\" ?# ?$ ?& ?' ?* ?, ?. ?\; ?? ?@ ?^ ?~)))
-         ;; [f x | x <-
-         ;; [p x | x <
-         ;; foo p (x:xs) = and [p x |
-         ;; if n < 0 then -1
-         ;; (x-
-         ;; foo (xs:
          'dhall-punct-in-list)
         ;; foo m n = Just (_
         ;; ((member char (list ?_))
@@ -720,7 +704,6 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
-          
           (or
 	   ;; "pure ($ y) <*> u"
            (and
@@ -743,19 +726,13 @@ Haskell: (>=>) :: Monad"
            ))
 	 ;; (not (looking-back "-." (line-beginning-position)))
 	 'dhall-in-list-p)
-        ;; ((looking-back " *}*;" (line-beginning-position))
-        ;;  'semicolon-braced-list-start-char)
-        ;; ;; data Contact =  Contact { name :: "asdf" }
-        ;; (cond ;; (
-        ;;  ;; 	(equal ?, char)
-        ;;  ;; 	'dhall-list-separator)
-        ((and
+        ;; ((and
           ;; list-start-char (equal ?\[ list-start-char)
           ;; evens n = map f [1..n]
-          (member char (list ?, ?.))
+          ;; (member char (list ?, ?.))
 	  ;; (equal ?, char)
-          )
-         'dhall-in-bracketed)
+          ;; )
+         ;; 'dhall-in-bracketed)
         ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
         ((nth 4 pps)
@@ -927,7 +904,7 @@ Haskell: (>=>) :: Monad"
               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
          'haskell-after-opening)
         ((and (nth 1 pps)
-              
+
               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
@@ -1010,7 +987,7 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
-          
+
           (or
 	   ;; "pure ($ y) <*> u"
            (and
