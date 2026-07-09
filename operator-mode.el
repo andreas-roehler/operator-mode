@@ -671,38 +671,11 @@ Haskell: (>=>) :: Monad"
 	((looking-back "import +[^ ]+" (line-beginning-position))
 	 'haskell-import)
 	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
-	;; (list-start-char
-	;;  ;; data Contact =  Contact { name :: "asdf" }
-	;;  ;; (unless (eq list-start-char ?{)
-	;;  (cond
-        ;;   ;; already as 'separator
-        ;;   ;; ((equal ?, char)
-	;;   ;;  'haskell-list-separator)
-	;;   ((and (equal ?\[ list-start-char)
-	;; 	(equal ?. char))
-	;;    'haskell-construct-for-export)
-	;;   ((and (equal ?\[ list-start-char)
-	;; 	(equal ?, char))
-	;;    'haskell-operator--in-list-continue)
-	;;   ;; let x = 5 in x * x
-	;;   ;; ((equal ?* char)
-	;;   ;; 	'haskell-equal-\*-in-list-p)
-	;;   ((member char (list ?\( ?\) ?\] ?_))
-	;;    'haskell-listing)
-	;;   ((and (nth 1 pps)
-        ;;         ;; (member char (list ?$))
-        ;;         (eq (nth 1 pps) (- (point) 2)))
-	;;    ;; "pure ($ y) <*> u"
-	;;    'in-list)
-	;;   ((and (nth 3 pps)(not (eq (char-before) ?|)))
-	;;    'haskell-and-nth-1-pps-nth-3-pps)
-	;;   ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-	;;    'pattern-match-on-list)))
-        ((nth 4 pps)
+	((nth 4 pps)
          'haskell-in-comment)
-         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+        (list-start-char
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
 
 (defun operator--haskell-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
@@ -751,10 +724,6 @@ Haskell: (>=>) :: Monad"
 	((and
 	  (nth 1 pps)
           (not (haskell-session-maybe))
-          ;; (haskell-interactive-session)
-          ;; (not (or
-          ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  haskell-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-          ;;      (and comint-last-prompt (string-match haskell-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
           (or
 	   ;; "pure ($ y) <*> u"
            (and
@@ -773,8 +742,8 @@ Haskell: (>=>) :: Monad"
                 ;; "(x<="
                 (member char (list ?< ?= ?|))
                 ;; list-start-char (equal 40 list-start-char)
-)
-))
+                )
+           ))
 	 ;; (not (looking-back "-." (line-beginning-position)))
 	 'haskell-in-list-p)
         ;; ((looking-back " *}*;" (line-beginning-position))
@@ -785,18 +754,18 @@ Haskell: (>=>) :: Monad"
         ;;  ;; 	'haskell-list-separator)
         ((and
           ;; list-start-char (equal ?\[ list-start-char)
-              ;; evens n = map f [1..n]
-              (member char (list ?, ?.))
-	      ;; (equal ?, char)
-)
+          ;; evens n = map f [1..n]
+          (member char (list ?, ?.))
+	  ;; (equal ?, char)
+          )
          'haskell-in-bracketed)
         ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
          'pattern-match-on-list)
         ((nth 4 pps)
          'haskell-in-comment)
         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
 
 (defun operator--do-haskell-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
@@ -854,34 +823,8 @@ Haskell: (>=>) :: Monad"
 	 'haskell-import)
 	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)
-	;; (list-start-char
-	;;  ;; data Contact =  Contact { name :: "asdf" }
-	;;  ;; (unless (eq list-start-char ?{)
-	;;  (cond ((equal ?, char)
-	;; 	'haskell-list-separator)
-	;;        ((and (equal ?\[ list-start-char)
-	;; 	     (equal ?. char))
-	;; 	'haskell-construct-for-export)
-	;;        ((and (equal ?\[ list-start-char)
-	;; 	     (equal ?, char))
-	;; 	'haskell-operator--in-list-continue)
-	;;        ;; let x = 5 in x * x
-	;;        ;; ((equal ?* char)
-	;;        ;; 	'haskell-equal-\*-in-list-p)
-	;;        ((member char (list ?\( ?\) ?\] ?_))
-	;; 	'haskell-listing)
-	;;        ((and (nth 1 pps)
-        ;;              ;; (member char (list ?$))
-        ;;              (eq (nth 1 pps) (- (point) 2)))
-	;; 	;; "pure ($ y) <*> u"
-	;; 	'in-list)
-	;;        ((and (nth 3 pps)(not (eq (char-before) ?|)))
-	;; 	'haskell-and-nth-1-pps-nth-3-pps)
-	;;        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-	;; 	'pattern-match-on-list)))
-        ))
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
 
 (defun operator--haskell-interactive-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
@@ -973,24 +916,13 @@ Haskell: (>=>) :: Monad"
                       ;; asdf = eins +
                       (looking-back (concat "[][:alnum:]+})]"
                                             (char-to-string char))
-                                            (line-beginning-position))))
+                                    (line-beginning-position))))
 		((and (member char (list ?=))
 		      (save-excursion (backward-char)
 				      (looking-back "_ +" (line-beginning-position)))))
 		((save-excursion (backward-char)
 				 (looking-back ") *" (line-beginning-position)))))))
-    (operator--final char orig notfirst notsecond nojoin))
-  ;; (let* ((notfirst (operator--haskell-interactive-notfirst char pps list-start-char notfirst))
-  ;;        (notsecond (operator--haskell-interactive-notsecond char pps list-start-char notsecond))
-  ;;        (nojoin
-  ;;         (cond ((member char (list ?_ ?, ?\[ ?\] ?\))))
-  ;;       	((and
-  ;;       	      (save-excursion (backward-char)
-  ;;       			      (looking-back "_ +" (line-beginning-position)))))
-  ;;       	((save-excursion (backward-char)
-  ;;       			 (looking-back ") +" (line-beginning-position)))))))
-  ;;   (operator--final char orig notfirst notsecond nojoin)
-  )
+    (operator--final char orig notfirst notsecond nojoin)))
 
 
 (defun operator--idris-notfirst (char pps list-start-char notfirst)
