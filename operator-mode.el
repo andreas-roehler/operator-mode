@@ -401,7 +401,7 @@ Haskell: (>=>) :: Monad"
               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
          'rust-after-opening)
         ((and (nth 1 pps)
-              (not (rust-session-maybe))
+              
               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
@@ -418,8 +418,6 @@ Haskell: (>=>) :: Monad"
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
          'rust-number-following-alpha)
-	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) rust-font-lock-keywords)
-	 'rust-font-lock-keyword)
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?, ?\;))
@@ -512,7 +510,7 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
-          (not (rust-session-maybe))
+          
           ;; (rust-interactive-session)
           ;; (not (or
           ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  rust-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
@@ -632,6 +630,296 @@ Haskell: (>=>) :: Monad"
 	 (notsecond (operator--sql-notsecond char pps list-start-char notsecond)))
     (operator--final char orig notfirst notsecond nojoin)))
 
+(defun operator--dhall-notfirst (char pps list-start-char notfirst)
+  (cond (notfirst
+	 'dhall-notfirst)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
+         'dhall-after-opening)
+        ((and (nth 1 pps)
+              
+              (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
+         ;; bar n m = baz (foo n +
+         ;; foo p (x:xs) = and [p x |
+         ;; if n < 0 then -1
+         ;; (x-
+         ;; [p x | x <
+         ;; [f x | x <-
+         'dhall-punct-in-list)
+        ;; sum' (x:
+        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
+         'pattern-match-on-list)
+        ((member char (list ?\) ?_))
+         'dhall-punct)
+        ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
+              (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
+         'dhall-number-following-alpha)
+
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((member char (list ?, ?\;))
+	 'separator)
+	((looking-back "<\\*" (line-beginning-position))
+	 'dhall-<)
+	((looking-back "^-" (line-beginning-position))
+	 'dhall-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'dhall-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
+	((nth 4 pps)
+         'dhall-in-comment)
+        (list-start-char
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
+
+(defun operator--dhall-notsecond (char pps list-start-char notsecond)
+  (cond (notsecond
+	 'notsecond)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
+         'dhall-after-opening)
+        ;; (x:_n
+        ((and (nth 1 pps)
+              ;; (+)
+              (eq (nth 1 pps) (- (point) 2))
+              ;; (member char (list ?- ?_ ?:))
+              ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
+              ;; foo m n = Just (_
+              (member char (list ?! ?\" ?# ?$ ?& ?' ?* ?, ?. ?\; ?? ?@ ?^ ?~)))
+         ;; [f x | x <-
+         ;; [p x | x <
+         ;; foo p (x:xs) = and [p x |
+         ;; if n < 0 then -1
+         ;; (x-
+         ;; foo (xs:
+         'dhall-punct-in-list)
+        ;; foo m n = Just (_
+        ;; ((member char (list ?_))
+        ;;  'dhall-punct)
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+	((member char (list ?\( ?\[ ?{))
+	 'dhall-list-delimiter)
+        ((and (nth 3 pps) (not (eq (char-before) ?|)))
+	 'dhall-in-string)
+	;; index-p
+	((and
+	  ;; "even <$> (2,2)"
+	  (not (equal char ?,))
+	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'dhall-comment-start)
+	((looking-back "import +[^ ]+." (line-beginning-position))
+	 'dhall-import)
+	((looking-back "<." (line-beginning-position))
+	 'dhall->)
+        ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
+        ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
+        ;;  'in-list)
+	((and
+	  (nth 1 pps)
+          
+          (or
+	   ;; "pure ($ y) <*> u"
+           (and
+            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
+            ;; "pure ($ y) <*> u"
+            (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
+            ;; (<=
+            ;; (==)
+            ;; mylast (_:xs) = mylast xs
+            ;; (<$>)
+            ;; pure (.
+            ;; foo m n = Just (_
+            (member char (list ?$ ?- ?. ?< ?= ?>)))
+           (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
+                ;; "(september <|> oktober)"
+                ;; "(x<="
+                (member char (list ?< ?= ?|))
+                ;; list-start-char (equal 40 list-start-char)
+                )
+           ))
+	 ;; (not (looking-back "-." (line-beginning-position)))
+	 'dhall-in-list-p)
+        ;; ((looking-back " *}*;" (line-beginning-position))
+        ;;  'semicolon-braced-list-start-char)
+        ;; ;; data Contact =  Contact { name :: "asdf" }
+        ;; (cond ;; (
+        ;;  ;; 	(equal ?, char)
+        ;;  ;; 	'dhall-list-separator)
+        ((and
+          ;; list-start-char (equal ?\[ list-start-char)
+          ;; evens n = map f [1..n]
+          (member char (list ?, ?.))
+	  ;; (equal ?, char)
+          )
+         'dhall-in-bracketed)
+        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
+         'pattern-match-on-list)
+        ((nth 4 pps)
+         'dhall-in-comment)
+        (list-start-char
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
+
+(defun operator--do-dhall-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Haskell"
+  (let* ((notfirst (operator--dhall-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--dhall-notsecond char pps list-start-char notsecond))
+	 (nojoin
+	  (cond ((member char (list ?\) ?, ?\[ ?\] ?_)))
+                ((and (member char operator-known-operators)
+                      ;; (concat "[][:alnum:]+})]" (char-to-string char))
+                      ;; foo (x:xs) =
+                      ;; a = "asd" ++
+                      (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position))))
+                ((and (member char (list ?=))
+                      (save-excursion (backward-char)
+                                      (looking-back "_ +" (line-beginning-position)))))
+                ((save-excursion (backward-char)
+                                 (looking-back ") *" (line-beginning-position)))))))
+    (operator--final char orig notfirst notsecond nojoin)))
+
+(defun operator--dhall-interactive-notfirst (char pps list-start-char notfirst)
+  (cond (notfirst
+         'dhall-notfirst)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
+         'dhall-after-opening)
+        ;; foo (Rect 2 3)
+        ((member char (list ?\( ?\) ?\[ ?\] ?{ ?}))
+         'dhall-list-delimiter)
+        ((nth 3 pps)
+         'in-string-p)
+
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+        ;; λ> :l foo.hs
+        ((and (eq char ?.) (looking-back ":[[:print:]][^:]*" (line-beginning-position)))
+	 'loading)
+	((save-excursion
+           (backward-char 1)
+	   (looking-back
+	    (concat dhall-interactive-prompt "*")
+	    ;; dhall-interactive-prompt
+	    (line-beginning-position)))
+	 'dhall-dhall-interactive-prompt)
+	((member char (list ?, ?/ ?\;))
+	 'separator)
+	((looking-back "<\\*" (line-beginning-position))
+	 'dhall-<)
+	((looking-back "^-" (line-beginning-position))
+	 'dhall-comment-start)
+	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+	((looking-back "return +[^ ]+" (line-beginning-position)))
+	((looking-back "import +[^ ]+" (line-beginning-position))
+	 'dhall-import)
+	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
+        (list-start-char
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
+
+(defun operator--dhall-interactive-notsecond (char pps list-start-char notsecond)
+  (cond (notsecond
+	 'dhall-notsecond)
+        ((and (member char operator-known-operators)
+              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
+         'dhall-after-opening)
+        ((member char (list ?-))
+         'dhall-interactive-option)
+        ((nth 3 pps)
+         'in-string-p)
+	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+	 'float)
+        ;; λ> :l foo.hs
+        ((and (eq char ?.) (looking-back ":[[:print:]][^:]*" (line-beginning-position)))
+	 'loading)
+	((member char (list ?\( ?\) ?\[ ?\] ?{ ?}))
+	 'dhall-list-delimiter)
+        ((save-excursion
+           (backward-char 1)
+	   (looking-back
+	    (concat dhall-interactive-prompt "*")
+	    ;; dhall-interactive-prompt
+	    (line-beginning-position)))
+	 'dhall-dhall-interactive-prompt)
+	((and (nth 3 pps) (not (eq (char-before) ?|)))
+	 'dhall-in-string)
+	;; index-p
+	((and
+	  ;; "even <$> (2,2)"
+	  (not (equal char ?,))
+	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+	((looking-back "^-" (line-beginning-position))
+	 'dhall-comment-start)
+	((looking-back "import +[^ ]+." (line-beginning-position))
+	 'dhall-import)
+	((looking-back "<\\*" (line-beginning-position))
+	 'dhall->)
+        ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
+        ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
+        ;;  'in-list)
+	((and
+	  (nth 1 pps)
+          (or
+           (and
+            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
+            ;; "pure ($ y) <*> u"
+            (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
+            ;; (<=
+            ;; (==)
+            ;; mylast (_:xs) = mylast xs
+            ;; (<$>)
+            ;; pure (.
+            (member char (list ?$ ?+ ?- ?. ?< ?= ?> ?_)))
+           (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
+                ;; "(september <|> oktober)"
+                (member char (list ?< ?|))
+                ;; list-start-char (equal 40 list-start-char)
+                )))
+	 ;; (not (looking- back "-." (line-beginning-position)))
+	 'dhall-in-list-p)
+        ;; ((looking-back " *}*;" (line-beginning-position))
+        ;;  'semicolon-braced-list-start-char)
+        ;; ;; data Contact =  Contact { name :: "asdf" }
+        ;; (cond ;; (
+        ((member char (list ?/))
+	 'separator)
+        ((and
+          ;; list-start-char (equal ?\[ list-start-char)
+          ;; evens n = map f [1..n]
+          (member char (list ?.))
+	  ;; (equal ?, char)
+          )
+         'dhall-in-bracketed)
+        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
+         'pattern-match-on-list)
+        (list-start-char
+         ;; silence compiler warning Unused lexical argument ‘list- start-char’
+         nil)))
+
+(defun operator--do-dhall-interactive-mode (char orig pps list-start-char &optional notfirst notsecond)
+  "Haskell"
+  (let* ((notfirst (operator--dhall-interactive-notfirst char pps list-start-char notfirst))
+	 (notsecond (operator--dhall-interactive-notsecond char pps list-start-char notsecond))
+	 (nojoin
+	  (cond ((member char (list ?\) ?, ?\[ ?\] ?_)))
+                ((and (member char operator-known-operators)
+                      ;; foo (x:xs)=
+                      ;; asdf = eins +
+                      (looking-back (concat "[][:alnum:]+})]"
+                                            (char-to-string char))
+                                    (line-beginning-position))))
+		((and (member char (list ?=))
+		      (save-excursion (backward-char)
+				      (looking-back "_ +" (line-beginning-position)))))
+		((save-excursion (backward-char)
+				 (looking-back ") *" (line-beginning-position)))))))
+    (operator--final char orig notfirst notsecond nojoin)))
+
+
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'haskell-notfirst)
@@ -639,7 +927,7 @@ Haskell: (>=>) :: Monad"
               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
          'haskell-after-opening)
         ((and (nth 1 pps)
-              (not (haskell-session-maybe))
+              
               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
          ;; bar n m = baz (foo n +
          ;; foo p (x:xs) = and [p x |
@@ -656,8 +944,7 @@ Haskell: (>=>) :: Monad"
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
          'haskell-number-following-alpha)
-	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
-	 'haskell-font-lock-keyword)
+
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?, ?\;))
@@ -723,7 +1010,7 @@ Haskell: (>=>) :: Monad"
         ;;  'in-list)
 	((and
 	  (nth 1 pps)
-          (not (haskell-session-maybe))
+          
           (or
 	   ;; "pure ($ y) <*> u"
            (and
@@ -797,8 +1084,7 @@ Haskell: (>=>) :: Monad"
          'haskell-list-delimiter)
         ((nth 3 pps)
          'in-string-p)
-	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) haskell-font-lock-keywords)
-	 'haskell-font-lock-keyword)
+
 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
         ;; λ> :l foo.hs
@@ -1112,9 +1398,7 @@ Haskell: (>=>) :: Monad"
         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
          'nix-number-following-alpha)
-	((member (save-excursion (backward-char) (string= "Data" (word-at-point))) nix-font-lock-keywords)
-	 'nix-font-lock-keyword)
-	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+  	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
 	 'float)
 	((member char (list ?, ?\;))
 	 'separator)
@@ -2607,17 +2891,20 @@ Haskell: (>=>) :: Monad"
        (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
       (`coq-mode
        (operator--do-coq-mode char orig pps list-start-char notfirst notsecond))
+      (`dhall-mode
+       (operator--do-dhall-mode char orig pps list-start-char notfirst notsecond))
+      (`dhall-interactive-mode
+       (operator--do-dhall-mode char orig pps list-start-char notfirst notsecond))
       (`emacs-lisp-mode
        (operator--do-emacs-lisp-mode char orig pps list-start-char notfirst notsecond))
       (`haskell-mode
+       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+      (`haskell-interactive-mode
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`idris-mode
        (operator--do-idris-mode char orig pps list-start-char notfirst notsecond))
       (`idris-repl-mode
        (operator--do-idris-repl-mode char orig pps list-start-char notfirst notsecond))
-      (`haskell-interactive-mode
-       ;; (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
-       (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-haskell-mode
        ;; (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
        (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
