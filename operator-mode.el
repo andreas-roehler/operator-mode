@@ -633,113 +633,20 @@ Haskell: (>=>) :: Monad"
 (defun operator--dhall-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'dhall-notfirst)
-        ((and (member char operator-known-operators)
-              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
-         'dhall-after-opening)
-        ((and (nth 1 pps)
-              (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
-         'dhall-punct-in-list)
-        ;; sum' (x:
-        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-         'pattern-match-on-list)
-        ((member char (list ?\) ?_))
+        ((member char (list ?.))
          'dhall-punct)
-        ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
-              (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
-         'dhall-number-following-alpha)
-
-	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
-	 'float)
-	((member char (list ?, ?\;))
-	 'separator)
-	((looking-back "<\\*" (line-beginning-position))
-	 'dhall-<)
-	((looking-back "^-" (line-beginning-position))
-	 'dhall-comment-start)
-	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
-	((looking-back "return +[^ ]+" (line-beginning-position)))
-	((looking-back "import +[^ ]+" (line-beginning-position))
-	 'dhall-import)
-	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
-	((nth 4 pps)
-         'dhall-in-comment)
-        (list-start-char
-         ;; silence compiler warning Unused lexical argument ‘list-start-char’
-         nil)))
+        ((member char (list ?\( ?{))
+         'dhall-opener)
+        ))
 
 (defun operator--dhall-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'notsecond)
-        ((and (member char operator-known-operators)
-              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
-         'dhall-after-opening)
-        ;; (x:_n
-        ((and (nth 1 pps)
-              ;; (+)
-              (eq (nth 1 pps) (- (point) 2))
-              (member char (list ?! ?\" ?# ?$ ?& ?' ?* ?, ?. ?\; ?? ?@ ?^ ?~)))
-         'dhall-punct-in-list)
-        ;; foo m n = Just (_
-        ;; ((member char (list ?_))
-        ;;  'dhall-punct)
-	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
-	 'float)
-	((member char (list ?\( ?\[ ?{))
-	 'dhall-list-delimiter)
-        ((and (nth 3 pps) (not (eq (char-before) ?|)))
-	 'dhall-in-string)
-	;; index-p
-	((and
-	  ;; "even <$> (2,2)"
-	  (not (equal char ?,))
-	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
-	((looking-back "^-" (line-beginning-position))
-	 'dhall-comment-start)
-	((looking-back "import +[^ ]+." (line-beginning-position))
-	 'dhall-import)
-	((looking-back "<." (line-beginning-position))
-	 'dhall->)
-        ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
-        ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
-        ;;  'in-list)
-	((and
-	  (nth 1 pps)
-          (or
-	   ;; "pure ($ y) <*> u"
-           (and
-            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
-            ;; "pure ($ y) <*> u"
-            (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
-            ;; (<=
-            ;; (==)
-            ;; mylast (_:xs) = mylast xs
-            ;; (<$>)
-            ;; pure (.
-            ;; foo m n = Just (_
-            (member char (list ?$ ?- ?. ?< ?= ?>)))
-           (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
-                ;; "(september <|> oktober)"
-                ;; "(x<="
-                (member char (list ?< ?= ?|))
-                ;; list-start-char (equal 40 list-start-char)
-                )
-           ))
-	 ;; (not (looking-back "-." (line-beginning-position)))
-	 'dhall-in-list-p)
-        ;; ((and
-          ;; list-start-char (equal ?\[ list-start-char)
-          ;; evens n = map f [1..n]
-          ;; (member char (list ?, ?.))
-	  ;; (equal ?, char)
-          ;; )
-         ;; 'dhall-in-bracketed)
-        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-         'pattern-match-on-list)
-        ((nth 4 pps)
-         'dhall-in-comment)
-        (list-start-char
-         ;; silence compiler warning Unused lexical argument ‘list-start-char’
-         nil)))
+        ((member char (list ?.))
+         'dhall-punct)
+        ((member char (list ?\) ?}))
+         'dhall-closer)
+        ))
 
 (defun operator--do-dhall-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"

@@ -19,24 +19,24 @@
 # Code:
 
 if [ $1 == en ]; then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif [ $1 == e25 ]; then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e26 ];then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e27 ];then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e28 ];then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e29 ];then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
     [ $1 == e30 ];then
-    export EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 else
     EMACS=emacs
 fi
@@ -53,12 +53,15 @@ WERKSTATT=${WERKSTATT:=1}
 echo "\$WERKSTATT: $WERKSTATT"
 
 TESTDIR=$PDIR/test
-export TESTDIR
+
 echo "\$TESTDIR: $TESTDIR"
 
 echo "\$SCALAMODE: $SCALAMODE"
 
-DHALLMODE=${DHALLMODE:=${HOME}.emacs.d/straight/repos/dhall-mode}
+DHALLMODE=${DHALLMODE:=${HOME}/.emacs.d/straight/repos/dhall-mode}
+REFORMATTER=${DHALLMODE:=${HOME}/.emacs.d/straight/repos/emacs-reformatter}
+
+echo "\$DHALLMODE: $DHALLMODE"
 
 IFLOCAL=${IFLOCAL:=1}
 
@@ -234,18 +237,23 @@ h10 () {
 
 # --eval "(require 'coq-mode)" \
 
+# --eval "(add-to-list 'load-path (getenv \"REFORMATTER\"))" 
+# --eval "(add-to-list 'load-path (getenv \"DHALLMODE\"))" 
+
 h11 () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
 --eval "(setq operator-mode-debug nil)" \
---eval "(add-to-list 'load-path (getenv \"DHALLMODE\"))" \
+--eval "(load \"${HOME}/.emacs.d/straight/repos/emacs-reformatter/reformatter.el\")" \
+--eval "(require 'reformatter)" \
+--eval "(load \"${HOME}/.emacs.d/straight/repos/dhall-mode/dhall-mode.el\")" \
 --eval "(require 'dhall-mode)" \
 --eval "(add-to-list 'load-path (getenv \"PWD\"))" \
 --eval "(require 'operator-mode)" \
 --eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
 --eval "(require 'operator-setup-tests)" \
 \
--load $TEST10 \
+-load $TEST11 \
 -f ert-run-tests-batch-and-exit
 }
     
