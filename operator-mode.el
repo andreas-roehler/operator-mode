@@ -1261,185 +1261,221 @@ Haskell: (>=>) :: Monad"
 (defun operator--nix-notfirst (char pps list-start-char notfirst)
   (cond (notfirst
 	 'nix-notfirst)
-        ((and (member char operator-known-operators)
-              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
-         'nix-after-opening)
-        ((and (nth 1 pps)
-
-              (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
-         ;; bar n m = baz (foo n +
-         ;; foo p (x:xs) = and [p x |
-         ;; if n < 0 then -1
-         ;; (x-
-         ;; [p x | x <
-         ;; [f x | x <-
-         'nix-punct-in-list)
-        ;; sum' (x:
-        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-         'pattern-match-on-list)
-        ((member char (list ?\) ?_))
+        ((member char (list ?. ?\;))
          'nix-punct)
-        ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
-              (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
-         'nix-number-following-alpha)
-  	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
-	 'float)
-	((member char (list ?, ?\;))
-	 'separator)
-	((looking-back "<\\*" (line-beginning-position))
-	 'nix-<)
-	((looking-back "^-" (line-beginning-position))
-	 'nix-comment-start)
-	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
-	((looking-back "return +[^ ]+" (line-beginning-position)))
-	((looking-back "import +[^ ]+" (line-beginning-position))
-	 'nix-import)
-	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
-	;; (list-start-char
-	;;  ;; data Contact =  Contact { name :: "asdf" }
-	;;  ;; (unless (eq list-start-char ?{)
-	;;  (cond
-        ;;   ;; already as 'separator
-        ;;   ;; ((equal ?, char)
-	;;   ;;  'nix-list-separator)
-	;;   ((and (equal ?\[ list-start-char)
-	;; 	(equal ?. char))
-	;;    'nix-construct-for-export)
-	;;   ((and (equal ?\[ list-start-char)
-	;; 	(equal ?, char))
-	;;    'nix-operator--in-list-continue)
-	;;   ;; let x = 5 in x * x
-	;;   ;; ((equal ?* char)
-	;;   ;; 	'nix-equal-\*-in-list-p)
-	;;   ((member char (list ?\( ?\) ?\] ?_))
-	;;    'nix-listing)
-	;;   ((and (nth 1 pps)
-        ;;         ;; (member char (list ?$))
-        ;;         (eq (nth 1 pps) (- (point) 2)))
-	;;    ;; "pure ($ y) <*> u"
-	;;    'in-list)
-	;;   ((and (nth 3 pps)(not (eq (char-before) ?|)))
-	;;    'nix-and-nth-1-pps-nth-3-pps)
-	;;   ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-	;;    'pattern-match-on-list)))
-        ((nth 4 pps)
-         'nix-in-comment)
-         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+        ((member char (list ?\( ?{))
+         'nix-opener)
+        ))
 
 (defun operator--nix-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'notsecond)
-        ((and (member char operator-known-operators)
-              (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
-         'nix-after-opening)
-        ;; (x:_n
-        ((and (nth 1 pps)
-              ;; (+)
-              (eq (nth 1 pps) (- (point) 2))
-              ;; (member char (list ?- ?_ ?:))
-              ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
-              ;; foo m n = Just (_
-              (member char (list ?! ?\" ?# ?$ ?& ?' ?* ?, ?. ?\; ?? ?@ ?^ ?~)))
-         ;; [f x | x <-
-         ;; [p x | x <
-         ;; foo p (x:xs) = and [p x |
-         ;; if n < 0 then -1
-         ;; (x-
-         ;; foo (xs:
-         'nix-punct-in-list)
-        ;; foo m n = Just (_
-        ;; ((member char (list ?_))
-        ;;  'nix-punct)
-	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
-	 'float)
-	((member char (list ?\( ?\[ ?{))
-	 'nix-list-delimiter)
-        ((and (nth 3 pps) (not (eq (char-before) ?|)))
-	 'nix-in-string)
-	;; index-p
-	((and
-	  ;; "even <$> (2,2)"
-	  (not (equal char ?,))
-	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
-	((looking-back "^-" (line-beginning-position))
-	 'nix-comment-start)
-	((looking-back "import +[^ ]+." (line-beginning-position))
-	 'nix-import)
-	((looking-back "<." (line-beginning-position))
-	 'nix->)
-        ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
-        ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
-        ;;  'in-list)
-	((and
-	  (nth 1 pps)
-
-          ;; (nix-interactive-session)
-          ;; (not (or
-          ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  nix-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
-          ;;      (and comint-last-prompt (string-match nix-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
-          (or
-	   ;; "pure ($ y) <*> u"
-           (and
-            (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
-            ;; "pure ($ y) <*> u"
-            (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
-            ;; (<=
-            ;; (==)
-            ;; mylast (_:xs) = mylast xs
-            ;; (<$>)
-            ;; pure (.
-            ;; foo m n = Just (_
-            (member char (list ?$ ?- ?. ?< ?= ?>)))
-           (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
-                ;; "(september <|> oktober)"
-                ;; "(x<="
-                (member char (list ?< ?= ?|))
-                ;; list-start-char (equal 40 list-start-char)
-)
-))
-	 ;; (not (looking-back "-." (line-beginning-position)))
-	 'nix-in-list-p)
-        ;; ((looking-back " *}*;" (line-beginning-position))
-        ;;  'semicolon-braced-list-start-char)
-        ;; ;; data Contact =  Contact { name :: "asdf" }
-        ;; (cond ;; (
-        ;;  ;; 	(equal ?, char)
-        ;;  ;; 	'nix-list-separator)
-        ((and
-          ;; list-start-char (equal ?\[ list-start-char)
-              ;; evens n = map f [1..n]
-              (member char (list ?, ?.))
-	      ;; (equal ?, char)
-)
-         'nix-in-bracketed)
-        ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
-         'pattern-match-on-list)
-        ((nth 4 pps)
-         'nix-in-comment)
-        (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+        ((member char (list ?.))
+         'nix-punct)
+        ((member char (list ?\) ?}))
+         'nix-closer)
+        ))
 
 (defun operator--do-nix-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Haskell"
   (let* ((notfirst (operator--nix-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--nix-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond ((member char (list ?\) ?, ?\[ ?\] ?_)))
+	  (cond ((member char (list ?\) ?, ?\[ ?\] ?_ ?{ ?} )))
                 ((and (member char operator-known-operators)
                       ;; (concat "[][:alnum:]+})]" (char-to-string char))
                       ;; foo (x:xs) =
                       ;; a = "asd" ++
-                      (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position)))
-                 )
+                      (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position))))
                 ((and (member char (list ?=))
                       (save-excursion (backward-char)
                                       (looking-back "_ +" (line-beginning-position)))))
                 ((save-excursion (backward-char)
                                  (looking-back ") *" (line-beginning-position)))))))
     (operator--final char orig notfirst notsecond nojoin)))
+
+;; (defun operator--nix-notfirst (char pps list-start-char notfirst)
+;;   (cond (notfirst
+;; 	 'nix-notfirst)
+;;         ((and (member char operator-known-operators)
+;;               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
+;;          'nix-after-opening)
+;;         ((and (nth 1 pps)
+
+;;               (member char (list ?! ?\" ?# ?$ ?& ?' ?\) ?* ?, ?. ?\; ?? ?@ ?^ ?_ ?~) ))
+;;          ;; bar n m = baz (foo n +
+;;          ;; foo p (x:xs) = and [p x |
+;;          ;; if n < 0 then -1
+;;          ;; (x-
+;;          ;; [p x | x <
+;;          ;; [f x | x <-
+;;          'nix-punct-in-list)
+;;         ;; sum' (x:
+;;         ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
+;;          'pattern-match-on-list)
+;;         ((member char (list ?\) ?_))
+;;          'nix-punct)
+;;         ((and (member char (list ?0 ?1 ?2 ?3 ?4 ?5 ?6 ?7 ?8 ?9))
+;;               (looking-back (concat "[[:alpha:]]" (char-to-string char)) (line-beginning-position)))
+;;          'nix-number-following-alpha)
+;;   	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+;; 	 'float)
+;; 	((member char (list ?, ?\;))
+;; 	 'separator)
+;; 	((looking-back "<\\*" (line-beginning-position))
+;; 	 'nix-<)
+;; 	((looking-back "^-" (line-beginning-position))
+;; 	 'nix-comment-start)
+;; 	((looking-back "lambda +\\_<[^ ]+\\_>:" (line-beginning-position)))
+;; 	((looking-back "return +[^ ]+" (line-beginning-position)))
+;; 	((looking-back "import +[^ ]+" (line-beginning-position))
+;; 	 'nix-import)
+;; 	((looking-back "forall +[^ ]+.*" (line-beginning-position)))
+;; 	;; (list-start-char
+;; 	;;  ;; data Contact =  Contact { name :: "asdf" }
+;; 	;;  ;; (unless (eq list-start-char ?{)
+;; 	;;  (cond
+;;         ;;   ;; already as 'separator
+;;         ;;   ;; ((equal ?, char)
+;; 	;;   ;;  'nix-list-separator)
+;; 	;;   ((and (equal ?\[ list-start-char)
+;; 	;; 	(equal ?. char))
+;; 	;;    'nix-construct-for-export)
+;; 	;;   ((and (equal ?\[ list-start-char)
+;; 	;; 	(equal ?, char))
+;; 	;;    'nix-operator--in-list-continue)
+;; 	;;   ;; let x = 5 in x * x
+;; 	;;   ;; ((equal ?* char)
+;; 	;;   ;; 	'nix-equal-\*-in-list-p)
+;; 	;;   ((member char (list ?\( ?\) ?\] ?_))
+;; 	;;    'nix-listing)
+;; 	;;   ((and (nth 1 pps)
+;;         ;;         ;; (member char (list ?$))
+;;         ;;         (eq (nth 1 pps) (- (point) 2)))
+;; 	;;    ;; "pure ($ y) <*> u"
+;; 	;;    'in-list)
+;; 	;;   ((and (nth 3 pps)(not (eq (char-before) ?|)))
+;; 	;;    'nix-and-nth-1-pps-nth-3-pps)
+;; 	;;   ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
+;; 	;;    'pattern-match-on-list)))
+;;         ((nth 4 pps)
+;;          'nix-in-comment)
+;;          (list-start-char
+;;            ;; silence compiler warning Unused lexical argument ‘list-start-char’
+;;            nil)))
+
+;; (defun operator--nix-notsecond (char pps list-start-char notsecond)
+;;   (cond (notsecond
+;; 	 'notsecond)
+;;         ((and (member char operator-known-operators)
+;;               (member (char-before (- (point) 1))(list ?\( ?\[ ?{)))
+;;          'nix-after-opening)
+;;         ;; (x:_n
+;;         ((and (nth 1 pps)
+;;               ;; (+)
+;;               (eq (nth 1 pps) (- (point) 2))
+;;               ;; (member char (list ?- ?_ ?:))
+;;               ;; listeAnhaengen (x:xs) (y:ys) = foldr (\x (y:ys) -> [x] ++(y:ys)) (y:ys) (x:xs)
+;;               ;; foo m n = Just (_
+;;               (member char (list ?! ?\" ?# ?$ ?& ?' ?* ?, ?. ?\; ?? ?@ ?^ ?~)))
+;;          ;; [f x | x <-
+;;          ;; [p x | x <
+;;          ;; foo p (x:xs) = and [p x |
+;;          ;; if n < 0 then -1
+;;          ;; (x-
+;;          ;; foo (xs:
+;;          'nix-punct-in-list)
+;;         ;; foo m n = Just (_
+;;         ;; ((member char (list ?_))
+;;         ;;  'nix-punct)
+;; 	((and (eq char ?.) (looking-back "[ \t]+[0-9]\." (line-beginning-position)))
+;; 	 'float)
+;; 	((member char (list ?\( ?\[ ?{))
+;; 	 'nix-list-delimiter)
+;;         ((and (nth 3 pps) (not (eq (char-before) ?|)))
+;; 	 'nix-in-string)
+;; 	;; index-p
+;; 	((and
+;; 	  ;; "even <$> (2,2)"
+;; 	  (not (equal char ?,))
+;; 	  (looking-back "^return +[^ ]+.*" (line-beginning-position))))
+;; 	((looking-back "^-" (line-beginning-position))
+;; 	 'nix-comment-start)
+;; 	((looking-back "import +[^ ]+." (line-beginning-position))
+;; 	 'nix-import)
+;; 	((looking-back "<." (line-beginning-position))
+;; 	 'nix->)
+;;         ;; ((and (nth 1 pps) (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$))))
+;;         ;;  ;; (and (nth 1 pps) (eq (nth 1 pps) (- (point) 2)))
+;;         ;;  'in-list)
+;; 	((and
+;; 	  (nth 1 pps)
+
+;;           ;; (nix-interactive-session)
+;;           ;; (not (or
+;;           ;;      (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match  nix-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+;;           ;;      (and comint-last-prompt (string-match nix-interactive-prompt-regex (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point))))))
+;;           (or
+;; 	   ;; "pure ($ y) <*> u"
+;;            (and
+;;             (not (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point))))
+;;             ;; "pure ($ y) <*> u"
+;;             (not (and (eq (char-before (- (point) 1)) 40) (eq char ?$)))
+;;             ;; (<=
+;;             ;; (==)
+;;             ;; mylast (_:xs) = mylast xs
+;;             ;; (<$>)
+;;             ;; pure (.
+;;             ;; foo m n = Just (_
+;;             (member char (list ?$ ?- ?. ?< ?= ?>)))
+;;            (and (string-match "[[:alnum:] ]+" (buffer-substring-no-properties (nth 1 pps) (point)))
+;;                 ;; "(september <|> oktober)"
+;;                 ;; "(x<="
+;;                 (member char (list ?< ?= ?|))
+;;                 ;; list-start-char (equal 40 list-start-char)
+;; )
+;; ))
+;; 	 ;; (not (looking-back "-." (line-beginning-position)))
+;; 	 'nix-in-list-p)
+;;         ;; ((looking-back " *}*;" (line-beginning-position))
+;;         ;;  'semicolon-braced-list-start-char)
+;;         ;; ;; data Contact =  Contact { name :: "asdf" }
+;;         ;; (cond ;; (
+;;         ;;  ;; 	(equal ?, char)
+;;         ;;  ;; 	'nix-list-separator)
+;;         ((and
+;;           ;; list-start-char (equal ?\[ list-start-char)
+;;               ;; evens n = map f [1..n]
+;;               (member char (list ?, ?.))
+;; 	      ;; (equal ?, char)
+;; )
+;;          'nix-in-bracketed)
+;;         ((and (equal ?: char) (looking-back "(.:" (line-beginning-position)))
+;;          'pattern-match-on-list)
+;;         ((nth 4 pps)
+;;          'nix-in-comment)
+;;         (list-start-char
+;;            ;; silence compiler warning Unused lexical argument ‘list-start-char’
+;;            nil)))
+
+;; (defun operator--do-nix-mode (char orig pps list-start-char &optional notfirst notsecond)
+;;   "Haskell"
+;;   (let* ((notfirst (operator--nix-notfirst char pps list-start-char notfirst))
+;; 	 (notsecond (operator--nix-notsecond char pps list-start-char notsecond))
+;; 	 (nojoin
+;; 	  (cond ((member char (list ?\) ?, ?\[ ?\] ?_)))
+;;                 ((and (member char operator-known-operators)
+;;                       ;; (concat "[][:alnum:]+})]" (char-to-string char))
+;;                       ;; foo (x:xs) =
+;;                       ;; a = "asd" ++
+;;                       (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position)))
+;;                  )
+;;                 ((and (member char (list ?=))
+;;                       (save-excursion (backward-char)
+;;                                       (looking-back "_ +" (line-beginning-position)))))
+;;                 ((save-excursion (backward-char)
+;;                                  (looking-back ") *" (line-beginning-position)))))))
+;;     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--java-notfirst (char pps list-start-char &optional notfirst)
   (cond (notfirst
