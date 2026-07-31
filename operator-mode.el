@@ -713,20 +713,22 @@ Haskell: (>=>) :: Monad"
 (defun operator--ocaml-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'notsecond)
-        ((member char (list ?.))
+        ;; i := !i + 1
+        ((member char (list ?. ?! ?:))
          'ocaml-punct)
         ((member char (list ?\) ?}))
          'ocaml-closer)
         ))
 
 (defun operator--do-ocaml-mode (char orig pps list-start-char &optional notfirst notsecond)
-  "Haskell"
+  "Ocaml"
   (let* ((notfirst (operator--ocaml-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--ocaml-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond ((member char (list ?< ?\) ?, ?\[ ?\] ?_)))
-                ((and (member char operator-known-operators)
-                      (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position))))
+	  (cond (;; i := !i + 1
+                 (member char (list ?< ?\) ?, ?\[ ?\] ?_ ?: ?! ?+)))
+                ;; ((and (member char operator-known-operators)
+                ;;       (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position))))
                 ((and (member char (list ?=))
                       (save-excursion (backward-char)
                                       (looking-back "_ +" (line-beginning-position)))))
@@ -2739,8 +2741,10 @@ Haskell: (>=>) :: Monad"
 	    'operator--do-intern-generic-on-symbols)))
          (notsecond
           (cond
-           ((nth 3 pps)
-            'operator--do-intern-in-string-p)
+           ;; ocaml
+           ;; printf (\"%d:
+           ;; ((nth 3 pps)
+           ;;  'operator--do-intern-in-string-p)
            ((and
              (member char (list ?`))
              ;; odd numbers of backticks before last one
