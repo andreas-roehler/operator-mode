@@ -80,7 +80,7 @@ TEST8=${TESTDIR}/operator-scala-mode-test.el
 TEST9=${TESTDIR}/operator-haskell-mode-test.el
 TEST10=${TESTDIR}/operator-coq-mode-test.el
 TEST11=${TESTDIR}/operator-dhall-mode-test.el
-
+TEST12=${TESTDIR}/operator-tuareg-mode-test.el
 #  EU27Q="$HOME/arbeit/emacs/emacs-UA/src/emacs-27.0.50.1"
 
 echo "\$EMACS: $EMACS"
@@ -256,7 +256,24 @@ h11 () {
 -load $TEST11 \
 -f ert-run-tests-batch-and-exit
 }
-    
+
+h12 () 
+{
+    $EMACS -Q --batch \
+--eval "(message (emacs-version))" \
+--eval "(setq operator-mode-debug nil)" \
+--eval "(add-to-list 'load-path (expand-file-name \"~/.emacs.d/straight/repos/tuareg\"))" \
+--eval "(load \"${HOME}/.emacs.d/straight/repos/tuareg/tuareg.el\")" \
+--eval "(require 'tuareg)" \
+--eval "(add-to-list 'load-path (getenv \"PWD\"))" \
+--eval "(require 'operator-mode)" \
+--eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
+--eval "(require 'operator-setup-tests)" \
+\
+-load $TEST12 \
+-f ert-run-tests-batch-and-exit
+}
+
 hier () {
     $EMACS -Q --batch \
 --eval "(message (emacs-version))" \
@@ -285,6 +302,7 @@ hier () {
 -load $TEST9 \
 -load $TEST10 \
 -load $TEST11 \
+-load $TEST12 \
 -f ert-run-tests-batch-and-exit
 }
 
@@ -324,7 +342,7 @@ if [ $IFLOCAL != 1 ]; then
 	    9) echo "h9: Lade \$TEST9: \"$TEST9\"";h9;;
 	    a) echo "h10: Lade \$TEST10: \"$TEST10\"";h10;;
 	    b) echo "h11: Lade \$TEST11: \"$TEST11\"";h11;;
-	    #  c) echo "h12: Lade \$TEST12: \"$TEST12\"";h12;;
+	    c) echo "h12: Lade \$TEST12: \"$TEST12\"";h12;;
 	    #  d) echo "h13: Lade \$TEST13: \"$TEST13\"";h13;;
 	    #  e) echo "h14: Lade \$TEST14: \"$TEST14\"";h14;;
 	    #  f) echo "h15: Lade \$TEST15: \"$TEST15\"";h15;;
