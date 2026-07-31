@@ -18,10 +18,12 @@ Currently the following languages are explicitly configured:
 Agda  \
 Clojure  \
 Coq  \
+Dhall  \
 Emacs Lisp  \
 Haskell  \
 Idris  \
 Java  \
+Ocaml \
 Python  \
 Scala  \
 Shell  \
