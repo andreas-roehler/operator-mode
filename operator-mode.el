@@ -708,6 +708,14 @@ Haskell: (>=>) :: Monad"
          'ocaml-punct)
         ((member char (list ?\( ?{))
          'ocaml-opener)
+        ((and
+          (member char (list ?\) ?}))
+          ;; (+)
+          (member (char-before (- (point) 2)) (list ?\( ?{)))
+         'ocaml-closer)
+        ;; (+) 3 4;;
+        ((eq (char-before (- (point) 1)) ?\()
+         'ocaml-after-opener)
         ))
 
 (defun operator--ocaml-notsecond (char pps list-start-char notsecond)
@@ -716,8 +724,9 @@ Haskell: (>=>) :: Monad"
         ;; i := !i + 1
         ((member char (list ?. ?! ?:))
          'ocaml-punct)
-        ((member char (list ?\) ?}))
-         'ocaml-closer)
+        ;; (+) 3 4;;
+        ((eq (char-before (- (point) 1)) ?\()
+         'ocaml-after-opener)
         ))
 
 (defun operator--do-ocaml-mode (char orig pps list-start-char &optional notfirst notsecond)
@@ -725,15 +734,22 @@ Haskell: (>=>) :: Monad"
   (let* ((notfirst (operator--ocaml-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--ocaml-notsecond char pps list-start-char notsecond))
 	 (nojoin
-	  (cond (;; i := !i + 1
+	  (cond (;; (+) 3 4;;
+                 (and
+                  (member char (list ?< ?! ?^ ?+ ?*))
+                  (looking-back "( *[+*^]" (line-beginning-position)))
+                 nil)
+                (;; i := !i + 1
                  (member char (list ?< ?\) ?, ?\[ ?\] ?_ ?: ?! ?+)))
                 ;; ((and (member char operator-known-operators)
                 ;;       (looking-back (concat "[^ ]+\\" (char-to-string char)) (line-beginning-position))))
-                ((and (member char (list ?=))
-                      (save-excursion (backward-char)
-                                      (looking-back "_ +" (line-beginning-position)))))
-                ((save-excursion (backward-char)
-                                 (looking-back ") *" (line-beginning-position)))))))
+                ;; ((and (member char (list ?=))
+                ;;       (save-excursion (backward-char)
+                ;;                       (looking-back "_ +" (line-beginning-position)))))
+                ;; ((save-excursion (backward-char)
+                ;;                  (looking-back ") *" (line-beginning-position)))
+                ;;  )
+                )))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--haskell-notfirst (char pps list-start-char notfirst)
