@@ -2437,8 +2437,12 @@ Haskell: (>=>) :: Monad"
   "Org"
   (let* ((notfirst (operator--org-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--org-notsecond char pps list-start-char notsecond))
-	 (nojoin (or (member char (list ?*))
-                     t)))
+	 (nojoin (cond ((member char (list ?* ?&))
+                        nil)
+                       ((and (member char (list ?!))
+                             (not (looking-back "[[:alnum:]+] *" (line-beginning-position))))
+                        'or))))
+
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--text-notfirst (char pps list-start-char notfirst)
