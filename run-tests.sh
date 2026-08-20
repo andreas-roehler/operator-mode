@@ -19,7 +19,11 @@
 # Code:
 
 if [ $1 == en ]; then
-    EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    if [ -s $(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g") ]; then
+        EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
+    else
+        EMACS=emacs
+    fi
 elif [ $1 == e25 ]; then
     EMACS=$(echo $(alias $1) | sed "s,alias [^~]*.\([^ ]*\).*,$HOME\1,g")
 elif
