@@ -2691,7 +2691,7 @@ Optional FUNC: run it if provided"
               (not (member (char-after) operator-known-operators))
               ;; def largestSumDezDigits(a: Long=,
               (member (char-after) (list ?,))))
-    (let ((pps (syntax-ppss))))
+    (let ((pps (syntax-ppss)))
       (when (and
              (or
 	      (eq major-mode 'shell-mode)
@@ -2705,7 +2705,7 @@ Optional FUNC: run it if provided"
              (not (and (eq (char-before (- (point) 1)) 92) (not (eq (char-before (- (point) 2)) ?\))))))
         (operator--do-intern
          (char-before)
-         (copy-marker (point)) pps))))
+         (copy-marker (point)) pps)))))
 
 ;;;###autoload
 (define-minor-mode operator-mode
