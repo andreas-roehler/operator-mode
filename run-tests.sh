@@ -137,7 +137,6 @@ h4 () {
 --eval "(require 'operator-mode)" \
 --eval "(add-to-list 'load-path (concat (getenv \"PWD\") \"/test\"))" \
 --eval "(require 'operator-setup-tests)" \
---eval "(require 'haskell-mode)" \
 \
 -load $TEST4 \
 -f ert-run-tests-batch-and-exit
