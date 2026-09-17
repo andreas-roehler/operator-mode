@@ -80,6 +80,10 @@
   (when (called-interactively-p 'any)
     (message "operator-include-numbers-p: %s" operator-include-numbers-p)))
 
+(defun operator--get-src-block-info ()
+  "See org-babel-get-src-block-info. "
+  (org-element-property :language (org-element-context)))
+
 (defun operator-setup-strg (opes)
   (let (erg)
     (dolist (ele opes)
@@ -2546,14 +2550,13 @@ Optional FUNC: run it if provided"
   (when func (funcall func)))
 
 (defun operator--do-intern (char orig pps)
-  (let* (
-         ;; (start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
-		       ;; (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
-		      ;; ((eq major-mode 'haskell-interactive-mode)
-		       ;; (if (ignore-errors (cdr comint-last-prompt))
-                           ;; (min (cdr comint-last-prompt) (line-beginning-position))
-                           ;; (point-min)))
-		      ;; (t (point-min))))
+  (let* (;; (start (cond ((and (member major-mode (list 'shell-mode 'py-shell-mode 'inferior-python-mode))(ignore-errors (cdr comint-last-prompt)))
+	 ;; (min (ignore-errors (cdr comint-last-prompt)) (line-beginning-position)))
+	 ;; ((eq major-mode 'haskell-interactive-mode)
+	 ;; (if (ignore-errors (cdr comint-last-prompt))
+         ;; (min (cdr comint-last-prompt) (line-beginning-position))
+         ;; (point-min)))
+	 ;; (t (point-min))))
 	 ;; (pps (parse-partial-sexp start (point)))
 	 (list-start-char
 	  (and (nth 1 pps) (save-excursion
@@ -2601,7 +2604,7 @@ Optional FUNC: run it if provided"
       (`tuareg-mode
        (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
       ;; (`ocaml-interactive-mode
-       ;; (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
+      ;; (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
       (`emacs-lisp-mode
        (operator--do-emacs-lisp-mode char orig pps list-start-char notfirst notsecond))
       (`haskell-mode
@@ -2620,7 +2623,96 @@ Optional FUNC: run it if provided"
       (`java-mode
        (operator--do-java-mode char orig pps list-start-char notfirst notsecond))
       (`org-mode
-       (operator--do-org-mode char orig pps list-start-char notfirst notsecond))
+       (pcase (car (read-from-string (operator--get-src-block-info)))
+         (`sh
+          (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
+         (`agda2-mode
+          (operator--do-agda-mode char orig pps list-start-char notfirst notsecond))
+         (`coq-mode
+          (operator--do-coq-mode char orig pps list-start-char notfirst notsecond))
+         (`dhall-mode
+          (operator--do-dhall-mode char orig pps list-start-char notfirst notsecond))
+         (`dhall-interactive-mode
+          (operator--do-dhall-mode char orig pps list-start-char notfirst notsecond))
+         (`tuareg-mode
+          (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
+         ;; (`ocaml-interactive-mode
+         ;; (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
+         (`emacs-lisp-mode
+          (operator--do-emacs-lisp-mode char orig pps list-start-char notfirst notsecond))
+         (`haskell-mode
+          (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+         (`haskell-interactive-mode
+          (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+         (`idris-mode
+          (operator--do-idris-mode char orig pps list-start-char notfirst notsecond))
+         (`idris-repl-mode
+          (operator--do-idris-repl-mode char orig pps list-start-char notfirst notsecond))
+         (`inferior-haskell-mode
+          ;; (operator--do-haskell-interactive-mode char orig pps list-start-char notfirst notsecond))
+          (operator--do-haskell-mode char orig pps list-start-char notfirst notsecond))
+         (`nix-mode
+          (operator--do-nix-mode char orig pps list-start-char notfirst notsecond))
+         (`java-mode
+          (operator--do-java-mode char orig pps list-start-char notfirst notsecond))
+         (`org-mode
+          (operator--do-org-mode char orig pps list-start-char notfirst notsecond))
+         (`python-mode
+          (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
+         (`py-shell-mode
+          ;; (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
+          (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))
+         (`py-ipython-shell-mode
+          (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
+         (`rust-mode
+          (operator--do-rust-mode char orig pps list-start-char notfirst notsecond))
+         (`scala-mode
+          (require 'scala-mode)
+          (operator--do-scala-mode char orig pps list-start-char notfirst notsecond))
+         (`sh-mode
+          ;; (if (ignore-errors (shell-command ":sh env"))
+          ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+          ;; all this is not working:
+          ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
+          ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+          (operator--do-sh-mode char orig pps list-start-char notfirst notsecond))
+         (`shell-mode
+          (cond (;; alternative form here, in case ‘pos-bol’ isn't available
+                 (or
+                  (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*Coq <.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+                  (and comint-last-prompt (string-match "^.*Coq <.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point)))))
+                 (require 'coq-mode)
+                 (operator--do-coq-mode char orig pps list-start-char notfirst notsecond)
+                 ;; better honor the shell-specific from common scala
+                 ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+                 )
+                (;; alternative form here, in case ‘pos-bol’ isn't available
+                 (or
+                  (and comint-last-prompt (ignore-errors (functionp 'pos-bol)) (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(pos-bol)) (point))))
+                  (and comint-last-prompt (string-match "^.*scala>.*" (buffer-substring-no-properties (save-excursion (goto-char (cdr comint-last-prompt))(forward-line -1) (line-beginning-position)) (point)))))
+                 (require 'scala-mode)
+                 (operator--do-scala-mode char orig pps list-start-char notfirst notsecond)
+                 ;; better honor the shell-specific from common scala
+                 ;; (operator--do-scala-shell-mode char orig pps list-start-char notfirst notsecond)
+                 )
+                ;; all this is not working:
+                ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
+                ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
+                (t (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))))
+         (`sml-mode
+          (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
+         (`inferior-sml-mode
+          (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
+         (`sql-mode
+          (operator--do-sql-mode char orig pps list-start-char notfirst notsecond))
+         (`text-mode
+          (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
+         (`english-mode
+          (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
+         ((pred derived-mode-p)
+          (operator--do-text-mode char orig pps list-start-char notfirst notsecond))
+         (_ (operator--do-org-mode char orig pps list-start-char notfirst notsecond))))
+
       (`python-mode
        (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
       (`py-shell-mode
@@ -2662,8 +2754,7 @@ Optional FUNC: run it if provided"
              ;; all this is not working:
              ;; (if (ignore-errors (shell-command ":sh \"echo $0\""))
              ;; (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)
-             (t (operator--do-shell-mode char orig pps list-start-char notfirst notsecond)))
-       )
+             (t (operator--do-shell-mode char orig pps list-start-char notfirst notsecond))))
       (`sml-mode
        (operator--do-sml-mode char orig pps list-start-char notfirst notsecond))
       (`inferior-sml-mode

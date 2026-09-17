@@ -28,11 +28,6 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-(unless
-    ;;  check for remote environment
-    (string= "0" (getenv "WERKSTATT"))
-  (straight-use-package 'haskell-mode))
-
 (require 'haskell)
 
 (ert-deftest operator-haskell-test-WG0LXr ()
@@ -858,7 +853,6 @@ module AStack( Stack, push, pop, top, size) where
     (should (eq (char-before (1- (point))) ?!))
     (should (eq (char-before (- (point) 2)) ?!))
     ))
-
 
 "trennzeichen(tail xs,(xs !! 0) ++ \" : \" ++"
 

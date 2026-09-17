@@ -28,9 +28,6 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-;; (straight-use-package 'scala-mode nil nil)
-;; (require 'scala-mode)
-
 (ert-deftest operator-scala-test-QxYnli ()
   (operator-test
       ;; map { y => (x, y) -> x * y })

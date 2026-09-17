@@ -28,10 +28,10 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-(unless
-    ;;  check for remote environment
-    (string= "0" (getenv "WERKSTATT"))
-  (straight-use-package 'dhall-mode))
+;; (unless
+;;     ;;  check for remote environment
+;;     (string= "0" (getenv "WERKSTATT"))
+;;   (straight-use-package 'dhall-mode))
 
 (require 'dhall-mode)
 

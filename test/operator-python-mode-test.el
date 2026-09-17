@@ -25,7 +25,6 @@
 ;;; Code:
 (require 'operator-setup-tests)
 
-;; (straight-use-package 'python-mode)
 (require 'python)
 
 (ert-deftest operator-python-test-JSKBng ()

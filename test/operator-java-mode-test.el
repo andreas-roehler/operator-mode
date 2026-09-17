@@ -28,7 +28,6 @@
 (require 'operator-mode)
 (require 'operator-setup-tests)
 
-;; (straight-use-package 'java-mode nil nil)
 ;; cc-mode provides java-mode
 (require 'cc-mode)
 
