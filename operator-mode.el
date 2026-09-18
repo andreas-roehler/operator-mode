@@ -2581,7 +2581,9 @@ Optional FUNC: run it if provided"
     (`java-mode
      (operator--do-java-mode char orig pps list-start-char notfirst notsecond))
     (`org-mode
-     (operator--select-mode (car (read-from-string (operator--get-src-block-info))) char orig pps list-start-char notfirst notsecond))
+     (if (operator--get-src-block-info)
+         (operator--select-mode (car (read-from-string (operator--get-src-block-info))) char orig pps list-start-char notfirst notsecond)
+       (operator--do-org-mode char orig pps list-start-char notfirst notsecond)))
     (`python-mode
      (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
     (`py-shell-mode
