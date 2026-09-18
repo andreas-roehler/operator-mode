@@ -29,7 +29,7 @@
   (operator-test
       "ssh root@"
     'shell-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -42,7 +42,7 @@
   (operator-test
       "sed -r 's,"
     'shell-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -55,7 +55,7 @@
   (operator-test
       "[ -d emacs ] ||"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)

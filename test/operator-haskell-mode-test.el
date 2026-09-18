@@ -34,7 +34,7 @@
         ;; args <- getArgs
         "args <-"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (char-equal (char-before) 32))
       (should (looking-back "args <- " (line-beginning-position)))))
@@ -43,7 +43,7 @@
     (operator-test
         "args<"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) 32))))
 
@@ -52,7 +52,7 @@
         ;; evens n = map f [1..n]
         "evens n = map f [1."
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) ?.))))
 
@@ -61,7 +61,7 @@
         ;; evens n = map f [1..n]
         "evens n = map f [1.."
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) ?.))))
 
@@ -70,7 +70,7 @@
         ;; "f . g = \x -> g (f x)"
         "f."
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) 32))
       (should (looking-back "f \. " (line-beginning-position)))))
@@ -80,7 +80,7 @@
         ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
         "(>"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should-not (eq (char-before) 32))
       (should (looking-back "(>" (line-beginning-position)))))
@@ -90,7 +90,7 @@
         ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
         "(>=>) ::"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should-not (char-equal (char-before (- (point) 2)) 32))
       (should (eq (char-before) 32))))
@@ -100,7 +100,7 @@
         ;; "Monad m =>"
         "Monad m =>"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) 32))))
 
@@ -109,7 +109,7 @@
         ;; "(>=>) :: Monad m => (a -> m b) -> (b -> m c) -> a -> m c"
         "(>=>) :: Monad m => (a ->"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) 32))))
 
@@ -118,7 +118,7 @@
         ;; "pure (."
         "pure (."
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before) ?.))))
 
@@ -127,7 +127,7 @@
         ;; "pure ($ y) <*> u"
         "pure ($"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-before (1- (point))) ?$))
       (should (eq (char-before) 32))))
@@ -137,7 +137,7 @@
         ;; "even <$> (2,2)"
         "even <$> (2,"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should-not (char-equal (char-before) ?,))
       (should (char-equal (char-before (1- (point))) ?,))))
@@ -147,7 +147,7 @@
         ;; "undefined :: forall (r :: RuntimeRep). forall (a :: TYPE r). "
         "undefined :: forall (r :: RuntimeRep)."
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should-not (char-equal (char-before (- (point) 2)) 32))
       (should (char-equal (char-before) 32))))
@@ -157,7 +157,7 @@
         ;; "(september <|> oktober)"
         "(september<"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       ;; (should (looking-back "(september <" (line-beginning-position)))
       (should (char-equal (char-before) ?<))
@@ -168,7 +168,7 @@
         ;; "(september <|> oktober)"
         "(september <|"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "(september <|" (line-beginning-position)))
       (should (char-equal (char-before) ?|))))
@@ -177,7 +177,7 @@
     (operator-test
         "2+"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "2 \\+ " (line-beginning-position)))
       (should (char-equal (char-before) 32))))
@@ -186,7 +186,7 @@
     (operator-test
         "[2,3] + +"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-after 9) 32))
       (should (eq (char-after 8) ?+))
@@ -197,7 +197,7 @@
     (operator-test
         "[2,3] ++["
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (backward-char)
       (operator-do)
       (forward-char 1)
@@ -209,7 +209,7 @@
         ;; "(september <|> oktober)"
         "(september <|>"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "(september <|> " (line-beginning-position)))
       (should (char-equal (char-before) 32))))
@@ -218,7 +218,7 @@
     (operator-test
         "maior (x:"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "maior (x:"))))
 
@@ -227,7 +227,7 @@
         "maior (x:xs) | (x > maior xs) =  x
              |"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (current-column) 15))))
 
@@ -235,7 +235,7 @@
     (operator-test
         "[x, y | x<"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "x < " (line-beginning-position)))))
 
@@ -243,7 +243,7 @@
     (operator-test
         "[x, y | x <-"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "x <- " (line-beginning-position)))))
 
@@ -251,7 +251,7 @@
     (operator-test
         ": ["
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back ": \\[" (line-beginning-position)))
       (should (eq (char-before) ?\[))))
@@ -260,7 +260,7 @@
     (operator-test
         "foo (x:xs)="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "foo (x:xs) = " (line-beginning-position)))
       (should (eq (char-before) ?\s))))
@@ -269,7 +269,7 @@
     (operator-test
         "foo (x:xs) ="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "foo (x:xs) = " (line-beginning-position)))
       (should (eq (char-before) ?\s))))
@@ -277,14 +277,14 @@
   (ert-deftest operator-haskell-in-braced-data-test-lZ3VAf ()
     (operator-test
         "data Contact = Contact { name:" 'haskell-mode
-        operator-mode-debug
+        'operator-mode-debug
         (operator-do)
         (should (looking-back "data Contact = Contact { name : " (line-beginning-position)))))
 
   (ert-deftest operator-haskell-in-braced-data-test-6xRxtO ()
     (operator-test
         "data Contact = Contact { name : :" 'haskell-mode
-        operator-mode-debug
+        'operator-mode-debug
         (operator-do)
         (should (looking-back "data Contact = Contact { name :: " (line-beginning-position)))))
 
@@ -293,7 +293,7 @@
         "data Contact =  Contact { name :: String
                         ,"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "^ \\{24\\}, +" (line-beginning-position)))))
 
@@ -301,7 +301,7 @@
     (operator-test
         "foo :: [[char]] ->"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back " -> " (line-beginning-position)))))
 
@@ -309,7 +309,7 @@
     (operator-test
         "foo :: [[char]] ->"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back " -> " (line-beginning-position)))))
 
@@ -317,7 +317,7 @@
     (operator-test
         " foo x ++ \", \" ++"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (eq (char-after 10) 32))
       (should (eq (char-after 9) ?+))
@@ -328,7 +328,7 @@
     (operator-test
         "-"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "-" (line-beginning-position)))))
 
@@ -338,7 +338,7 @@
   { name :: String
   ,}"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (backward-char)
       (operator-do)
       (should (eq (char-before) 32))))
@@ -348,7 +348,7 @@
         "data Record = MRecord {
   name : : }"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (backward-char 2)
       (operator-do)
       (should (looking-back " :: " (line-beginning-position)))))
@@ -357,7 +357,7 @@
     (operator-test
         "maxhelper a (x:"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (backward-char)
       (operator-do)
       (forward-char 1)
@@ -389,7 +389,7 @@ module AStack( Stack, push, pop, top, size) where
 }
 "
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (search-backward ";top")
       (forward-char 1)
@@ -401,7 +401,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "let foo s f = Command s (\\x -> do f x;return x)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (search-backward ";")
       (forward-char 1)
@@ -412,7 +412,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "rvrs (x:"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (operator-do)
       (should (looking-back "rvrs (x:" (line-beginning-position)))))
@@ -421,7 +421,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "x /="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (operator-do)
       (should (looking-back "x /= " (line-beginning-position)))))
 
@@ -429,7 +429,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(,)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (backward-char 2)
       (operator-do)
@@ -440,7 +440,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(->)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (operator-do)
       (goto-char (point-max))
@@ -450,7 +450,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(->)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (backward-char)
       (operator-do)
@@ -461,7 +461,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(->)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (backward-char 2)
       (operator-do)
@@ -472,7 +472,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(-)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (backward-char)
       (operator-do)
@@ -483,7 +483,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
 	"deriving (Eq,Ord, Show)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (search-backward "O")
       (operator-do)
@@ -494,7 +494,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
 	"mylast (_:xs) = mylast xs"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (search-backward ":")
       (operator-do)
@@ -504,7 +504,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
 	"N = a `div`"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -515,7 +515,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "let foo :: Double -> Double;foo x = let { s = sin x;c = cos x } in 2 * s * c"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (search-backward ";")
       (forward-char 1)
@@ -534,7 +534,7 @@ module AStack( Stack, push, pop, top, size) where
   where filterPrime (p:xs) =
           p : filterPrime [x|"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -546,7 +546,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "preplicate x a = a ++ preplicate (x-"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -558,7 +558,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo :: [a]-"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -570,7 +570,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(x:_"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -581,7 +581,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "-- question?"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -592,7 +592,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "(x<="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -603,7 +603,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo (xs:"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -614,7 +614,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "<$>"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (search-backward ">")
       (operator-do)
@@ -625,7 +625,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "listeAnhaengen (x:xs) (y:ys) = foldr (\\x (y:ys) -> [x] ++"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -636,7 +636,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "[p x | x<"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -648,7 +648,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "[f x | x <-"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -660,7 +660,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo ::"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -672,7 +672,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo :: [a] ->"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -684,7 +684,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo n="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -696,7 +696,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo (x:xs)="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -708,7 +708,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo m n = Just (_"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -720,7 +720,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "foo m n = Just (m `div` n)"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -732,7 +732,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         ";; bar n m = baz (foo n+"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -744,7 +744,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "elem 3 (1 : 3:"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -756,7 +756,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "import Prelude hiding (|"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -768,7 +768,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "sum' (x:"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -780,7 +780,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "a = \"asd\" + +"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -792,7 +792,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "a="
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -804,7 +804,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "a!"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)
@@ -816,7 +816,7 @@ module AStack( Stack, push, pop, top, size) where
     (operator-test
         "a ! !"
       'haskell-mode
-      operator-mode-debug
+      'operator-mode-debug
       (goto-char (point-max))
       (skip-chars-backward " \t\r\n\f")
       (operator-do)

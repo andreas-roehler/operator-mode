@@ -30,7 +30,7 @@
   (operator-test
       "Definition negb (b:bool):"
     'coq-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -43,7 +43,7 @@
   (operator-test
       "Definition orb (b1:bool) (b2:bool) : bool:"
     'coq-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -56,7 +56,7 @@
   (operator-test
       "Definition my_list : list nat := [47;"
     'coq-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -73,7 +73,7 @@
   | S _ , O    => n
   | S n',"
     'coq-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -86,7 +86,7 @@
   (operator-test
       "Check andb."
     'coq-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -99,7 +99,7 @@
   (operator-test
       "(foo' false false)="
     'coq-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)

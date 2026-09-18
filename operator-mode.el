@@ -71,6 +71,12 @@
 ;; (defvar-local operator-known-operators-strg (cl-map 'string 'identity operator-known-operators)
 ;;   "Used to skip over operators at point.")
 
+(defun ar-escaped-p (&optional pos)
+    "Return t if char at POS is preceded by an odd number of backslashes. "
+    (save-excursion
+      (when pos (goto-char pos))
+      (< 0 (% (abs (skip-chars-backward "\\\\")) 2))))
+
 (defun operator-toggle-include-numbers-p()
   (interactive)
   (setq operator-include-numbers-p (not operator-include-numbers-p))
@@ -349,13 +355,14 @@ Haskell: (>=>) :: Monad"
 	  ;;  'python-string-in-list)
 	  ;; (equal char ?~)
 	  ;; with open('/path/to/some/file') as file_1,
-	  ((member char (list ?\( ?\) ?\; ?@ ?\[ ?\] ?{ ?~))
+          ;; if x == 4: print (x, y); x, y = y, x
+	  ((member char (list ?\( ?\) ?@ ?\[ ?\] ?{ ?~))
 	   'python-list-op)
 	  ((member char (list ?- ?. ?_))
 	   'python-dot)
                                         ; "D = {'cognome': 'Foo', 'nome': 'Bar', 'eta': 30}"
-	  ;; ((member char (list ?:))
-	  ;;  'python-colon)
+	  ((unless (nth 1 pps) (member char (list ?:)))
+	   'python-colon)
 	  ((or (looking-back "[ \t]*\\_<\\(async def\\|class\\|def\\)\\_>[ \n\t]+\\([[:alnum:]_]+ *(.*)-\\)" (line-beginning-position))
 	       (and
 		;; return self.first_name, self.last_name
@@ -379,10 +386,17 @@ Haskell: (>=>) :: Monad"
                         (or (member (char-before (- (point) 1)) operator-known-operators)
                             (member (char-before (- (point) 2)) operator-known-operators))
                         (not (member (char-before (- (point) 1)) (list ?\) ?\] ?})))
-                   (not (member (char-before (- (point) 2)) (list ?\) ?\] ?}))))
+                        ;; if __name__=
+                   (not (member (char-before (- (point) 2)) (list ?\) ?\] ?} ?_))))
                  nil)
+                  ((and (member char (list ?\())
+                        (member (char-before (- (point) 2)) operator-known-operators))
+                   nil)
                   ((and (member char (list ?& ?+ ?/ ?: ?< ?= ?> ?? ?|))
-                        (not (member (char-before (- (point) 1)) operator-known-operators)))
+                        (or
+                         (member (char-before (- (point) 1)) (list ?_))
+                         (not (member (char-before (- (point) 1)) operator-known-operators))
+                         ))
                    t)
                   ((and (member char (list ??))(save-excursion (forward-char -1) (skip-chars-backward " \t\r\n\f") (eq (char-before (point)) ?=)))
                    t)
@@ -1288,7 +1302,10 @@ Haskell: (>=>) :: Monad"
   (setq operator-known-operators (remove ?. operator-known-operators))
   (let* ((notfirst (operator--java-notfirst char pps list-start-char notfirst))
 	 (notsecond (operator--java-notsecond char pps list-start-char notsecond))
-         (nojoin (save-excursion (or (and (nth 1 pps) (progn (goto-char (nth 1 pps)) (eq (char-after) 40)) (looking-back "format" (line-beginning-position)))) (nth 3 pps))))
+         (nojoin (or
+                  (and (nth 1 pps) (save-excursion (progn (goto-char (nth 1 pps)) (eq (char-after) 40)) (looking-back "format" (line-beginning-position))))
+                  (nth 3 pps)
+                  (looking-back ".*String.*" (line-beginning-position)))))
     (operator--final char orig notfirst notsecond nojoin)))
 
 (defun operator--js-notfirst (char pps list-start-char &optional notfirst)
@@ -2248,8 +2265,12 @@ Haskell: (>=>) :: Monad"
         ;; (let*
         ((and (member (char-before) (list ?*)) (eq (char-before (- (point) 1)) ?-))
          'emacs-lisp-badge)
-        ((member char (list ?  ?! ?\" ?# ?$ ?& ?' ?+ ?, ?- ?. ?/ ?: ?< ?= ?> ?? ?@ ?^ ?_ ?| ?~))
+        ;; -*-
+        ;; (+
+        ((member char (list ?  ?! ?\" ?# ?$ ?& ?' ?, ?. ?/ ?: ?< ?= ?> ?? ?@ ?^ ?_ ?| ?~))
          'emacs-lisp-punct)
+        ((looking-back "-\\*" (line-beginning-position))
+         'emacs-lisp-buffler-local)
 	((member char (list ?\( ?\) ?\[ ?\] ?{ ?}))
 	 'emacs-lisp-list-delimter)
 	((nth 3 pps)
@@ -2410,11 +2431,12 @@ Haskell: (>=>) :: Monad"
 	((member char (list ?\( ?\) ?/ ?\[ ?\]))
 	 'org-listing)
         ;; _sys_membarrier
+        ;; "S. "
 	((member char (list
                        ?$
                        ?+
                        ?-
-                       ?.
+                       ;; ?.
                        ?:
                        ?@
                        ?_
@@ -2442,7 +2464,9 @@ Haskell: (>=>) :: Monad"
                         nil)
                        ((and (member char (list ?!))
                              (not (looking-back "[[:alnum:]+] *" (line-beginning-position))))
-                        'or))))
+                        'or)
+                       ((and (eq (char-before) ?=) (eq 5 (car (syntax-after (- (point) 2)))))
+                        'org-equal-after-closer))))
 
     (operator--final char orig notfirst notsecond nojoin)))
 
@@ -2482,7 +2506,7 @@ Haskell: (>=>) :: Monad"
         (list-start-char
            ;; silence compiler warning Unused lexical argument ‘list-start-char’
            nil)
-        (pps
+        ((nth 1 pps)
          ;; silence compiler warning
          'pps)
 	))

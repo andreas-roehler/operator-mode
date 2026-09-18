@@ -40,7 +40,7 @@
   (operator-test
       "List { home:"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?:))
@@ -50,7 +50,7 @@
   (operator-test
       "in [ user : \"Foo\","
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?,))
@@ -61,7 +61,7 @@
   (operator-test
       "True |"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?|))
@@ -72,7 +72,7 @@
   (operator-test
       "True ||"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?|))
@@ -85,7 +85,7 @@
   (operator-test
       "True &"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?&))
@@ -96,7 +96,7 @@
   (operator-test
       "True &&"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?&))
@@ -109,7 +109,7 @@
   (operator-test
       "True =="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -122,7 +122,7 @@
   (operator-test
       "True ="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -134,7 +134,7 @@
   (operator-test
       "2 +"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?+))
@@ -146,7 +146,7 @@
   (operator-test
       "2 *"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?*))
@@ -158,7 +158,7 @@
   (operator-test
       "\"Hello\" +"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?+))
@@ -170,7 +170,7 @@
   (operator-test
       "\"Hello\" ++"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?+))
@@ -183,7 +183,7 @@
   (operator-test
       "[1,"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?,))
@@ -195,7 +195,7 @@
   (operator-test
       "[1, 2] # [3,"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?,))
@@ -207,7 +207,7 @@
   (operator-test
       "[1, 2] #"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?#))
@@ -219,7 +219,7 @@
   (operator-test
       "{ foo = 1 } ∧"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?∧))
@@ -231,7 +231,7 @@
   (operator-test
       "{ foo = 1 } ∧ { bar ="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -243,7 +243,7 @@
   (operator-test
       "{ foo = 1, bar = True } ⫽"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?⫽))
@@ -255,7 +255,7 @@
   (operator-test
       "assert :"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?:))
@@ -267,7 +267,7 @@
   (operator-test
       "assert : 2 + 2 ="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -279,7 +279,7 @@
   (operator-test
       "assert : 2 + 2 =="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -293,7 +293,7 @@
   (operator-test
       "assert : 2 + 2 =="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -306,7 +306,7 @@
   (operator-test
       "assert : 2 + 2 =="
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?=))
@@ -321,7 +321,7 @@
   (operator-test
       "assert : 2 + 2 ≡"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 32))
     (should (char-equal (char-before (- (point) 1)) ?≡))
@@ -333,7 +333,7 @@
   (operator-test
       "record."
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?.))
     (should (char-equal (char-before (- (point) 1)) ?d))
@@ -344,7 +344,7 @@
   (operator-test
       "record.("
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?\())
     (should (char-equal (char-before (- (point) 1)) ?.))
@@ -355,7 +355,7 @@
   (operator-test
       "record.("
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?\())
     (should (char-equal (char-before (- (point) 1)) ?.))
@@ -366,7 +366,7 @@
   (operator-test
       "record.({"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?{))
     (should (char-equal (char-before (- (point) 1)) ?\())
@@ -377,7 +377,7 @@
   (operator-test
       "record.({ x : Natural }"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?}))
     (should (char-equal (char-before (- (point) 1)) 32))
@@ -389,7 +389,7 @@
   (operator-test
       "record.({ x : Natural })"
     'dhall-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?\)))
     (should (char-equal (char-before (- (point) 1)) ?}))

@@ -29,11 +29,11 @@
   (operator-test
       "grep asf\\|"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (char-equal (char-before) ?\"))
+    (should (char-equal (char-before) ?|))
     (should (char-equal (char-before (- (point) 1)) 92))
     ))
 
@@ -41,7 +41,7 @@
   (operator-test
       "lspci -k|"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -54,7 +54,7 @@
   (operator-test
       "alias foo="
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -67,7 +67,7 @@
   (operator-test
       "ssh root@"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -80,19 +80,20 @@
   (operator-test
       "foo;"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (char-equal (char-before) ?\;))
-    (should (char-equal (char-before (1- (point))) ?o))
+    (should (char-equal (char-before) 32))
+    (should (char-equal (char-before (- (point) 1)) ?\;))
+    (should (char-equal (char-before (- (point) 2)) ?o))
     ))
 
 (ert-deftest operator-sh-mode-test-CGL6M7 ()
   (operator-test
       "echo \"Foo: $i\"&"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -104,7 +105,7 @@
   (operator-test
       "echo \"Foo: $i\" &&"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -116,7 +117,7 @@
   (operator-test
       "echo \"Foo: $i\" & &"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -129,7 +130,7 @@
   (operator-test
       "FOO={"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -141,7 +142,7 @@
   (operator-test
       "KERNE=$[KERNE*"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -153,7 +154,7 @@
   (operator-test
       "asdf-"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -165,7 +166,7 @@
   (operator-test
       "[ -d $HOME/foo ]|"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -178,7 +179,7 @@
   (operator-test
       "[ -d $HOME/foo ] ||"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -192,7 +193,7 @@
   (operator-test
       "[ -d $HOME/foo ] &&"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -206,7 +207,7 @@
   (operator-test
       "[ -d $HOME/foo ] & &"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -220,7 +221,7 @@
   (operator-test
       "[ -d $HOME/foo ]&"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -233,7 +234,7 @@
   (operator-test
       "[ $HOSTNAME == kanu ] |"
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -246,7 +247,7 @@
   (operator-test
       "[ $HOSTNAME == kanu ]|" 
     'sh-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)

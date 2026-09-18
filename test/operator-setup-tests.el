@@ -29,6 +29,8 @@
 (require 'operator-mode)
 (require 'shell)
 
+;; (setq operator-mode-debug t)
+
 (defmacro operator-test (contents mode debug &rest body)
   "Create temp buffer inserting CONTENTS.
 

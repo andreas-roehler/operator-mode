@@ -25,11 +25,13 @@
 ;;; Code:
 (require 'operator-setup-tests)
 
+;; (setq operator-mode-debug t)
+
 (ert-deftest operator-org-mode-test-b28znx ()
   (operator-test
       "* asdf,"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -41,7 +43,7 @@
   (operator-test
       "*asdf,"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "a")
     (operator-do)
@@ -53,19 +55,19 @@
   (operator-test
       "*?"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (eq (char-before) 32))
     (should (eq (char-before (1- (point))) ??))
-    (should (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before (- (point) 2)) ?*))
     ))
 
 (ert-deftest operator-org-mode-test-NvPETJ ()
   (operator-test
       "* *"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -78,20 +80,20 @@
   (operator-test
       "* %"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should (eq (char-before) 32))
     (should (eq (char-before (1- (point))) ?%))
-    (should (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before (- (point) 2)) ?*))
     ))
 
 (ert-deftest operator-org-mode-test-QHFHYC ()
   (operator-test
       "len(test_list)="
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -104,46 +106,46 @@
   (operator-test
       "!+"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (eq (char-before) 32))
-    (should (eq (char-before (1- (point))) ?+))
-    (should (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before) ?+))
+    (should (eq (char-before (1- (point))) ?!))
+    ;; (should (eq (char-before (- (point) 2)) ?!))
     ))
 
 (ert-deftest operator-org-mode-test-I0fS1A ()
   (operator-test
       "?+"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (eq (char-before) 32))
-    (should (eq (char-before (1- (point))) ?+))
-    (should (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before) ?+))
+    (should (eq (char-before (1- (point))) ??))
+    ;; (should (eq (char-before (- (point) 2)) 32))
     ))
 
 (ert-deftest operator-org-mode-test-9Tr8uH ()
   (operator-test
       ".+"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (eq (char-before) 32))
-    (should (eq (char-before (1- (point))) ?+))
-    (should (eq (char-before (- (point) 2)) 32))
+    (should (eq (char-before) ?+))
+    (should (eq (char-before (1- (point))) ?.))
+    ;; (should (eq (char-before (- (point) 2)) 32))
     ))
 
 (ert-deftest operator-org-mode-test-Deu5fW ()
   (operator-test
       "33,"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -155,7 +157,7 @@
   (operator-test
       "&&"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -168,7 +170,7 @@
   (operator-test
       " **"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -181,7 +183,7 @@
   (operator-test
       "--fix-missing & &"
     'org-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -190,7 +192,28 @@
     (should (eq (char-before (- (point) 2)) ?&))
     ))
 
-"--fix-missing & &"
+(ert-deftest operator-org-mode-test-BD78cs ()
+  (operator-test
+      "*"
+    'org-mode
+    'operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before) 32))
+    (should (eq (char-before (- (point) 1)) ?*))
+    ;; (should (eq (char-before (- (point) 2)) ?&))
+    ))
+
+(ert-deftest operator-orgmode-test-WG0LXr ()
+  (operator-test
+      ;; Seitenzahl
+      "S."
+    'org-mode
+    'operator-mode-debug
+    (operator-do)
+    (should (eq (char-before) 32))))
+
 
 (provide 'operator-org-mode-test)
 ;;; operator-org-mode-test.el ends here

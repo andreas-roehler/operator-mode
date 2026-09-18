@@ -38,7 +38,7 @@
         double perimeter = (length + width)*
 "
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -52,7 +52,7 @@
       ;; for(int foo: bar) {
       "for(int foo:"
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -65,7 +65,7 @@
   (operator-test
     "for(int i=0;"
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -78,7 +78,7 @@
   (operator-test
     "String readline ="
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -91,7 +91,7 @@
   (operator-test
     "while((line = br.readline()) !="
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -104,7 +104,7 @@
   (operator-test
     "for(int i=100; i > 51; i = i - 5"
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -117,7 +117,7 @@
   (operator-test
       "if (Character.isLetter(i)) {"
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -130,7 +130,7 @@
   (operator-test
       "System.out.format(\"Foo: %"
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -143,7 +143,7 @@
   (operator-test
       "return (length +"
     'java-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)

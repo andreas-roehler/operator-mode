@@ -29,7 +29,7 @@
   (operator-test
       "(should (char-equal (char-before (- (point) 2)) ?"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -41,7 +41,7 @@
   (operator-test
     "(should (eq (char-before) ?\\;"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -52,7 +52,7 @@
   (operator-test
       "(char-equal (char-before (- (point) 1)) ?+"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -62,7 +62,7 @@
   (operator-test
       "(let*"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -75,7 +75,7 @@
   (operator-test
       "(defun foo("
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -87,7 +87,7 @@
   (operator-test
       "(defun foo_"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -99,7 +99,7 @@
   (operator-test
       "(insert \":"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -112,7 +112,7 @@
   (operator-test
       "'"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -123,7 +123,7 @@
   (operator-test
       "'("
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -133,7 +133,7 @@
   (operator-test
       "(with-"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -145,7 +145,7 @@
   (operator-test
       ";;"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -158,7 +158,7 @@
   (operator-test
       "-* -"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -171,20 +171,20 @@
   (operator-test
       "-*"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
     (should-not (eq (char-before (point)) 32))
-    (should (eq (char-before (- (point) 1)) ?*))
-    (should (eq (char-before (- (point) 2)) ?-))
+    (should (eq (char-before (- (point) 0)) ?*))
+    (should (eq (char-before (- (point) 1)) ?-))
     ))
 
 (ert-deftest operator-elisp-mode-test-W4I2Kv ()
   (operator-test
       ";; - A/"
     'emacs-lisp-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)

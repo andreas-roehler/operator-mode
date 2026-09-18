@@ -33,7 +33,7 @@
       ;; map { y => (x, y) -> x * y })
       "map { y = >"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) 32))
@@ -45,7 +45,7 @@
       ;; map { y => (x, y) -> x * y })
       "map { y => (x,"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) 32))
@@ -57,7 +57,7 @@
       ;; map { y => (x, y) -> x * y })
       "map { y => (x, y)"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) 32))
@@ -69,7 +69,7 @@
       ;; map { y => (x, y) -> x * y })
       "map { y => (x, y) -"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "-")
     (forward-char 1)
@@ -83,7 +83,7 @@
       ;; map { y => (x, y) -> x * y })
       "map { y => (x, y) ->"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) 32))
@@ -95,7 +95,7 @@
       ;; map { y => (x, y) -> x * y })
       "map { y => (x, y) -> x*y })"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "y")
     (operator-do)
@@ -107,7 +107,7 @@
   (operator-test
       "def summ(list:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward ":")
     (forward-char 1)
@@ -120,7 +120,7 @@
       ;; "if (list.isEmpty)"
       "if (list."
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     ;; (search-backward "i")
     (operator-do)
@@ -131,7 +131,7 @@
   (operator-test
       " { case list."
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) ?.))
     (should (char-equal (char-after) ?t))))
@@ -140,7 +140,7 @@
   (operator-test
       "if (!args.isEmpty)"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (operator-do)
     (should (char-equal (char-before) 41))
     (should (char-equal (char-before (1- (point))) ?y))))
@@ -156,7 +156,7 @@ lazy val root = (project in file(\".\"))
   .settings(name:
 "
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward ":")
     (forward-char 1)
@@ -169,7 +169,7 @@ lazy val root = (project in file(\".\"))
   (operator-test
       "import org.scalatest.{BeforeAndAfterAll,"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward ",")
     (forward-char 1)
@@ -186,7 +186,7 @@ lazy val root = (project in file(\".\"))
 }
 "
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "=")
     (forward-char 1)
@@ -208,7 +208,7 @@ lazy val root = (project in file(\".\"))
 }
 "
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward ":")
     (forward-char 1)
@@ -229,7 +229,7 @@ firstArg match {
 }
 "
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "=")
     (forward-char 1)
@@ -244,7 +244,7 @@ firstArg match {
   (operator-test
       "foo.asdf(10, 10);"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) ?\;))
@@ -254,7 +254,7 @@ firstArg match {
   (operator-test
       "println(file)\;"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) ?\;))
@@ -265,7 +265,7 @@ firstArg match {
   (operator-test
       "b.map{ case i="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (operator-do)
     (should (char-equal (char-before) 32))
@@ -278,7 +278,7 @@ firstArg match {
 "case class Foo(bar: Int, baz: Int):
     val foo = bar*"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -291,7 +291,7 @@ firstArg match {
   (operator-test
       "def reorder[A](p: Seq[A], q: Seq[Int]): Seq[A] = ??"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -304,7 +304,7 @@ firstArg match {
   (operator-test
       "def add20 (List[List[Int]]): List[List[Int]] =?"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -317,7 +317,7 @@ firstArg match {
   (operator-test
       "val b = a.map{ case x => x._1 + 4 * x._2*"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -330,7 +330,7 @@ firstArg match {
   (operator-test
       "val result = d + +"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -344,7 +344,7 @@ firstArg match {
   (operator-test
       "List(((a.last), false))+"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -359,7 +359,7 @@ firstArg match {
   ??
 }"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "?")
     (forward-char 1)
@@ -373,7 +373,7 @@ firstArg match {
   (operator-test
       "def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] =?"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -387,7 +387,7 @@ firstArg match {
   (operator-test
       "assert(result = ="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -401,7 +401,7 @@ firstArg match {
   (operator-test
       "val q =  (2 to n-"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -414,7 +414,7 @@ firstArg match {
   (operator-test
       "def foo(p: Seq[String], q: Seq[Int]): Map[Int, String] = ?"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -427,7 +427,7 @@ firstArg match {
   (operator-test
       "() ="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -440,7 +440,7 @@ firstArg match {
   (operator-test
       "def foo(a: Seq[Int]):"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -453,7 +453,7 @@ firstArg match {
   (operator-test
       "done s ::"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -466,7 +466,7 @@ firstArg match {
   (operator-test
       "done s:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -479,7 +479,7 @@ firstArg match {
   (operator-test
       "{ (acc, x) => acc:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -492,7 +492,7 @@ firstArg match {
   (operator-test
       "(-15, false, 10) /"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -505,7 +505,7 @@ firstArg match {
   (operator-test
       "(-15, false, 10) //"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -518,7 +518,7 @@ firstArg match {
   (operator-test
       "val expected:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -530,7 +530,7 @@ firstArg match {
   (operator-test
       "(x: (A, A))._1"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -544,7 +544,7 @@ firstArg match {
   (operator-test
       "=> result:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -556,7 +556,7 @@ firstArg match {
   (operator-test
       "case ex:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -568,7 +568,7 @@ firstArg match {
   (operator-test
       "{ case (x, y) => y : :"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -580,7 +580,7 @@ firstArg match {
   (operator-test
       "val result:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -592,7 +592,7 @@ firstArg match {
   (operator-test
       "def doppel(x:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -604,7 +604,7 @@ firstArg match {
   (operator-test
       "xs.foldLeft(init){ (x, y) => x:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -616,7 +616,7 @@ firstArg match {
   (operator-test
       "def toPairs_"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -628,7 +628,7 @@ firstArg match {
   (operator-test
       ".map{case k => k._"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -640,7 +640,7 @@ firstArg match {
   (operator-test
       "val a =  0 : :"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -652,7 +652,7 @@ firstArg match {
   (operator-test
       "case class Foo(bar:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -665,7 +665,7 @@ firstArg match {
   (operator-test
       "[+"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -677,7 +677,7 @@ firstArg match {
   (operator-test
       "case _ ="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -689,7 +689,7 @@ firstArg match {
   (operator-test
       "def foo(bar: Bar):"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -702,7 +702,7 @@ firstArg match {
   (operator-test
       "b.foreach(x = >"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -715,7 +715,7 @@ firstArg match {
   (operator-test
       "b.filter(x => x="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -728,7 +728,7 @@ firstArg match {
   (operator-test
       "val a = (_:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -741,7 +741,7 @@ firstArg match {
   (operator-test
       "b.foreach(println_"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -754,7 +754,7 @@ firstArg match {
   (operator-test
       "foo(0)+"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -767,7 +767,7 @@ firstArg match {
   (operator-test
       "if (x = ="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -780,7 +780,7 @@ firstArg match {
   (operator-test
       "def foo()="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -793,7 +793,7 @@ firstArg match {
   (operator-test
       "val foo="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -806,7 +806,7 @@ firstArg match {
   (operator-test
       "def foo(abc:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -819,7 +819,7 @@ firstArg match {
   (operator-test
       "def byFoo[A](xs: Seq[A], maxF: Double="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -833,7 +833,7 @@ firstArg match {
 "def foo(xs: List[Int], m: Double = 5): List[Int] = {
   privat zff Double="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -847,7 +847,7 @@ firstArg match {
 "def ein(xs: List[Int], maxW: Double = 5): List[Int] = {
   foo:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -860,7 +860,7 @@ firstArg match {
   (operator-test
       "case Fixed,"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -873,7 +873,7 @@ firstArg match {
   (operator-test
       "def foo(e: E):"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -886,7 +886,7 @@ firstArg match {
   (operator-test
       "foo(hQuyAM) // Double="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -906,7 +906,7 @@ firstArg match {
 }
 "
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "_")
     (forward-char 1)
@@ -920,7 +920,7 @@ firstArg match {
   (operator-test
       "def falten[A,"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -933,7 +933,7 @@ firstArg match {
   (operator-test
       "b +:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -946,7 +946,7 @@ firstArg match {
   (operator-test
       "a.reduce(_"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -959,7 +959,7 @@ firstArg match {
   (operator-test
       "def init: Acc = Map(xs.head._1 ->"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -972,7 +972,7 @@ firstArg match {
   (operator-test
       "if (i != 0)"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "=")
     (operator-do)
@@ -985,7 +985,7 @@ firstArg match {
   (operator-test
       "e.map{ x =}"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "}")
     (operator-do)
@@ -998,7 +998,7 @@ firstArg match {
   (operator-test
       "def foo[A, K](xs: Seq[A])(by: A => K): Map[K, Seq[A]] ={"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "{")
     (operator-do)
@@ -1011,7 +1011,7 @@ firstArg match {
   (operator-test
       "a.foldLeft(0)(_-"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "{")
     (operator-do)
@@ -1024,7 +1024,7 @@ firstArg match {
   (operator-test
       "val q =  (2 to n-"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (search-backward "{")
     (operator-do)
@@ -1037,7 +1037,7 @@ firstArg match {
   (operator-test
       "def foo(bar:"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1050,7 +1050,7 @@ firstArg match {
   (operator-test
       "def foo(a: Long=,"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (search-backward ",")
@@ -1064,7 +1064,7 @@ firstArg match {
   (operator-test
       "def foo(xs: Seq[Int], a: Int): Int =?"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1076,7 +1076,7 @@ firstArg match {
   (operator-test
       "def foo(xs: Seq[Int], a: Int): Int = ??"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1088,7 +1088,7 @@ firstArg match {
   (operator-test
       "def foo(xs: Seq[Int], a: Int): Int = ???"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1100,7 +1100,7 @@ firstArg match {
   (operator-test
       "new_"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1112,7 +1112,7 @@ firstArg match {
   (operator-test
       "/ / keep"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (search-backward " ")
@@ -1125,7 +1125,7 @@ firstArg match {
   (operator-test
       "// keep"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (search-backward " ")
@@ -1138,7 +1138,7 @@ firstArg match {
   (operator-test
       "// asdf?"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1151,7 +1151,7 @@ firstArg match {
   (operator-test
       "(current.sum<"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1164,7 +1164,7 @@ firstArg match {
   (operator-test
       "current."
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1176,7 +1176,7 @@ firstArg match {
   (operator-test
       "else {"
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1189,7 +1189,7 @@ firstArg match {
   (operator-test
       "{resFoo ="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
@@ -1202,7 +1202,7 @@ firstArg match {
   (operator-test
       "assert(result = ="
     'scala-mode
-    operator-mode-debug
+    'operator-mode-debug
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
