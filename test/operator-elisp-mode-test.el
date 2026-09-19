@@ -137,8 +137,8 @@
     (goto-char (point-max))
     (skip-chars-backward " \t\r\n\f")
     (operator-do)
-    (should (eq (char-before (- (point) 1)) ?-))
-    (should (eq (char-before (- (point) 2)) ?h))
+    (should (eq (char-before (- (point) 0)) ?-))
+    (should (eq (char-before (- (point) 1)) ?h))
     ))
 
 (ert-deftest operator-elisp-mode-test-Cwnl9z ()
@@ -190,6 +190,18 @@
     (operator-do)
     (should (eq (char-before (point)) ?/))
     ))
+
+(ert-deftest operator-elisp-mode-test-pEp26o ()
+  (operator-test
+      "ar-"
+    'emacs-lisp-mode
+    'operator-mode-debug
+    (goto-char (point-max))
+    (skip-chars-backward " \t\r\n\f")
+    (operator-do)
+    (should (eq (char-before (point)) ?-))
+    )
+  )
 
 
 (provide 'operator-elisp-mode-test)

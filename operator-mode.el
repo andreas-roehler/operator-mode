@@ -2258,15 +2258,18 @@ Haskell: (>=>) :: Monad"
 (defun operator--emacs-lisp-notsecond (char pps list-start-char notsecond)
   (cond (notsecond
 	 'emacs-lisp-notsecond)
+        ((and (member char (list ?-))
+              (not (eq (char-before (- (point) 1)) 32))
+              (not (eq 5 (car (syntax-after (- (point) 2))))))
+         'emacs-lisp-minus)
         ((eq (char-before (- (point) 1)) ??)
-          'emacs-lisp-after-question-mark)
-        ((and (equal char  ?\;) (equal (char-before (- (point) 1)) ?\\) (equal (char-before (- (point) 2)) ??))
+         'emacs-lisp-after-question-mark)
+        ((and (equal char ?\;) (equal (char-before (- (point) 1)) ?\\) (equal (char-before (- (point) 2)) ??))
          'emacs-lisp-semicolon)
         ;; (let*
         ((and (member (char-before) (list ?*)) (eq (char-before (- (point) 1)) ?-))
          'emacs-lisp-badge)
-        ;; -*-
-        ;; (+
+        ;; -*-, (+, ar-
         ((member char (list ?  ?! ?\" ?# ?$ ?& ?' ?, ?. ?/ ?: ?< ?= ?> ?? ?@ ?^ ?_ ?| ?~))
          'emacs-lisp-punct)
         ((looking-back "-\\*" (line-beginning-position))
@@ -2278,8 +2281,8 @@ Haskell: (>=>) :: Monad"
 	;; ((looking-back "^;" (line-beginning-position))
 	;;  'emacs-lisp-comment-start)
         (list-start-char
-           ;; silence compiler warning Unused lexical argument ‘list-start-char’
-           nil)))
+         ;; silence compiler warning Unused lexical argument ‘list-start-char’
+         nil)))
 
 (defun operator--do-emacs-lisp-mode (char orig pps list-start-char &optional notfirst notsecond)
   "Emacs"
