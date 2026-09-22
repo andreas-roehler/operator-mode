@@ -214,6 +214,17 @@
     (operator-do)
     (should (eq (char-before) 32))))
 
+(ert-deftest operator-orgmode-test-8o55fR ()
+  (operator-test
+      ;; Seitenzahl
+      "#+begin_src emacs-"
+    'org-mode
+    'operator-mode-debug
+    (operator-do)
+    (should (eq (char-before) ?-))
+    (should (eq (char-before  (- (point) 1)) ?s))
+    ))
 
+"#+begin_src emacs-"
 (provide 'operator-org-mode-test)
 ;;; operator-org-mode-test.el ends here

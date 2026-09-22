@@ -2609,7 +2609,10 @@ Optional FUNC: run it if provided"
      (operator--do-java-mode char orig pps list-start-char notfirst notsecond))
     (`org-mode
      (if (operator--get-src-block-info)
-         (operator--select-mode (car (read-from-string (operator--get-src-block-info))) char orig pps list-start-char notfirst notsecond)
+         (cond ((looking-back "^#+.+" (line-beginning-position))
+                ;; #+begin_src emacs-
+                (operator--do-org-mode char orig pps list-start-char t t))
+                (t (operator--select-mode (car (read-from-string (operator--get-src-block-info))) char orig pps list-start-char notfirst notsecond)))
        (operator--do-org-mode char orig pps list-start-char notfirst notsecond)))
     (`python-mode
      (operator--do-python-mode char orig pps list-start-char notfirst notsecond))
