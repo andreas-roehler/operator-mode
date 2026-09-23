@@ -225,6 +225,20 @@
     (should (eq (char-before  (- (point) 1)) ?s))
     ))
 
-"#+begin_src emacs-"
+(ert-deftest operator-orgmode-test-H2Gak7 ()
+  (operator-test
+      ;; Seitenzahl
+      "#+begin_src emacs-lisp
+  (if (
+#+end_src"
+    'org-mode
+    'operator-mode-debug
+    (goto-char (point-max)) 
+    (skip-chars-backward "^(")
+    (operator-do)
+    (should (eq (char-before) ?\())
+    (should (eq (char-before  (- (point) 1)) 32))
+    ))
+
 (provide 'operator-org-mode-test)
 ;;; operator-org-mode-test.el ends here

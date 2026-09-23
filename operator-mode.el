@@ -2590,6 +2590,9 @@ Optional FUNC: run it if provided"
      (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
     ;; (`ocaml-interactive-mode
     ;; (operator--do-ocaml-mode char orig pps list-start-char notfirst notsecond))
+    (`emacs-lisp
+     ;; #+begin_src emacs-lisp
+     (operator--do-emacs-lisp-mode char orig pps list-start-char notfirst notsecond))
     (`emacs-lisp-mode
      (operator--do-emacs-lisp-mode char orig pps list-start-char notfirst notsecond))
     (`haskell-mode
